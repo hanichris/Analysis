@@ -29,7 +29,7 @@ class UserAdmin(BaseUserAdmin):
         )
     ]
 
-    search_fields = ("email", "")
+    search_fields = ("email",)
     ordering = ("email",)
 
 admin.site.register(User, UserAdmin)
