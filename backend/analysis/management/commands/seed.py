@@ -38,12 +38,12 @@ class Command(BaseCommand):
 
 
 def clear_data():
-    """Deletes all the users from the database who are not admins"""
+    """Deletes all the dummy users from the database."""
     logger.warn("Delete all users with no administrative permissions")
-    User.people.exclude(is_superuser=True).delete()
+    User.people.filter(email__icontains="example").delete()
 
 def create_users(fake: Faker, num: int = 15):
-    for num in range(15):
+    for num in range(num):
         fake_email = fake.unique.email()
         fake_pwd = fake.password()
         logger.info(f"{num}-{fake_email}-{fake_pwd}")
