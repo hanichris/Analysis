@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [react()],
   base: "/static/",
   build: {
-    manifest: "mainfest.json",
+    manifest: "manifest.json",
     outDir: path.resolve('./static'),
     rollupOptions: {
       input: {
