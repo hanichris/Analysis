@@ -12,7 +12,7 @@ class UserCreationForm(forms.ModelForm):
     password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
     password2 = forms.CharField(
         label="Password confirmation",
-        widget=forms.PasswordInput
+        widget=forms.PasswordInput,
     )
 
     class Meta:
@@ -29,7 +29,7 @@ class UserCreationForm(forms.ModelForm):
         return password2
 
     def save(self, commit=True):
-        user = super().save(commit=False)
+        user: User = super().save(commit=False)
         user.set_password(self.cleaned_data.get("password1"))
         if commit:
             user.save()
