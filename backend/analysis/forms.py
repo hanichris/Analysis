@@ -1,6 +1,10 @@
+import re
+from typing import Any
+
 from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from django.utils.translation import gettext_lazy as _
 
 from .models import User
 
@@ -9,15 +13,45 @@ class UserCreationForm(forms.ModelForm):
     A form for creating new users. Includes all the required \
     fields, plus a repeated password.
     """
-    password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
+    email = forms.EmailField(
+        label=_("Email address"),
+        help_text=_("Email should be a valid email address matching RFC standard"),
+        widget=forms.EmailInput(attrs={'placeholder': 'john@email.com'})
+    )
+    password1 = forms.CharField(
+        label=_("Password"),
+        min_length=10,
+        widget=forms.PasswordInput
+    )
     password2 = forms.CharField(
-        label="Password confirmation",
-        widget=forms.PasswordInput,
+        label=_("Password confirmation"),
+        widget=forms.PasswordInput
     )
 
     class Meta:
         model = User
         fields = ("email",)
+    
+    def clean_password1(self):
+        password1: str | Any = self.cleaned_data.get("password1")
+        pat = re.compile(
+            r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!#%*?&])[A-Za-z\d@#$!%*?&]{10,}$"
+        )
+
+        if pat.fullmatch(password1) is None:
+            raise ValidationError(
+                _(
+                    """
+                    Passwords must have a minimum of ten characters,
+                    at least one uppercase letter, one lowercase letter,
+                    a number and a special character.
+                    """
+                )
+            )
+        
+        return password1
+
+
     
     def clean_password2(self):
         # Check the two passwords match
@@ -27,6 +61,15 @@ class UserCreationForm(forms.ModelForm):
         if password1 and password2 and password1 != password2:
             raise ValidationError("Passwords do not match")
         return password2
+    
+    def clean_email(self):
+        pat = re.compile(
+            r"[\w!#$%&'*+\/=?`\{\|\}~^\-]+(?:\.[\w!#$%&'*+\/=?`\{\|\}~^\-])*@(?:[a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,6}"
+        )
+        email: str | Any = self.cleaned_data.get("email")
+        if pat.fullmatch(email) is None:
+            raise ValidationError(_("The provided email address is not valid."))
+        return email
 
     def save(self, commit=True):
         user: User = super().save(commit=False)
