@@ -1,12 +1,41 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Sign Up{% endblock title %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'analysis/css/auth.css' %}">
+{% endblock css %}
 
 {% block content %}
-<h1>Sign up</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form }}
-    <button type="submit">Sign Up</button>
-</form>
+<div class="container">
+    <header>
+        <h2>Sign up for an account</h2>
+        <p class="tagline">Or
+            <a href="/accounts/login/" class="link link--primary link--bold">sign in to your account</a>
+        </p>
+    </header>
+    <main>
+        <div class="wrapper shadow">
+            {{ form.non_field_errors }}
+            <form method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="fieldWrapper">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {{ field.errors }}
+                    {% if field.help_text %}
+                    <p class="help" id="{{ field.auto_id }}_helptext">
+                        {{ field.help_text|safe }}
+                    </p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                <div class="fieldWrapper">
+                    <button type="submit">Sign Up</button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
 {% endblock content %}
