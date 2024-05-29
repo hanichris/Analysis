@@ -1,25 +1,41 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Login{% endblock title %}
+{% block title %}Sign Up{% endblock title %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'analysis/css/auth.css' %}">
+{% endblock css %}
 
 {% block content %}
-<h1>Login</h1>
-{% if form.errors %}
-<p>Your username and password did not match. Please try again.</p>
-{% endif %}
-
-<form action="{% url 'login' %}" method="post">
-    {% csrf_token %}
-    <table>
-        <tr>
-            <td>{{ form.username.label_tag }}</td>
-            <td>{{ form.username }}</td>
-        </tr>
-        <tr>
-            <td>{{ form.password.label_tag }}</td>
-            <td>{{ form.password }}</td>
-        </tr>
-        </table>
-    <input type="submit" value="login">
-</form>
+<div class="container">
+    <header>
+        <h2>Sign in to your account</h2>
+        <p class="tagline">Or
+            <a href="/accounts/signup/" class="link link--primary link--bold">create a new account</a>
+        </p>
+    </header>
+    <main>
+        <div class="wrapper shadow">
+            {{ form.non_field_errors }}
+            <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="fieldWrapper">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {{ field.errors }}
+                    {% if field.help_text %}
+                    <p class="help" id="{{ field.auto_id }}_helptext">
+                        {{ field.help_text|safe }}
+                    </p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                <div class="fieldWrapper">
+                    <button type="submit">Sign in</button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
 {% endblock content %}
