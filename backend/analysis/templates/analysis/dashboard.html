@@ -11,7 +11,7 @@
 Hi {{ user.email }}
 <form action="{% url 'logout' %}" method="post">
     {% csrf_token %}
-    <button type="submit">Log out</button>
+    <button type="submit" class="btn btn--m">Log out</button>
 </form>
 <div id="root"></div>
 <script type="module" src="{% static 'index-bundle.js' %}"></script>
