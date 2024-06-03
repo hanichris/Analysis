@@ -3,18 +3,28 @@
 
 {% block title %}Dashboard{% endblock title %}
 {% block css %}
-<link rel="stylesheet" href="{% static manifest.css.0 %}">
-{% endblock css%}
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css">
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
+{% endblock css %}
 
 {% block content %}
 {% if user.is_authenticated %}
-Hi {{ user.email }}
 <form action="{% url 'logout' %}" method="post">
     {% csrf_token %}
     <button type="submit" class="btn btn--m">Log out</button>
 </form>
-<div id="root"></div>
-<script type="module" src="{% static 'index-bundle.js' %}"></script>
+<div id="map" style="width: 100dvw; height: 100dvh;"></div>
+<script>
+    const token = 'pk.eyJ1IjoiaGFuaWNocmlzIiwiYSI6ImNsd3kxMGkxMTFnN2IycXNhOTAxaTUxdDIifQ.Cxj00jTKpHqvlBAUVCf0gg'
+    const map = new mapboxgl.Map({
+        accessToken: token,
+        container: 'map',
+        style: 'mapbox://styles/mapbox/satellite-streets-v12',
+        center: [36.8219, -1.2921],
+        zoom: 9
+    })
+</script>
+<!-- <script type="module" src="{% static 'index-bundle.js' %}"></script> -->
 {% else %}
 <p>You are not logged in</p>
 <a href="{% url 'login' %}"> Log in</a>
