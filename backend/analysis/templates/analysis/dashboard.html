@@ -25,27 +25,55 @@
 {{ access_token|json_script:'token-data'}}
 <script>
     const token = JSON.parse(document.getElementById('token-data').textContent);
+    const csrftoken = getCookie('csrftoken');
+
     mapboxgl.accessToken = token;
-    const map = new mapboxgl.Map({
-        container: 'map',
-        style: 'mapbox://styles/mapbox/satellite-streets-v12',
-        center: [36.8219, -1.2921],
-        zoom: 12
-    });
+    if (!mapboxgl.supported()) {
+        alert("Your browser does not support Mapbox GL");
+    } else {
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/satellite-streets-v12',
+            center: [36.8219, -1.2921],
+            zoom: 12
+        });
 
-    const draw = new MapboxDraw({
-        displayControlsDefault: false,
-        controls: {
-            polygon: true,
-            trash: true,
-        },
-        defaultMode: 'draw_polygon',
-    })
+        var draw = new MapboxDraw({
+            displayControlsDefault: false,
+            controls: {
+                polygon: true,
+                trash: true,
+            },
+            defaultMode: 'draw_polygon',
+        })
 
-    map.addControl(draw)
-    map.on('draw.create', (e) => {
-        console.log(draw.getAll())
-    })
+        map.addControl(draw);
+        map.on('draw.create', saveCoord);
+    }
+
+    function getCookie(name){
+        return document.cookie.match(name).input.split('=').pop();
+    }
+
+    async function saveCoord(e) {
+        const data = draw.getAll();
+        if (data.features.length > 0) {
+            const res = await fetch("{% url 'analysis:dashboard' %}", {
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: {
+                    'Accept': "application/json",
+                    'Content-Type': "application/json",
+                    'X-Requested-With': 'XMLHttpRequest',
+                    "X-CSRFToken": csrftoken,
+                }
+            });
+            if(res.ok){
+                console.log("Data below sent to backend");
+                console.log(data);
+            }
+        }
+    }
 </script>
 <!-- <script type="module" src="{% static 'index-bundle.js' %}"></script> -->
 {% endblock content %}
