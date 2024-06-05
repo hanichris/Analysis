@@ -2,9 +2,8 @@ import json
 import os
 from pathlib import Path
 
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import Http404, HttpRequest, HttpResponse
+from django.http import HttpRequest, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, View
@@ -28,6 +27,10 @@ class IndexView(LoginRequiredMixin, View):
                 "access_token": self.access_token,
             }
         )
+    
+    def post(self, request: HttpRequest, *args, **kwargs):
+        print(json.loads(request.body.decode('utf-8')))
+        return JsonResponse({'success': True})
 
 class SignUpView(CreateView):
     form_class = UserCreationForm
