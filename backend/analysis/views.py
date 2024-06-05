@@ -29,6 +29,8 @@ class IndexView(LoginRequiredMixin, View):
         )
     
     def post(self, request: HttpRequest, *args, **kwargs):
+        print("User: ", end="")
+        print(request.user.id) # type: ignore
         print(json.loads(request.body.decode('utf-8')))
         return JsonResponse({'success': True})
 
