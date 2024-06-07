@@ -12,10 +12,22 @@ from .forms import UserCreationForm
 from .models import User
 
 
-class IndexView(LoginRequiredMixin, View):
+class IndexView(View):
     parents = Path(__file__).parents
     new_path = parents[1].joinpath('static/manifest.json')
     manifest: dict = json.load(new_path.open(encoding='utf-8'))
+
+    def get(self, request, *args, **kwargs):
+        return render(
+            request,
+            "analysis/home.html",
+            {
+                "manifest": self.manifest,
+            }
+        )
+
+class DashboardView(LoginRequiredMixin, View):
+    
     access_token = os.getenv('MAPBOX_ACCESS_TOKEN')
 
     def get(self, request: HttpRequest, *args, **kwargs):
@@ -23,7 +35,7 @@ class IndexView(LoginRequiredMixin, View):
             request,
             "analysis/dashboard.html",
             {
-                "manifest": self.manifest,
+                
                 "access_token": self.access_token,
             }
         )
