@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home{% endblock title %}
+
+{% block css%}
+{% endblock css%}
+
+{% block content %}
+<div id="root"></div>
+<script type="module" src="{% static 'index-bundle.js' %}"></script>
+{% endblock content %}
