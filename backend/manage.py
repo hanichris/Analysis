@@ -4,9 +4,6 @@ import logging
 import os
 import sys
 
-from dotenv import load_dotenv, dotenv_values
-
-load_dotenv()
 logger = logging.getLogger(__name__)
 
 def main():
