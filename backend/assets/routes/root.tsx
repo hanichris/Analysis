@@ -5,12 +5,12 @@ import Footer from "../components/footer";
 
 export default function Root() {
   return (
-    <div className="container">
-        <Navbar />
-      <div className="wrapper">
+    <>
+      <Navbar />
+      <main>
         <Outlet />
-      </div>
+      </main>
       <Footer />
-    </div>
+    </>
   );
 }
