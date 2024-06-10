@@ -17,6 +17,7 @@
     --color-light-grey: #f2f2f3;
     --color-grey: #7d7c83;
     --color-medium-grey: #b1b0b5;
+    --color-gold: #E5B80B;
     --color-blue: #0066ff;
 
     --error-color: var(--color-vermilion);
@@ -35,6 +36,23 @@
     --font-weight-bold: 800;
 
     --font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+    /* FOOTER */
+    --footer-padding: 5rem 0rem 1rem;
+
+    /* NAVBAR */
+    --nav-item-font-family: var(--font-family);
+    --nav-item-font-size: var(--font-size-medium);
+    --nav-item-font-weight: var(--font-weight-bold);
+    --nav-item-link-hover: var(--color-phthalo-green);
+    --nav-item-margin: 0 0 0 2rem;
+    --nav-item-letter-spacing: .04rem;
+    --nav-item-link-hover: var(--color-gold);
+
+
+    /** MOTION **/
+    --transition-duration: .3s;
+    --transition-cubic-bezier: cubic-bezier(0.17, 0.67, 0, 1.01);
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
@@ -89,25 +107,18 @@ a {
     color: var(--color-black);
 }
 
-a.link {
-    display: inline-block;
-    text-decoration: none;
-    cursor: pointer;
-    position: relative;
-    transition: color .1s;
+a:visited{
+    font-style: italic;
 }
 
-a.link--black {
-    color: var(--color-black);
-}
-
-a.link--primary {
-    color: var(--color-blue);
-}
-
-a.link--primary:hover {
+a:hover {
     text-decoration: underline;
 }
+
+a:active {
+    background-color: var(--color-grey);
+}
+
 
 .btn {
     display: block;
