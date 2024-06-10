@@ -2,22 +2,30 @@ import { Link } from "react-router-dom";
 
 export default function Navbar() {
   return (
-    <nav>
-      <ul>
-        <li>
-          <Link to={""}>
-            <img src="/static/analysis/img/logo.svg" alt="logo" />
-          </Link>
-        </li>
-        <div>
-          <li>
-            <Link to={"about"}>About</Link>
-          </li>
-          <li>
-            <Link to={"contact"}>Contact Us</Link>
-          </li>
+    <header className="header">
+      <div className="container">
+        <div className="header-container">
+          <div className="header-logo">
+            <Link to={""}>
+              <img src="/static/analysis/img/logo.svg" className="filter-svg" alt="logo" width={160} height={140}/>
+            </Link>
+          </div>
+          {/* <label htmlFor="menu-btn" className="menu-icon">
+            <span className="navicon"></span>
+            <input type="checkbox" className="menu-btn" id="menu-btn" />
+          </label> */}
+          <nav className="navbar-menu">
+            <ul className="nav">
+              <li className="nav-item">
+                <Link to={"about"} className="nav-link">About</Link>
+              </li>
+              <li className="nav-item">
+                <Link to={"contact"} className="nav-link">Contact Us</Link>
+              </li>
+            </ul>
+          </nav>
         </div>
-      </ul>
-    </nav>
+      </div>
+    </header>
   );
 }
