@@ -8,6 +8,9 @@ import {
 
 import ErrorPage from './error-page';
 import Root from './routes/root';
+import AboutPage from './routes/about';
+
+import "./home.css";
 
 const route = createBrowserRouter([
     {
@@ -21,7 +24,7 @@ const route = createBrowserRouter([
             },
             {
                 path: "about",
-                element: <div>About page</div>,
+                element: <AboutPage />,
             },
             {
                 path: "contact",
