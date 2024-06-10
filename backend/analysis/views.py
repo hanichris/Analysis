@@ -17,12 +17,12 @@ class IndexView(View):
     new_path = parents[1].joinpath('static/manifest.json')
     manifest: dict = json.load(new_path.open(encoding='utf-8'))
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request: HttpRequest):
         return render(
             request,
             "analysis/home.html",
             {
-                "manifest": self.manifest,
+                "manifest": self.manifest.get("assets/main.tsx"),
             }
         )
 
