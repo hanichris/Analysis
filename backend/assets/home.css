@@ -26,15 +26,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0 1.5rem;
 }
 
 img.filter-svg {
     filter: invert(66%) sepia(38%) saturate(1997%) hue-rotate(10deg) brightness(107%) contrast(91%);
 }
 
-.navbar-menu {
-    flex: 1;
-}
 
 .nav {
     display: flex;
@@ -79,6 +77,33 @@ header .menu-icon .navicon::after {
     top: -.7rem;
 }
 
+.menu-btn {
+    display: none;
+}
+
+.menu-btn:checked ~ .navbar-menu {
+    display: block;
+}
+
+.menu-btn:checked ~ .navbar-menu > .nav {
+    max-height: 100%;
+    overflow: inherit;
+}
+
+.menu-btn:checked + .menu-icon > .navicon {
+    background: transparent;
+}
+
+.menu-btn:checked + .menu-icon > .navicon::before {
+    transform: rotate(-45deg);
+    top: 0;
+}
+
+.menu-btn:checked + .menu-icon > .navicon::after {
+    transform: rotate(45deg);
+    top: 0;
+}
+
 .nav .nav-item {
     font-family: var(--nav-item-font-family);
     font-weight: var(--nav-item-font-weight);
@@ -96,7 +121,7 @@ header .menu-icon .navicon::after {
     position: relative;
 }
 
-.nav .nav-link:hover {
+.nav .nav-link:hover, .nav .nav-link:active {
     color: var(--nav-item-link-hover);
     text-decoration: none;
 }
@@ -112,15 +137,66 @@ header .menu-icon .navicon::after {
     transition: var(--transition-duration) var(--transition-cubic-bezier);
 }
 
-.nav .nav-item:hover .nav-link::before {
+.nav .nav-item:hover .nav-link::before, .nav .nav-item:active .nav-link::before {
     background-color: var(--color-gold);
     width: 100%;
 }
 
-@media only screen and (min-width: 400px) {
+/* Section */
+.section {
+    padding: var(--section-padding);
+}
+
+.section-header {
+    text-align: var(--section-header-align);
+    padding: var(--section-header-padding);
+  }
+  
+  .section-title {
+    font-size: var(--section-title-font-size);
+    font-family: var(--font-family);
+    font-weight: var(--section-title-font-weight);
+  }
+  
+  .section-tagline {
+    font-family: var(--font-family);
+    text-align: center;
+  }
+
+@media only screen and (min-width: 480px) {
     .nav {
         flex-direction: row;
         overflow: auto;
         max-height: 100%;
+    }
+
+    header .menu-icon {
+        display: none;
+    }
+
+}
+
+@media only screen and (max-width: 480px) {
+    .navbar-menu {
+        display: none;
+        flex: 1;
+    }
+
+    .header-container {
+        flex-wrap: wrap;
+    }
+
+    .header .menu-icon {
+        display: block;
+    }
+
+    .header-logo {
+        flex-basis: 70%;
+    }
+}
+
+@media only screen and (min-width: 481px) and (max-width: 767px) {
+    .header-logo {
+        flex-basis: 79%;
     }
 }
