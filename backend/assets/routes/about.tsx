@@ -1,14 +1,14 @@
 export default function AboutPage() {
   return (
-    <section>
+    <section className="section">
       <div className="container">
         <article>
-          <header>
-            <h2>
+          <header className="section-header">
+            <h2 className="section-title">
               What we do now
             </h2>
           </header>
-          <p>
+          <p className="section-tagline">
             Divergent Space is a pioneering consultancy dedicated to harnessing
             space technology's transformative potential for business growth and
             positive societal change. Our mission revolves around seamlessly
