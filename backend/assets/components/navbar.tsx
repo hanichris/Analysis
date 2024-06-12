@@ -23,7 +23,7 @@ export default function Navbar() {
                 <Link to={"contact"} className="nav-link">Contact Us</Link>
               </li>
               <li className="nav-item">
-                <a href="accounts/login" className="nav-link">Login</a>
+                <a href="/accounts/login" className="nav-link">Login</a>
               </li>
             </ul>
           </nav>
