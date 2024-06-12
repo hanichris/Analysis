@@ -11,6 +11,8 @@ import Root from './routes/root';
 import AboutPage from './routes/about';
 
 import "./home.css";
+import HomePage from './routes/home';
+import ContactPage from './routes/contact';
 
 const route = createBrowserRouter([
     {
@@ -20,7 +22,7 @@ const route = createBrowserRouter([
         children: [
             {
                 path: "",
-                element: <div>Home page</div>,
+                element: <HomePage />,
             },
             {
                 path: "about",
@@ -28,7 +30,7 @@ const route = createBrowserRouter([
             },
             {
                 path: "contact",
-                element: <div>Contact page</div>,
+                element: <ContactPage />,
             },
         ],
     },
