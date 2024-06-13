@@ -1,16 +1,21 @@
 import json
+import logging
 import os
+
+from uuid import UUID
 from pathlib import Path
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import IntegrityError, transaction
 from django.http import HttpRequest, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, View
 
 from .forms import UserCreationForm
-from .models import User
+from .models import User, Geofield
 
+logger = logging.getLogger(__name__)
 
 class IndexView(View):
     parents = Path(__file__).parents
@@ -40,11 +45,23 @@ class DashboardView(LoginRequiredMixin, View):
         )
 
     def post(self, request: HttpRequest, *args, **kwargs):
-        userId = request.user.id #type: ignore
         data = json.loads(request.body.decode('utf-8'))
-        print(f"{userId = }")
-        for feature in data.features:
-            feature.get('id')
+        create_data = [
+            Geofield(
+                user=request.user,
+                id=UUID(feature.get("id")),
+                geometry=feature.get("geometry")
+            )
+            for feature in data.get("features")
+        ]
+
+        try:
+            with transaction.atomic():
+                Geofield.objects.bulk_create(create_data)
+        except IntegrityError:
+            logger.error(f"sqlite3.IntegrityError: UNIQUE constraint failed")
+            return JsonResponse({'error': True}, status=500)
+
         return JsonResponse({'success': True})
 
 class SignUpView(CreateView):
