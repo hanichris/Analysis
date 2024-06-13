@@ -17,7 +17,7 @@ class IndexView(View):
     new_path = parents[1].joinpath('static/manifest.json')
     manifest: dict = json.load(new_path.open(encoding='utf-8'))
 
-    def get(self, request: HttpRequest):
+    def get(self, request: HttpRequest, *args, **kwargs):
         return render(
             request,
             "analysis/home.html",
@@ -35,15 +35,16 @@ class DashboardView(LoginRequiredMixin, View):
             request,
             "analysis/dashboard.html",
             {
-                
                 "access_token": self.access_token,
             }
         )
-    
+
     def post(self, request: HttpRequest, *args, **kwargs):
-        print("User: ", end="")
-        print(request.user.id) # type: ignore
-        print(json.loads(request.body.decode('utf-8')))
+        userId = request.user.id #type: ignore
+        data = json.loads(request.body.decode('utf-8'))
+        print(f"{userId = }")
+        for feature in data.features:
+            feature.get('id')
         return JsonResponse({'success': True})
 
 class SignUpView(CreateView):
