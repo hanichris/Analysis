@@ -2,11 +2,11 @@ export default function AboutPage() {
   return (
     <section className="section">
       <div className="container">
-        <article>
+        <article className="section-padding">
           <header className="section-header">
-            <h2 className="section-title">
+            <h1 className="section-title">
               What we do now
-            </h2>
+            </h1>
           </header>
           <p className="section-tagline">
             Divergent Space is a pioneering consultancy dedicated to harnessing
@@ -29,72 +29,79 @@ export default function AboutPage() {
             transformation shapes a future that is profitable and purposeful.
           </p>
           <div>
-            <img src="/static/analysis/img/satellite_side.jpg" alt="statellite-image" />
+            <img
+              src="/static/analysis/img/satellite_side.jpg"
+              alt="statellite-image"
+            />
           </div>
         </article>
 
-        <article>
-          <header>
-            <h2>
+        <article className="section-padding mt-b">
+          <header className="section-header">
+            <h1 className="section-title">
               Who we are
-            </h2>
+            </h1>
           </header>
-          <div>
+          <div className="grid">
             <div>
-              <img src="/static/analysis/img/ceo.jpg" alt="image of CEO Mr. Albert Mbogo"/>
+              <div>
+                <img src="/static/analysis/img/ceo.jpg" alt="image of CEO Mr. Albert Mbogo"/>
+              </div>
+              <div>
+                <h3 className="grid-item-title">
+                  CEO <br />
+                  Mr. Albert Mbogo
+                </h3>
+                <div className="grid-item-tagline">
+                  <span>An entrepreneur, astrophysicist and our proud founder.</span>
+                </div>
+              </div>
             </div>
-            <div>
-              <h3>CEO</h3>
-              <h2>
-                Mr. Albert Mbogo
-              </h2>
-              <p>An entrepreneur, astrophysicist and our proud founder.</p>
-            </div>
-          </div>
 
-          <div>
             <div>
-              <img src="/static/analysis/img/coo.jpg" alt="image of COO Mr. Joshua Oleko"/>
+              <div>
+                <img src="/static/analysis/img/coo.jpg" alt="image of COO Mr. Joshua Oleko"/>
+              </div>
+              <div>
+                <h3 className="grid-item-title">
+                  COO <br />
+                  Mr. Joshua Oleko
+                </h3>
+                <div className="grid-item-tagline">
+                  <span>
+                    A Biosystems engineer who has had international experience in food
+                    production and sustainable agriculture.
+                  </span>
+                </div>
+              </div>
             </div>
-            <div>
-              <h3>
-                COO
-              </h3>
-              <h2>
-                Mr. Joshua Oleko
-              </h2>
-              <p>
-                A Biosystems engineer who has had international experience in food
-                production and sustainable agriculture.
-              </p>
-            </div>
-          </div>
 
-          <div>
             <div>
-              <img src="/static/analysis/img/cto.jpeg" alt="image of CTO Ms. Evelyn"/>
-            </div>
-            <div>
-              <h3>
-                CTO
-              </h3>
-              <h2>
-                Ms. Evelyn
-              </h2>
-              <p>
-                A data scientist with a wealth of experience in statistics and
-                software engineering.
-              </p>
+              <div>
+                <img src="/static/analysis/img/cto.jpeg" alt="image of CTO Ms. Evelyn"/>
+              </div>
+              <div>
+                <h3 className="grid-item-title">
+                  CTO <br />
+                  Ms. Evelyn
+                </h3>
+                <div className="grid-item-tagline">
+                  <span>
+                    A data scientist with a wealth of experience in statistics and
+                    software engineering.
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </article>
 
 
-        <article>
-          <header>
-            <h2>
+        <article className="section-padding mt-b">
+          <header className="section-header">
+            <h1 className="section-title">
               Our Approach
-            </h2>
+            </h1>
           </header>
           <div>
             <ol>
@@ -114,24 +121,36 @@ export default function AboutPage() {
           </div>
         </article>
 
-        <article>
-          <header>
-            <h2>
+        <article className="section-padding mt-b">
+          <header className="section-header">
+            <h1 className="section-title">
               Why Choose Us
-            </h2>
+            </h1>
           </header>
-          <div>
+          <div data-item="space-around" className="grid">
             <div>
-              <img src="/static/analysis/img/divergent.svg" alt=""/>
-              <h2>Divergent Thinking</h2>
-              <span>Unleashing creativity for space-driven business success</span>
+              <div className="img-background">
+                <img src="/static/analysis/img/divergent.svg" alt="divergent image"/>
+              </div>
+              <div>
+                <h3 className="grid-item-title">Divergent Thinking</h3>
+                <div className="grid-item-tagline">
+                  <span>Unleashing creativity for space-driven business success</span>
+                </div>
+              </div>
             </div>
             <div>
-              <img src="/static/analysis/img/profit.svg" alt=""/>
-              <h2>Proven Impact</h2>
-              <span>
-                Tangible results in both profit and societal transformation
-              </span>
+              <div className="img-background">
+                <img src="/static/analysis/img/profit.svg" alt="profit image"/>
+              </div>
+              <div>
+                <h3 className="grid-item-title">Proven Impact</h3>
+                <div className="grid-item-tagline">
+                  <span>
+                    Tangible results in both profit and societal transformation
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
 
