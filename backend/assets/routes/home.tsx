@@ -2,34 +2,38 @@ export default function HomePage() {
   return (
     <>
       <section>
-        <div>
-          <video autoPlay loop>
-            <source src='/static/analysis/img/landing_anim.mp4' type="video/mp4" />
-          </video>
-        </div>
-        <span>
+        <div className="container">
+          <div>
+            <video autoPlay loop>
+              <source src='/static/analysis/img/landing_anim.mp4' type="video/mp4" />
+            </video>
+          </div>
           <span>
-            Welcome to <br />
             <span>
-              Divergent Space
+              Welcome to <br />
+              <span>
+                Divergent Space
+              </span>
+            </span>
+            <span>
+              Elevating Business through Space Excellence and Societal Innovation
             </span>
           </span>
-          <span>
-            Elevating Business through Space Excellence and Societal Innovation
-          </span>
-        </span>
+        </div>
       </section>
 
 
-      <span>
-        We are a leading consultancy that harnesses space technology to propel
-        businesses forward and initiates visionary projects to create positive
-        societal impact.
-      </span>
+      <div className="container">
+        <p>
+          We are a leading consultancy that harnesses space technology to propel
+          businesses forward and initiates visionary projects to create positive
+          societal impact.
+        </p>
+      </div>
 
 
-      <div>
-        <div>
+      <section className="section">
+        <div className="container">
           <div>
             <img
               src="/static/analysis/img/satellite_arial.jpg"
@@ -47,37 +51,38 @@ export default function HomePage() {
               planning.
             </p>
           </div>
-        </div>
-
-        <div>
           <div>
-            <h2>
-              Fuelling progress
-            </h2>
-            <p>
-              These orbiting eyes in the sky provide a dynamic perspective,
-              fueling scientific breakthroughs and transforming how we
-              understand and interact with our planet.
-            </p>
+            <div>
+              <h2>
+                Fuelling progress
+              </h2>
+              <p>
+                These orbiting eyes in the sky provide a dynamic perspective,
+                fueling scientific breakthroughs and transforming how we
+                understand and interact with our planet.
+              </p>
+            </div>
+            <div>
+              <img
+                src="/static/analysis/img/satellite_side.jpg"
+                alt="statellite side image"
+              />
+            </div>
           </div>
+        </div>
+      </section>
+
+
+      <section className="section">
+        <div className="container">
+          <h2>
+            A sneak peak into how we work
+          </h2>
           <div>
-            <img
-              src="/static/analysis/img/satellite_side.jpg"
-              alt="statellite side image"
-            />
+            <img src="/static/analysis/img/software.jpg" />
           </div>
         </div>
-      </div>
-
-
-      <div>
-        <h2>
-          A sneak peak into how we work
-        </h2>
-        <div>
-          <img src="/static/analysis/img/software.jpg" />
-        </div>
-      </div>
+      </section>
     </>
   );
 }
