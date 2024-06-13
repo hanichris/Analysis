@@ -35,7 +35,8 @@
     --font-weight-regular: 400;
     --font-weight-bold: 800;
 
-    --font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    /* --font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; */
+    --font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 
     /* FOOTER */
     --footer-padding: 5rem 0rem 1rem;
@@ -49,6 +50,17 @@
     --nav-item-letter-spacing: .04rem;
     --nav-item-link-hover: var(--color-gold);
 
+    /** SECTION **/
+    --section-padding: 5rem 0;
+    --section-header-padding: 0 0 5rem;
+    --section-header-align: center;
+    --section-title-font-size: var(--font-size-xxx-large);
+    --section-title-font-weight: var(--font-weight-bold);
+    --section-tagline-font-family: var(--font-family-headings);
+    --section-tagline-font-weight: var(--font-weight-bold);
+    --section-body-padding: 2rem 0 4rem;
+    --section-footer-padding: 3rem 0 0;
+    --section-footer-align: center;
 
     /** MOTION **/
     --transition-duration: .3s;
@@ -115,8 +127,18 @@ a:hover {
     text-decoration: underline;
 }
 
-a:active {
-    background-color: var(--color-grey);
+a.link {
+    display: inline-block;
+    position: relative;
+    transition: color .1s;
+  }
+
+a.link--primary {
+color: var(--color-blue);
+}
+
+a.link--primary:hover {
+text-decoration: underline;
 }
 
 
