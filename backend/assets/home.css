@@ -1,14 +1,14 @@
 #root {
     display: flex;
     flex-direction: column;
-    background-color: var(--color-isabelline);
+    background-color: var(--color-baby-powder);
     min-height: 100dvh;
 }
 
 .header {
     position: -webkit-sticky; /* Safari */
     position: sticky;
-    background-color: var(--color-isabelline);
+    background-color: var(--color-baby-powder);
     top: 0;
 }
 
@@ -109,9 +109,6 @@ header .menu-icon .navicon::after {
     font-weight: var(--nav-item-font-weight);
     font-size: var(--nav-item-font-size);
     letter-spacing: var(--nav-item-letter-spacing);
-}
-
-.nav .nav-item + .nav-item {
     margin: var(--nav-item-margin);
 }
 
@@ -152,16 +149,79 @@ header .menu-icon .navicon::after {
     padding: var(--section-header-padding);
   }
   
-  .section-title {
+.section-title {
     font-size: var(--section-title-font-size);
     font-family: var(--font-family);
     font-weight: var(--section-title-font-weight);
-  }
-  
-  .section-tagline {
+}
+
+.section-tagline {
+    color: rgb(55 65 81 / 1);
     font-family: var(--font-family);
+    font-weight: 500;
+    font-size: var(--font-size-large);
     text-align: center;
-  }
+}
+
+.section-tagline + div {
+    margin-top: 5rem;
+    margin-bottom: 2rem;
+}
+
+.section-tagline + div > img {
+    border-radius: 1.2rem;
+}
+
+
+.section-padding {
+    padding: 0 1.5rem;
+}
+
+.mt-b {
+    margin-top: 6rem;
+    margin-bottom: 4rem;
+}
+
+.grid {
+    display: grid;
+    gap: 1.8rem;
+    padding: 2rem;
+}
+
+[data-item="space-around"].grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+[data-item="space-around"].grid:first-child {
+    grid-column: 2;
+}
+
+[data-item="space-around"].grid:last-child {
+    grid-column: 3;
+}
+
+.grid img {
+    border-radius: 1.2rem;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+}
+
+.grid .grid-item-title {
+    font-size: var(--font-size-large);
+    font-weight: var(--font-weight-bold);
+    margin-top: .8rem;
+    margin-bottom: .8rem;
+}
+
+.grid .grid-item-tagline {
+    display: flex;
+    border-bottom-width: .1rem;
+    border-color: var(--color-licorice);
+}
+
+.grid .img-background {
+    background-color: var(--color-isabelline);
+}
 
 @media only screen and (min-width: 480px) {
     .nav {
@@ -198,5 +258,11 @@ header .menu-icon .navicon::after {
 @media only screen and (min-width: 481px) and (max-width: 767px) {
     .header-logo {
         flex-basis: 79%;
+    }
+}
+
+@media (min-width: 640px) {
+    .grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
