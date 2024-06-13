@@ -37,13 +37,15 @@ class User(PermissionsMixin, AbstractBaseUser):
     def __str__(self) -> str:
         return self.email
     
-class Field(models.Model):
+class Geofield(models.Model):
     id = models.UUIDField(
         primary_key=True,
-        default=uuid.uuid4,
         editable=False
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    geojson = models.JSONField(encoder=DjangoJSONEncoder)
+    geometry = models.JSONField(encoder=DjangoJSONEncoder)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return f"{self.id.hex} {self.user} {self.geometry}"
