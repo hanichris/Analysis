@@ -9,17 +9,23 @@ a python virtual environment. You can use ``venv`` or ``pyenv`` to manage your v
 ### Install dependencies
 With your environment set up, run the following command in your terminal:    
    
-``python3 -m pip install -r requirements.txt``  
+```
+python3 -m pip install -r requirements.txt
+```  
   
 ### Database migrations
 With your dependencies installed, change your current working directory to the directory with the ``manage.py`` file. Once in that directory, run the following command in your terminal:   
   
-``python manage.py migrate``  
+```
+python manage.py migrate
+```  
   
 ### Create an admin user
 You will need to create a user who can login into to the admin site. Run the following command:   
    
-``python manage.py createsuperuser``  
+```
+python manage.py createsuperuser
+```  
    
 Follow the prompts presented to you.
 
@@ -28,15 +34,21 @@ Follow the prompts presented to you.
 To ensure the react frontend can be server-side rendered, run the following command to build the frontend:   
 If you are using ``pnpm`` as your package manager:   
     
-``pnpm build``    
+```
+pnpm build
+```    
     
 If you are using ``npm``, then the command to run would be:    
    
-``npm run build``   
+```
+npm run build
+```   
    
 
 ### Start the development server.
 Doing so requires running the following command:  
     
-``python manage.py runserver``    
+```
+python manage.py runserver
+```    
 
