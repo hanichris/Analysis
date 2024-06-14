@@ -29,6 +29,21 @@ python manage.py createsuperuser
    
 Follow the prompts presented to you.
 
+### Install JavaScript dependencies.
+Run the following command to install the necessary node modules:    
+If ``pnpm`` is your package manager:    
+      
+```
+pnpm install
+```
+    
+If ``npm`` is your package manager:
+    
+```
+npm install
+```
+   
+Ensure you are in the directory with the ``manage.py`` as it should also hold the ``package.json`` file.
 
 ### Build the react frontend.
 To ensure the react frontend can be server-side rendered, run the following command to build the frontend:   
