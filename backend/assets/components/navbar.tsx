@@ -15,7 +15,7 @@ export default function Navbar() {
           <div className="header-container">
             <div className="header-logo">
               <Link to={""}>
-                <img src="/static/analysis/img/logo.svg" alt="logo" width={160} height={140}/>
+                <img src="/static/analysis/img/logo.svg" alt="logo" width={90} height={90}/>
               </Link>
             </div>
             <input type="checkbox" className="menu-btn" id="menu-btn" />
