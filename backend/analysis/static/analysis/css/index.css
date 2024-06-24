@@ -120,6 +120,7 @@ ul, ol {
 a {
     text-decoration: none;
     color: var(--color-eerie-black);
+    cursor: pointer;
 }
 
 a:visited{
