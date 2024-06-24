@@ -6,16 +6,19 @@
   ============================= */
 
 :root {
+    --color-white: #fff;
     --color-off-white: #faf9f6;
     --color-baby-powder: #fffffc;
     --color-coquelicot: #ff3f00;
     --color-vermilion: #f64740;
     --color-licorice: #1f1300;
     --color-eerie-black: #181f1c;
-    --color-phthalo-green: #123534;
     --color-isabelline: #f4f3ee;
     --color-light-grey: #f2f2f3;
     --color-grey: #7d7c83;
+    --color-green: #08805b;
+    --color-phthalo-green: #123534;
+    --color-dark-green: #096A2E;
     --color-medium-grey: #b1b0b5;
     --color-gold: #E5B80B;
     --color-blue: #0066ff;
@@ -116,7 +119,7 @@ ul, ol {
 
 a {
     text-decoration: none;
-    color: var(--color-black);
+    color: var(--color-eerie-black);
 }
 
 a:visited{
@@ -134,7 +137,7 @@ a.link {
   }
 
 a.link--primary {
-color: var(--color-blue);
+    color: var(--color-blue);
 }
 
 a.link--primary:hover {
@@ -173,4 +176,8 @@ text-decoration: underline;
     color: var(--color-off-white);
     background: var(--valid-color);
     box-shadow: rgba(255, 255, 255, 0) 0 0 0 3px, rgba(0, 102, 255, 0) 0 0 0 4px;
+}
+
+._m-b-2 {
+    margin-bottom: 1.4rem;
 }
