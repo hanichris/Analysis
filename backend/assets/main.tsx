@@ -11,6 +11,7 @@ import Root from './routes/root';
 import AboutPage from './routes/about';
 
 import "./home.css";
+import "./modal.css";
 import HomePage from './routes/home';
 import ContactPage from './routes/contact';
 
