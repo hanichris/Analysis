@@ -9,6 +9,7 @@
     position: -webkit-sticky; /* Safari */
     position: sticky;
     background-color: var(--color-baby-powder);
+    border-bottom: 0.1rem solid var(--color-gold);
     top: 0;
 }
 
@@ -18,9 +19,6 @@
     margin-right: auto;
 }
 
-.container.border-bottom {
-    border-bottom: 0.1rem solid var(--color-gold);
-}
 
 .header-container {
     display: flex;
