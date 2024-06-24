@@ -1,0 +1,216 @@
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10001;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: none;
+    transition: backdrop-filter 0.3s cubic-bezier(0.6, 0.4, 0, 1);
+}
+
+.modal_container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    background: rgba(30, 41, 51, 0);
+    display: table;
+    transition: background 0.3s cubic-bezier(0.6, 0.4, 0, 1);
+}
+
+.modal_cell {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    overflow: hidden;
+    text-align: center;
+}
+
+.modal_element {
+    position: fixed;
+    bottom: 0;
+    width: 100vw;
+    display: inline-block;
+    height: auto;
+    background: var(--color-white);
+    border-radius: 1.4rem 1.4rem 0 0;
+    box-shadow: rgba(0, 0, 0, 0.1) 0 0 2rem;
+    transform: translate3d(0, 100%, 0);
+    transition: transform 0.3s cubic-bezier(0.6, 0.4, 0, 1), opacity .3s cubic-bezier(0.6, 0.4, 0, 1);
+    will-change: transition;
+}
+
+.modal_title {
+    padding: 3.2rem 2.4rem 2.4rem;
+}
+
+.modal_title h2 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    font-variation-settings: 'wght' 900;
+    letter-spacing: -0.045em;
+}
+
+.modal_title div {
+    color: var(--color-grey);
+    font-size: 1.6rem;
+}
+
+.modal_element .modal_button_left {
+    position: absolute;
+    top: 1.9rem;
+    left: .8rem;
+    cursor: pointer;
+}
+
+.modal_element a > .navicon {
+    background: transparent;
+    display: block;
+    width: 1.5rem;
+    height: .2rem;
+}
+
+.modal_element a > .navicon::before, .modal_element a > .navicon::after {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-eerie-black);
+}
+
+.modal_element a > .navicon::before {
+    transform: rotate(-45deg);
+}
+
+.modal_element a > .navicon::after {
+    transform: rotate(45deg);
+}
+
+.modal_body {
+    position: relative;
+    padding: 2.4rem;
+}
+
+.modal_title ~ .modal_body {
+    padding-top: .5rem;
+}
+
+.modal_body .btn--with-icon .icon svg {
+    width: 1.8rem;
+    height: 1.8rem;
+}
+
+.modal_body .btn--with-icon span {
+    flex-grow: 1;
+}
+
+.modal_body .small-text {
+    font-size: 1.2rem;
+    color: var(--color-grey);
+    text-align: center;
+}
+
+._m-t-3 {
+    margin-top: 2.4rem;
+}
+
+.modal.is-visible .modal_container {
+    background: rgba(17, 21, 24, 0.45);
+}
+
+.modal.is-visible .modal_container > .modal_cell > .modal_element {
+    position: relative;
+    transform: translate3d(0, 0, 0) scale(1) !important;
+    opacity: 1 !important;
+}
+
+.btn {
+    display: block;
+    position: relative;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    border: none;
+    font-variation-settings: 'wght' 600;
+    font-family: "Inter", sans-serif;
+    transition: box-shadow .1s, color .1s, background .1s;
+}
+
+.btn--m {
+    border-radius: 1rem;
+    font-size: 1.6rem;
+    padding: 0 2.1rem;
+    height: 4.8rem;
+}
+
+.btn--xs {
+    border-radius: .6rem;
+    font-size: 1.4rem;
+    height: 3.2rem;
+    padding: 0 1.2rem;
+}
+
+.btn--transparent {
+    color: var(--color-eerie-black);
+    background: var(--color-white);
+}
+
+.btn--primary {
+    background: var(--color-dark-green);
+    color: var(--color-white);
+    box-shadow: rgba(255, 255, 255, 0) 0 0 0 3px,rgba(0, 102, 255, 0) 0 0 0 4px;
+}
+
+.btn--gray {
+    color: var(--color-eerie-black);
+    background: #f2f2f3;
+}
+
+.btn--icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn--icon.btn--xs {
+    width: 3.2rem;
+    padding: 0;
+}
+
+.btn--with-icon {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+.icon {
+    display: inline-block;
+    flex-shrink: 0;
+    position: absolute;
+    left: 2.1rem;
+}
+
+@media (min-width: 576px) {
+    .modal_cell {
+        display: table-cell;
+        vertical-align: middle;
+        padding: 5.4rem;
+    }
+
+    .modal_element {
+        border-radius: 1.4rem;
+        opacity: 0;
+        width: 38rem;
+        position: relative;
+        transform: translate3d(0, 0, 0) scale(0.95);
+    }
+}
