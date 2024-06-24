@@ -25,7 +25,7 @@
 
     --error-color: var(--color-vermilion);
     --text-color: var(--color-eerie-black);
-    --valid-color: var(--color-blue);
+    --valid-color: var(--color-dark-green);
 
     --font-size-x-small: 1.2rem;
     --font-size-small: 1.4rem;
@@ -137,7 +137,7 @@ a.link {
   }
 
 a.link--primary {
-    color: var(--color-blue);
+    color: var(--color-dark-green);
 }
 
 a.link--primary:hover {
