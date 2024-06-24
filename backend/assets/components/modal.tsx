@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 
 interface IModal {
@@ -10,6 +11,26 @@ export default function SignInSignUp({
   setToggle,
 }: IModal) {
 
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let timeoutId = undefined;
+    if (toggle) {
+      timeoutId = setTimeout(() => {
+        if (ref.current) {
+          ref.current.className = "modal_element animate";
+        }
+      }, 3);
+    } else {
+
+      if (ref.current) {
+        ref.current.className = "modal_element";
+      }
+    }
+
+    return () => clearTimeout(timeoutId);
+  }, [toggle]);
+
   return (
     <div
       className={toggle ? "modal is-visible" : "modal"}
@@ -17,7 +38,9 @@ export default function SignInSignUp({
       >
       <div className="modal_container">
         <div className="modal_cell">
-          <div className="modal_element">
+          <div
+            ref={ref}
+            className="modal_element">
             <div className="modal_title">
               <h2>Hello!</h2>
               <div>Use your email or another service to continue with Analysis.</div>

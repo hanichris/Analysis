@@ -128,7 +128,7 @@
     background: rgba(17, 21, 24, 0.45);
 }
 
-.modal.is-visible .modal_container > .modal_cell > .modal_element {
+.modal.is-visible .modal_container > .modal_cell > .modal_element.animate {
     position: relative;
     transform: translate3d(0, 0, 0) scale(1) !important;
     opacity: 1 !important;
