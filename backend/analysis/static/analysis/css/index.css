@@ -96,6 +96,8 @@ body {
     font-family: var(--font-family);
     font-size: var(--font-size-medium);
     font-weight: var(--font-weight-regular);
+    min-height: 100dvh;
+    min-width: 100dvw;
 }
 
 img, video, canvas, svg, picture {
