@@ -13,15 +13,129 @@
 {% endblock css %}
 
 {% block content %}
-<header>
-    <form action="{% url 'logout' %}" method="post">
-        {% csrf_token %}
-        <button type="submit" class="btn btn--m">Log out</button>
-    </form>
-</header>
+<div class="window">
+    <div class="inner">
+        <div class="another">
+            <div class="holder">
+                <div class="wrapper">
+                    <button type="button" id="openModal">
+                        {{ user.email.0|upper}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="modal">
+    <div class="modal_container">
+        <div class="modal_cell">
+            <div class="modal_element" id="element">
+                <div class="modal_title">
+                    <div class="user_email">{{  request.user.email }}</div>
+                </div>
+                <button type="button" id="closeModal" class="button">
+                    <svg width="22" height="22" viewBox="1 1 22 22" focusable="false">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"></path>
+                    </svg>
+                </button>
+                <div class="modal_body">
+                    <button type="button">
+                        {{ user.email.0|upper }}
+                    </button>
+                    <div class="salutation">
+                        {% if user.name %}
+                        Hi, {{ user.name }}!
+                        {% else %}
+                        Hello!
+                        {% endif %}
+                    </div>
+                    <div>
+                        <span class="profile--link">
+                            <a href="http://">
+                                <div>
+                                    Manage your Account
+                                </div>
+                            </a>
+                        </span>
+                        <div class="link-container">
+                            <span>
+                                <span class="logout-link">
+                                    <form action="{% url 'logout' %}" method="post">
+                                        {% csrf_token %}
+                                        <span class="logout-icon">
+                                            <div>
+                                                <svg height="24" viewBox="0 0 24 24" width="24" focusable="false">
+                                                    <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"></path><path d="M0 0h24v24H0z" fill="none"></path>
+                                                </svg>
+                                            </div>
+                                        </span>
+                                        <button type="submit">Sign out</button>
+                                    </form>
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal_footer">
+                    <span class="footer_policy">
+                        <span class="footer_container">
+                            <span class="pp">
+                                <a href="http://" class="_m-r-3">
+                                    Privacy Policy
+                                </a>
+                            </span>
+                        </span>
+                    </span>
+                    <span class="footer_tos">
+                        <span class="footer_container">
+                            <span class="tos">
+                                <a href="http://" class="_m-l-3">
+                                    Terms of Service
+                                </a>
+                            </span>
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div id="dashboard--contanier">
     <div id="map"></div>
 </div>
+<script>
+    const modal = document.getElementById("modal");
+    const element = document.getElementById("element");
+    const openButton = document.getElementById("openModal");
+    const closeButton = document.getElementById("closeModal");
+
+    const debounce = (callback, wait) => {
+        let timeoutId = null;
+        return (...args) => {
+            window.clearTimeout(timeoutId);
+            timeoutId = window.setTimeout(() => {
+                callback(...args);
+            }, wait);
+        }
+    };
+
+    const handleOpenClick = debounce((ev) => {
+        modal.style.display = "block";
+        setTimeout(() => {
+            modal.className = "modal is-visible";
+        }, 10);
+    }, 5);
+
+    const handleCloseClick = debounce((ev) => {
+        modal.className = "modal";
+        setTimeout(() => {
+            modal.style.display = "none";
+        }, 500);
+    }, 0);
+
+    openButton.addEventListener("click", handleOpenClick);
+    closeButton.addEventListener("click", handleCloseClick);
+</script>
 {{ access_token|json_script:'token-data'}}
 <script>
     const token = JSON.parse(document.getElementById('token-data').textContent);
@@ -75,5 +189,5 @@
         }
     }
 </script>
-<!-- <script type="module" src="{% static 'index-bundle.js' %}"></script> -->
+
 {% endblock content %}
