@@ -1,3 +1,10 @@
+#map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+}
+
 .window {
     position: absolute;
     left: 0;
@@ -35,12 +42,12 @@
 }
 
 .wrapper button {
-    background: var(--color-dark-green);
-    border: none;
+    background: var(--color-isabelline);
+    border: .1rem solid var(--color-gold);
     border-radius: 50%;
     width: 4rem;
     height: 4rem;
-    color: var(--color-off-white);
+    color: var(--color-eerie-black);
     cursor: pointer;
     font-variation-settings: 'wght' 600;
 }
