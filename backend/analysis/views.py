@@ -36,6 +36,12 @@ class DashboardView(LoginRequiredMixin, View):
     access_token = os.getenv('MAPBOX_ACCESS_TOKEN')
 
     def get(self, request: HttpRequest, *args, **kwargs):
+        queryset = Geofield.objects.select_related(
+            "user"
+        ).filter(
+            user__email=request.user
+        )
+        data = [entry for entry in queryset]
         return render(
             request,
             "analysis/dashboard.html",
