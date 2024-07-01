@@ -159,6 +159,7 @@
             defaultMode: 'draw_polygon',
         })
 
+        map.on('load', () => {});
         map.addControl(draw);
         map.on('draw.create', saveCoord);
     }
@@ -169,22 +170,25 @@
 
     async function saveCoord(e) {
         const data = draw.getAll();
-        // if (data.features.length > 0) {
-        //     const res = await fetch("{% url 'analysis:dashboard' %}", {
-        //         method: "POST",
-        //         body: JSON.stringify(data),
-        //         headers: {
-        //             'Accept': "application/json",
-        //             'Content-Type': "application/json",
-        //             'X-Requested-With': 'XMLHttpRequest',
-        //             "X-CSRFToken": csrftoken,
-        //         }
-        //     });
-        //     if(res.ok){
-        //         console.log("Data below sent to backend");
-        //         console.log(data);
-        //     }
-        // }
+        if (data.features.length > 0) {
+            const res = await fetch("{% url 'analysis:dashboard' %}", {
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: {
+                    'Accept': "application/json",
+                    'Content-Type': "application/json",
+                    'X-Requested-With': 'XMLHttpRequest',
+                    "X-CSRFToken": csrftoken,
+                }
+            });
+            if(res.ok){
+                console.log("Data below sent to backend");
+                console.log(data);
+                const resp = await res.json();
+                console.log('data received from the backend');
+                console.log(resp);
+            }
+        }
         console.table({ data });
     }
 </script>
