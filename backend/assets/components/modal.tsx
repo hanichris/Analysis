@@ -15,16 +15,19 @@ export default function SignInSignUp({
 
   useEffect(() => {
     let timeoutId = undefined;
+    const body = document.querySelector("body");
     if (toggle) {
       timeoutId = setTimeout(() => {
-        if (ref.current) {
+        if (ref.current && body) {
           ref.current.className = "modal_element animate";
+          body.className = "has-modal";
         }
       }, 3);
     } else {
 
-      if (ref.current) {
+      if (ref.current && body) {
         ref.current.className = "modal_element";
+        body.className = "";
       }
     }
 
@@ -45,9 +48,11 @@ export default function SignInSignUp({
               <h2>Hello!</h2>
               <div>Use your email or another service to continue with Analysis.</div>
             </div>
-            <a role="button" onClick={setToggle} className="modal_button_left">
-              <span className="navicon"></span>
-            </a>
+            <button type="button" className="modal_button" onClick={setToggle}>
+                <svg width="22" height="22" viewBox="1 1 22 22" focusable="false">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"></path>
+                </svg>
+            </button>
             <div className="modal_body">
               <a href="/accounts/login" className="btn btn--m btn--gray _m-b-2 btn--with-icon">
                 <i className="icon">
