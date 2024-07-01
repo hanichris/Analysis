@@ -5,6 +5,7 @@ import os
 from uuid import UUID
 from pathlib import Path
 
+from django.core import serializers
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError, transaction
 from django.http import HttpRequest, JsonResponse
@@ -41,7 +42,7 @@ class DashboardView(LoginRequiredMixin, View):
         ).filter(
             user__email=request.user
         )
-        data = [entry for entry in queryset]
+        data = [(entry.feature_id, entry.geometry) for entry in queryset]
         return render(
             request,
             "analysis/dashboard.html",
@@ -55,20 +56,22 @@ class DashboardView(LoginRequiredMixin, View):
         create_data = [
             Geofield(
                 user=request.user,
-                id=UUID(feature.get("id")),
+                feature_id=UUID(feature.get("id")),
                 geometry=feature.get("geometry")
             )
             for feature in data.get("features")
         ]
 
-        try:
-            with transaction.atomic():
-                Geofield.objects.bulk_create(create_data)
-        except IntegrityError:
-            logger.error(f"sqlite3.IntegrityError: UNIQUE constraint failed")
-            return JsonResponse({'error': True}, status=500)
+        with transaction.atomic():
+            objs = serializers.serialize(
+                'json',
+                Geofield.objects.bulk_create(
+                    create_data,
+                    ignore_conflicts=True
+                )
+            )
 
-        return JsonResponse({'success': True})
+        return JsonResponse({'success': True, "data": objs})
 
 class SignUpView(CreateView):
     form_class = UserCreationForm
