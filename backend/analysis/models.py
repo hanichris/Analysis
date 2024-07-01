@@ -10,7 +10,14 @@ from .managers import CustomUserManager
 
 # Create your models here.
 
-class User(PermissionsMixin, AbstractBaseUser):
+class AbstractTime(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
+class User(PermissionsMixin, AbstractTime, AbstractBaseUser):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -21,8 +28,6 @@ class User(PermissionsMixin, AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     groups = models.ManyToManyField(Group)
     user_permissions = models.ManyToManyField(Permission)
@@ -37,15 +42,20 @@ class User(PermissionsMixin, AbstractBaseUser):
     def __str__(self) -> str:
         return self.email
     
-class Geofield(models.Model):
-    id = models.UUIDField(
-        primary_key=True,
-        editable=False
-    )
+class Geofield(AbstractTime):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    feature_id = models.UUIDField(null=True, unique=True)
     geometry = models.JSONField(encoder=DjangoJSONEncoder)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
-        return f"{self.id.hex} {self.user} {self.geometry}"
+        return f"{
+            self.feature_id.hex if self.feature_id else None
+        } {self.user} {self.geometry}"
+
+class Message(AbstractTime):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField()
+    updated_at = None
+
+    def __str__(self) -> str:
+        return f"{self.message[:10]}"
