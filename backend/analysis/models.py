@@ -59,3 +59,6 @@ class Message(AbstractTime):
 
     def __str__(self) -> str:
         return f"{self.message[:10]}"
+
+class Plan(AbstractTime):
+    pass
