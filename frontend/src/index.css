@@ -1,0 +1,190 @@
+/*** 1. GLOBAL ***/
+
+/* Reset / Josh W. Cormeau
+============================= */
+/* Variables
+  ============================= */
+
+  :root {
+    --color-white: #fff;
+    --color-off-white: #faf9f6;
+    --color-baby-powder: #fffffc;
+    --color-coquelicot: #ff3f00;
+    --color-vermilion: #f64740;
+    --color-licorice: #1f1300;
+    --color-eerie-black: #181f1c;
+    --color-isabelline: #f4f3ee;
+    --color-light-grey: #f2f2f3;
+    --color-grey: #7d7c83;
+    --color-green: #08805b;
+    --color-phthalo-green: #123534;
+    --color-dark-green: #096A2E;
+    --color-medium-grey: #b1b0b5;
+    --color-gold: #E5B80B;
+    --color-blue: #0066ff;
+
+    --error-color: var(--color-vermilion);
+    --text-color: var(--color-eerie-black);
+    --valid-color: var(--color-dark-green);
+
+    --font-size-x-small: 1.2rem;
+    --font-size-small: 1.4rem;
+    --font-size-medium: 1.6rem;
+    --font-size-large: 1.8rem;
+    --font-size-x-large: 2.3rem;
+    --font-size-xx-large: 3rem;
+    --font-size-xxx-large: 4.8rem;
+
+    --font-weight-regular: 400;
+    --font-weight-bold: 800;
+
+    /* --font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; */
+    --font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+
+    /* FOOTER */
+    --footer-padding: 5rem 0rem 1rem;
+
+    /* NAVBAR */
+    --nav-item-font-family: var(--font-family);
+    --nav-item-font-size: var(--font-size-medium);
+    --nav-item-font-weight: var(--font-weight-bold);
+    --nav-item-link-hover: var(--color-phthalo-green);
+    --nav-item-margin: 0 0 0 2rem;
+    --nav-item-letter-spacing: .04rem;
+    --nav-item-link-hover: var(--color-gold);
+
+    /** SECTION **/
+    --section-padding: 5rem 0;
+    --section-header-padding: 0 0 5rem;
+    --section-header-align: center;
+    --section-title-font-size: var(--font-size-xxx-large);
+    --section-title-font-weight: var(--font-weight-bold);
+    --section-tagline-font-family: var(--font-family-headings);
+    --section-tagline-font-weight: var(--font-weight-bold);
+    --section-body-padding: 2rem 0 4rem;
+    --section-footer-padding: 3rem 0 0;
+    --section-footer-align: center;
+
+    /** MOTION **/
+    --transition-duration: .3s;
+    --transition-cubic-bezier: cubic-bezier(0.17, 0.67, 0, 1.01);
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+
+}
+
+html {
+    box-sizing: border-box;
+    font-size: 62.5%;
+    scroll-behavior: smooth;
+}
+
+*, *::before, *::after {
+    box-sizing: inherit;
+}
+
+* {
+    margin: 0;
+    line-height: calc(1em + 0.5rem);
+}
+
+body {
+    font-family: var(--font-family);
+    font-size: var(--font-size-medium);
+    font-weight: var(--font-weight-regular);
+    min-height: 100dvh;
+    min-width: 100dvw;
+}
+
+body.has-modal {
+    overflow: hidden;
+}
+
+img, video, canvas, svg, picture {
+    display: block;
+    max-width: 100%;
+}
+
+input, button, textarea, select {
+    font: inherit;
+}
+
+:is(p, h1, h2, h3, h4, h5, h6) {
+    overflow-wrap: break-word;
+}
+
+ul, ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+    color: var(--color-eerie-black);
+    cursor: pointer;
+}
+
+a:visited{
+    font-style: italic;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a.link {
+    display: inline-block;
+    position: relative;
+    transition: color .1s;
+  }
+
+a.link--primary {
+    color: var(--color-dark-green);
+}
+
+a.link--primary:hover {
+text-decoration: underline;
+}
+
+
+.btn {
+    display: block;
+    width: 100%;
+    cursor: pointer;
+    border: none;
+    white-space: nowrap;
+    font-variation-settings: 'wght' 600;
+    font-family: var(--font-family);
+    transition: box-shadow .1s, color .1s, background .1s;
+}
+
+.btn--m {
+    border-radius: 1rem;
+    font-size: var(--font-size-medium);
+    padding: 0 2.1rem;
+    height: 4.6rem;
+    line-height: 4.6rem;
+}
+
+.btn--s {
+    border-radius: .8rem;
+    font-size: var(--font-size-small);
+    padding: 0 1.2rem;
+    height: 3.6rem;
+    line-height: 3.6rem;
+}
+
+.btn--primary {
+    color: var(--color-off-white);
+    background: var(--valid-color);
+    box-shadow: rgba(255, 255, 255, 0) 0 0 0 3px, rgba(0, 102, 255, 0) 0 0 0 4px;
+}
+
+._m-b-2 {
+    margin-bottom: 1.4rem;
+}
