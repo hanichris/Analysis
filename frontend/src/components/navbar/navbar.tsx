@@ -61,7 +61,7 @@ export default function Navbar() {
                   <NavLink
                     to={"contact"} className="nav-link">Contact Us</NavLink>
                 </li>
-                <li className="nav-item">
+                {/* <li className="nav-item">
                   <a role="button" className="nav-link" onClick={handleClick}>Login</a>
                 </li>
                 <li className="nav-item">
@@ -77,7 +77,7 @@ export default function Navbar() {
                     className="nav-link">
                       Billing
                   </a>
-                </li>
+                </li> */}
               </ul>
             </nav>
           </div>
