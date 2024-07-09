@@ -32,7 +32,7 @@
     overflow: hidden;
     text-align: center;
     max-height: 0;
-    transition: max-height .2s ease-out;
+    transition: max-height var(--transition-duration) var(--transition-cubic-bezier);
 }
 
 header .menu-icon {
@@ -158,20 +158,23 @@ header .menu-icon .navicon::after {
 .section-hero .section-inner {
     display: grid;
     grid-template-columns: repeat(2, minmax(50%, 1fr));
-    gap: 1rem;
+    /* gap: 1rem; */
     /* flex-wrap: wrap;
     align-items: center; */
     min-height: 75svh;
 }
 
 .section-inner h1.headline {
+    --min-font-size: calc(var(--font-size-xxx-large) + .7rem);
+    --max-font-size: calc(var(--font-size-xxx-large) + 3rem);
+    --scaler: 10vw;
     color: var(--color-eerie-black);
-    font-size: calc(var(--font-size-xxx-large) + 3rem);
+    font-size: clamp(var(--min-font-size), var(--scaler), var(--max-font-size));
     font-variation-settings: 'wght' 800;
     letter-spacing: -.2rem;
     margin-bottom: 3rem;
-    text-transform: capitalize;
     white-space: normal;
+    margin-right: 1rem;
 }
 
 .section-inner h1.headline span {
@@ -194,6 +197,18 @@ header .menu-icon .navicon::after {
     padding-right: 3rem;
 }
 
+.section-inner .mobile-subheading {
+    margin-top: 1.5rem;
+    display: flex;
+    grid-column-start: 1;
+    grid-column-end: span 2;
+    text-align: center;
+}
+
+.section-inner .subheading {
+    font-size: var(--font-size-small);
+    color: var(--color-grey);
+}
 
 .card-hero {
     display: flex;
@@ -202,9 +217,10 @@ header .menu-icon .navicon::after {
     height: 50rem;
 }
 
-/* .col-1-3 {
-    width: calc((100% / 3) - 6rem);
-} */
+.col-1-3 {
+    min-width: 9rem;
+    max-width: 16.7rem;
+}
 
 .card-hero .card-image img {
     height: 30rem;
@@ -215,8 +231,6 @@ header .menu-icon .navicon::after {
 .col-1-3:nth-child(2) {
     align-self: center;
 }
-
-
 
 .section {
     padding: var(--section-padding);
@@ -333,6 +347,47 @@ header .menu-icon .navicon::after {
 
     .header-logo {
         flex-basis: 70%;
+    }
+}
+
+@media only screen and (max-width: 564px) {
+    .section-hero .section-inner {
+        & .card-hero {
+            justify-content: center;
+            height: 30rem;
+        }
+    }
+}
+
+@media only screen and (max-width: 773px) {
+    .section-body{
+        padding-top: 2rem !important;
+    }
+
+    .section-hero .section-inner {
+
+        & .content-inner {
+            display: flex;
+            grid-column-start: 1;
+            grid-column-end: span 2;
+
+
+            & .subheading {
+                display: none;
+            }
+        }
+
+        & .card-hero {
+            grid-row-start: 2;
+            grid-column-start: 1;
+            grid-column-end: span 2;
+        }
+    }
+}
+
+@media only screen and (min-width: 773px) {
+    .section-inner .mobile-subheading {
+        display: none;
     }
 }
 
