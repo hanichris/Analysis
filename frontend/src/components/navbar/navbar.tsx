@@ -61,10 +61,10 @@ export default function Navbar() {
                   <NavLink
                     to={"contact"} className="nav-link">Contact Us</NavLink>
                 </li>
-                {/* <li className="nav-item">
+                <li className="nav-item">
                   <a role="button" className="nav-link" onClick={handleClick}>Login</a>
                 </li>
-                <li className="nav-item">
+                {/* <li className="nav-item">
                   <a
                     href="https://divergentag.lemonsqueezy.com/buy/d7a1de19-73f5-4873-bc91-b8633c5b4a54"
                     className="nav-link">
