@@ -65,6 +65,9 @@
     --section-footer-padding: 3rem 0 0;
     --section-footer-align: center;
 
+    /** FOOTER **/
+    --footer-padding: 5rem 2rem 1rem;
+
     /** MOTION **/
     --transition-duration: .3s;
     --transition-cubic-bezier: cubic-bezier(0.17, 0.67, 0, 1.01);
