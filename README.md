@@ -43,7 +43,7 @@ If ``npm`` is your package manager:
 npm install
 ```
    
-Ensure you are in the directory with the ``manage.py`` as it should also hold the ``package.json`` file.
+Ensure you are in the directory with the name ``frontend`` as it holds the requisite ``package.json`` file.
 
 ### Build the react frontend.
 To ensure the react frontend can be server-side rendered, run the following command to build the frontend:   
@@ -66,4 +66,4 @@ Doing so requires running the following command:
 ```
 python manage.py runserver
 ```    
-
+Ensure you are in the directory with the ``manage.py`` file.
