@@ -109,15 +109,16 @@ export default function Home() {
                 <article className="card-services">
                   <div className="card-outer">
                     <div className="card-services-image">
-                    <img
-                      sizes="(max-width: 6500px) 40vw, 2600px"
-                      srcSet="
-                      aerial_farm/aerial_farm_c_scale,w_1237.jpg 1237w,
-                      aerial_farm/aerial_farm_c_scale,w_1872.jpg 1872w,
-                      aerial_farm/aerial_farm_c_scale,w_2328.jpg 2328w,
-                      aerial_farm/aerial_farm_c_scale,w_2600.jpg 2600w"
-                      src="aerial_farm/aerial_farm_c_scale,w_2600.jpg"
-                      alt="Service 2" />
+                      <img
+                        sizes="(max-width: 6500px) 40vw, 2600px"
+                        srcSet="
+                          satellite_side/satellite_side_c_scale,w_380.jpg 380w,
+                          satellite_side/satellite_side_c_scale,w_1149.jpg 1149w,
+                          satellite_side/satellite_side_c_scale,w_1668.jpg 1668w,
+                          satellite_side/satellite_side_c_scale,w_2134.jpg 2134w,
+                          satellite_side/satellite_side_c_scale,w_2600.jpg 2600w"
+                        src="satellite_side/satellite_side_c_scale,w_2600.jpg"
+                        alt="" />
                     </div>
                     <div className="card-inner">
                       <h3 className="card-title">
