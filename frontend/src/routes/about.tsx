@@ -41,12 +41,12 @@ export default function About() {
                 <img
                   sizes="(max-width: 2633px) 40vw, 1053px"
                   srcSet="
-                    ceo/ceo_c_scale,w_380.jpg 380w,
-                    ceo/ceo_c_scale,w_659.jpg 659w,
-                    ceo/ceo_c_scale,w_861.jpg 861w,
-                    ceo/ceo_c_scale,w_1002.jpg 1002w,
-                    ceo/ceo_c_scale,w_1053.jpg 1053w"
-                  src="ceo/ceo_c_scale,w_1053.jpg"
+                    static/analysis/img/ceo/ceo_c_scale,w_380.jpg 380w,
+                    static/analysis/img/ceo/ceo_c_scale,w_659.jpg 659w,
+                    static/analysis/img/ceo/ceo_c_scale,w_861.jpg 861w,
+                    static/analysis/img/ceo/ceo_c_scale,w_1002.jpg 1002w,
+                    static/analysis/img/ceo/ceo_c_scale,w_1053.jpg 1053w"
+                  src="static/analysis/img/ceo/ceo_c_scale,w_1053.jpg"
                   alt="image of CEO Mr. Albert Mbogo" />
               </div>
               <div>
@@ -64,12 +64,12 @@ export default function About() {
                 <img
                   sizes="(max-width: 6500px) 40vw, 2600px"
                   srcSet="
-                    coo/coo_c_scale,w_380.jpg 380w,
-                    coo/coo_c_scale,w_1185.jpg 1185w,
-                    coo/coo_c_scale,w_1739.jpg 1739w,
-                    coo/coo_c_scale,w_2278.jpg 2278w,
-                    coo/coo_c_scale,w_2600.jpg 2600w"
-                  src="coo/coo_c_scale,w_2600.jpg"
+                    static/analysis/img/coo/coo_c_scale,w_380.jpg 380w,
+                    static/analysis/img/coo/coo_c_scale,w_1185.jpg 1185w,
+                    static/analysis/img/coo/coo_c_scale,w_1739.jpg 1739w,
+                    static/analysis/img/coo/coo_c_scale,w_2278.jpg 2278w,
+                    static/analysis/img/coo/coo_c_scale,w_2600.jpg 2600w"
+                  src="static/analysis/img/coo/coo_c_scale,w_2600.jpg"
                   alt="image of COO Mr. Joshua Oleko" />
               </div>
               <div>
@@ -90,9 +90,9 @@ export default function About() {
                 <img
                   sizes="(max-width: 2133px) 40vw, 853px"
                   srcSet="
-                  cto/cto_c_scale,w_380.jpg 380w,
-                  cto/cto_c_scale,w_581.jpg 581w,
-                  cto/cto_c_scale,w_853.jpg 853w"
+                  static/analysis/img/cto/cto_c_scale,w_380.jpg 380w,
+                  static/analysis/img/cto/cto_c_scale,w_581.jpg 581w,
+                  static/analysis/img/cto/cto_c_scale,w_853.jpg 853w"
                   src="cto/cto_c_scale,w_853.jpg"
                   alt="image of CTO Mr. Boniface Mwangi"/>
               </div>

@@ -24,15 +24,15 @@ export default function Home() {
                 <div className="col-1-3">
                   <div className="card-image">
                     <img
-                      src="millet/millet_c_scale,w_2600.jpg"
+                      src="static/analysis/img/millet/millet_c_scale,w_2600.jpg"
                       alt="millet image"
                       sizes="(max-width: 6500px) 40vw, 2600px"
                       srcSet="
-                        millet/millet_c_scale,w_380.jpg 380w,
-                        millet/millet_c_scale,w_1358.jpg 1358w,
-                        millet/millet_c_scale,w_2040.jpg 2040w,
-                        millet/millet_c_scale,w_2382.jpg 2382w,
-                        millet/millet_c_scale,w_2600.jpg 2600w" />
+                        static/analysis/img/millet/millet_c_scale,w_380.jpg 380w,
+                        static/analysis/img/millet/millet_c_scale,w_1358.jpg 1358w,
+                        static/analysis/img/millet/millet_c_scale,w_2040.jpg 2040w,
+                        static/analysis/img/millet/millet_c_scale,w_2382.jpg 2382w,
+                        static/analysis/img/millet/millet_c_scale,w_2600.jpg 2600w" />
                   </div>
                 </div>
                 <div className="col-1-3">
@@ -40,12 +40,12 @@ export default function Home() {
                     <img
                       sizes="(max-width: 6500px) 40vw, 2600px"
                       srcSet="
-                        maize/maize_c_scale,w_380.jpg 380w,
-                        maize/maize_c_scale,w_1346.jpg 1346w,
-                        maize/maize_c_scale,w_1965.jpg 1965w,
-                        maize/maize_c_scale,w_2405.jpg 2405w,
-                        maize/maize_c_scale,w_2600.jpg 2600w"
-                      src="maize/maize_c_scale,w_2600.jpg"
+                        static/analysis/img/maize/maize_c_scale,w_380.jpg 380w,
+                        static/analysis/img/maize/maize_c_scale,w_1346.jpg 1346w,
+                        static/analysis/img/maize/maize_c_scale,w_1965.jpg 1965w,
+                        static/analysis/img/maize/maize_c_scale,w_2405.jpg 2405w,
+                        static/analysis/img/maize/maize_c_scale,w_2600.jpg 2600w"
+                      src="static/analysis/img/maize/maize_c_scale,w_2600.jpg"
                       alt="maize image" />
                   </div>
                 </div>
@@ -54,12 +54,12 @@ export default function Home() {
                     <img
                       sizes="(max-width: 6500px) 40vw, 2600px"
                       srcSet="
-                        wheet/wheet_c_scale,w_380.jpg 380w,
-                        wheet/wheet_c_scale,w_1359.jpg 1359w,
-                        wheet/wheet_c_scale,w_2037.jpg 2037w,
-                        wheet/wheet_c_scale,w_2245.jpg 2245w,
-                        wheet/wheet_c_scale,w_2600.jpg 2600w"
-                      src="wheet_c_scale,w_2600.jpg"
+                        static/analysis/img/wheet/wheet_c_scale,w_380.jpg 380w,
+                        static/analysis/img/wheet/wheet_c_scale,w_1359.jpg 1359w,
+                        static/analysis/img/wheet/wheet_c_scale,w_2037.jpg 2037w,
+                        static/analysis/img/wheet/wheet_c_scale,w_2245.jpg 2245w,
+                        static/analysis/img/wheet/wheet_c_scale,w_2600.jpg 2600w"
+                      src="static/analysis/img/wheet_c_scale,w_2600.jpg"
                       alt="wheet image" />
                   </div>
                 </div>
@@ -88,11 +88,11 @@ export default function Home() {
                     <img
                       sizes="(max-width: 6500px) 40vw, 2600px"
                       srcSet="
-                      aerial_farm/aerial_farm_c_scale,w_1237.jpg 1237w,
-                      aerial_farm/aerial_farm_c_scale,w_1872.jpg 1872w,
-                      aerial_farm/aerial_farm_c_scale,w_2328.jpg 2328w,
-                      aerial_farm/aerial_farm_c_scale,w_2600.jpg 2600w"
-                      src="aerial_farm/aerial_farm_c_scale,w_2600.jpg"
+                      static/analysis/img/aerial_farm/aerial_farm_c_scale,w_1872.jpg 1872w,
+                      static/analysis/img/aerial_farm/aerial_farm_c_scale,w_1237.jpg 1237w,
+                      static/analysis/img/aerial_farm/aerial_farm_c_scale,w_2328.jpg 2328w,
+                      static/analysis/img/aerial_farm/aerial_farm_c_scale,w_2600.jpg 2600w"
+                      src="static/analysis/img/aerial_farm/aerial_farm_c_scale,w_2600.jpg"
                       alt="Service 1" />
                     </div>
                     <div className="card-inner">
@@ -112,12 +112,12 @@ export default function Home() {
                       <img
                         sizes="(max-width: 6500px) 40vw, 2600px"
                         srcSet="
-                          satellite_side/satellite_side_c_scale,w_380.jpg 380w,
-                          satellite_side/satellite_side_c_scale,w_1149.jpg 1149w,
-                          satellite_side/satellite_side_c_scale,w_1668.jpg 1668w,
-                          satellite_side/satellite_side_c_scale,w_2134.jpg 2134w,
-                          satellite_side/satellite_side_c_scale,w_2600.jpg 2600w"
-                        src="satellite_side/satellite_side_c_scale,w_2600.jpg"
+                          static/analysis/img/satellite_side/satellite_side_c_scale,w_380.jpg 380w,
+                          static/analysis/img/satellite_side/satellite_side_c_scale,w_1149.jpg 1149w,
+                          static/analysis/img/satellite_side/satellite_side_c_scale,w_1668.jpg 1668w,
+                          static/analysis/img/satellite_side/satellite_side_c_scale,w_2134.jpg 2134w,
+                          static/analysis/img/satellite_side/satellite_side_c_scale,w_2600.jpg 2600w"
+                        src="static/analysis/img/satellite_side/satellite_side_c_scale,w_2600.jpg"
                         alt="" />
                     </div>
                     <div className="card-inner">
@@ -137,11 +137,11 @@ export default function Home() {
                     <img
                       sizes="(max-width: 6500px) 40vw, 2600px"
                       srcSet="
-                      aerial_farm/aerial_farm_c_scale,w_1237.jpg 1237w,
-                      aerial_farm/aerial_farm_c_scale,w_1872.jpg 1872w,
-                      aerial_farm/aerial_farm_c_scale,w_2328.jpg 2328w,
-                      aerial_farm/aerial_farm_c_scale,w_2600.jpg 2600w"
-                      src="aerial_farm/aerial_farm_c_scale,w_2600.jpg"
+                      static/analysis/img/aerial_farm/aerial_farm_c_scale,w_1237.jpg 1237w,
+                      static/analysis/img/aerial_farm/aerial_farm_c_scale,w_1872.jpg 1872w,
+                      static/analysis/img/aerial_farm/aerial_farm_c_scale,w_2328.jpg 2328w,
+                      static/analysis/img/aerial_farm/aerial_farm_c_scale,w_2600.jpg 2600w"
+                      src="static/analysis/img/aerial_farm/aerial_farm_c_scale,w_2600.jpg"
                       alt="Service 3" />
                     </div>
                     <div className="card-inner">
