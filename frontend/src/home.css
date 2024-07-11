@@ -153,7 +153,7 @@ header .menu-icon .navicon::after {
 
 /* Section */
 
-.row {
+.row, .footer-row {
     display: flex;
     flex-direction: column;
 }
@@ -163,16 +163,22 @@ header .menu-icon .navicon::after {
 }
 
 .section-hero .section-body {
-    padding: 10rem 2rem;
+    padding: 10rem 2rem 7rem;
 }
 
 .section-hero .section-inner {
     display: grid;
     grid-template-columns: repeat(2, minmax(50%, 1fr));
-    /* gap: 1rem; */
-    /* flex-wrap: wrap;
-    align-items: center; */
     min-height: 75svh;
+}
+
+.section-hero::after {
+    background-color: #ffa1a1;
+    content: " ";
+    display: block;
+    height: .7rem;
+    width: 5rem;
+    margin: 1rem auto 2rem;
 }
 
 .section-inner h1.headline {
@@ -401,6 +407,80 @@ header .menu-icon .navicon::after {
     background-color: var(--color-isabelline);
 }
 
+/* Basic Form */
+.post-comments {
+    width: 80%;
+    margin-bottom: auto;
+    padding-left: 7rem;
+
+    .section-title {
+        font-variant: small-caps;
+    }
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    padding-top: 1rem;
+}
+
+/* Footer */
+
+.col-1-2 {
+    width: 100%;
+    margin: 0 0 3rem;
+    color: var(--text-color);
+
+    & svg {
+        margin-left: .5rem;
+    }
+
+    & .nav {
+        flex-direction: row;
+        overflow: auto;
+        max-height: 100%;
+        
+        .social-item, .footer-nav-item {
+            margin-left: 1rem;
+        }
+
+        .footer-nav-link {
+            color: var(--text-color);
+        }
+    }
+}
+
+.footer {
+    --nav-item-font-weight: normal;
+    --nav-item-font-size: var(--font-size-small);
+    padding: var(--footer-padding);
+    
+    & .footer-copyright {
+        color: var(--text-color);
+        font-size: var(--font-size-small);
+        text-align: left;
+        margin-left: 1rem;
+    }
+
+    & ul {
+        text-align: center;
+
+        & .social-link {
+            display: block;
+
+            & > svg {
+                fill: var(--text-color);
+            }
+        }
+    }
+}
+
+/** Section Theming **/
+[data-section-theme="gold"] {
+    --text-color: var(--color-baby-powder);
+    background-color: var(--color-dark-green);
+}
+
 @media only screen and (min-width: 480px) {
     .nav {
         flex-direction: row;
@@ -474,6 +554,12 @@ header .menu-icon .navicon::after {
 @media (min-width: 767px) {
     :root {
         --section-body-padding: 2rem 0 4rem;
+        --footer-padding: 5rem 0rem 1rem;
+    }
+
+    .col-1-2 {
+        width: calc((100% / 2) - 2rem);
+        margin: 1rem; 
     }
 
     .row {
@@ -521,6 +607,14 @@ header .menu-icon .navicon::after {
 }
 
 @media only screen and (min-width: 773px) {
+    .section-hero .section-body {
+        padding-bottom: 0;
+    }
+
+    .section-hero::after {
+        margin-top: 0;
+    }
+
     .section-inner .mobile-subheading {
         display: none;
     }
