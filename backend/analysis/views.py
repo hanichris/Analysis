@@ -28,7 +28,7 @@ class IndexView(View):
             request,
             "analysis/home.html",
             {
-                "manifest": self.manifest.get("assets/main.tsx"),
+                "manifest": self.manifest.get("src/main.tsx"),
             }
         )
 
@@ -78,3 +78,11 @@ class SignUpView(CreateView):
     model = User
     success_url = reverse_lazy('login')
     template_name = "registration/signup.html"
+
+
+class ProfileView(View):
+    def get(self, *args, **kwargs):
+        pass
+
+    def post(self, *args, **kwargs):
+        pass
