@@ -5,7 +5,7 @@
 /* Variables
   ============================= */
 
-:root {
+  :root {
     --color-white: #fff;
     --color-off-white: #faf9f6;
     --color-baby-powder: #fffffc;
@@ -190,4 +190,13 @@ text-decoration: underline;
 
 ._m-b-2 {
     margin-bottom: 1.4rem;
+}
+
+.visually-hidden:not(:focus):not(:active) {
+    position: absolute !important;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+    clip-path: rect(1px, 1px, 1px, 1px);
+    white-space: nowrap;
 }
