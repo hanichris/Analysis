@@ -422,6 +422,12 @@ form {
     display: flex;
     flex-direction: column;
     padding-top: 1rem;
+
+    .fieldErrors {
+        color: var(--error-color);
+        font-size: var(--font-size-small);
+        padding-left: 1rem;
+    }
 }
 
 fieldset {
@@ -461,15 +467,59 @@ fieldset {
         width: 100%;
         padding: 1.2rem;
         outline: 0;
+
+        &:focus {
+            border-color: var(--color-grey);
+            background-color: var(--color-light-grey);
+        }
     }
 
     input[type="text"],
     input[type="email"] {
         padding-right: 3rem;
     }
+
     /* FORM GROUP */
+    .form-field-container {
+        position: relative;
+    }
+
     .form-group {
         padding: 1rem;
+
+        .form-help, .form-error {
+            line-height: 1.3rem;
+            letter-spacing: .019rem;
+            color: var(--color-grey);
+            font-size: var(--font-size-x-small);
+            max-height: 0;
+            overflow: hidden;
+            transition: .3s;
+        }
+
+        .form-error {
+            max-height: 20rem;
+            margin-top: .4rem;
+        }
+
+        &:focus-within {
+            transition: .3s;
+            background-color: var(--color-light-grey);
+            .form-help {
+                max-height: 20rem;
+                margin-top: .4rem;
+            }
+        }
+
+        .form-field:has(.form-error) {
+            input, textarea {
+                border-color: var(--error-color);
+            }
+
+            .form-error {
+                color: var(--error-color);
+            }
+        }
     }
 
     .grow-wrap {
