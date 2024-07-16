@@ -7,16 +7,25 @@ from pathlib import Path
 
 from django.core import serializers
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db import IntegrityError, transaction
+from django.db import transaction
 from django.http import HttpRequest, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, View
 
+from pydantic import BaseModel, EmailStr, ValidationError
+
 from .forms import UserCreationForm
-from .models import User, Geofield
+from .models import User, Geofield, Comment
 
 logger = logging.getLogger(__name__)
+
+class PostData(BaseModel):
+    first_name: str
+    last_name: str
+    email: EmailStr
+    title: str
+    comment: str
 
 class IndexView(View):
     parents = Path(__file__).parents
@@ -31,6 +40,21 @@ class IndexView(View):
                 "manifest": self.manifest.get("src/main.tsx"),
             }
         )
+    
+    def post(self, request: HttpRequest, *args, **kwargs):
+        try:
+            data = PostData(**json.loads(request.body.decode('utf-8')))
+            Comment.objects.create(**data.model_dump())
+        except ValidationError as err:
+            logger.error(err)
+            return JsonResponse({
+                "error": "Validation of the data failed."
+            }, status_code=500)
+
+        return JsonResponse({
+            "success": "comment has been created",
+            "error": None
+        })
 
 class DashboardView(LoginRequiredMixin, View):
     
