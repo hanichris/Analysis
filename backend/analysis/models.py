@@ -59,12 +59,28 @@ class Message(AbstractTime):
 
     def __str__(self) -> str:
         return f"{self.message[:10]}"
+    
+class Comment(AbstractTime):
+    first_name = models.CharField(max_length=35)
+    last_name = models.CharField(max_length=40)
+    email = models.EmailField(max_length=55, db_index=True)
+    title = models.CharField(max_length=75)
+    comment = models.TextField()
+    updated_at = None
 
-class Plan(AbstractTime):
-    product_id = models.IntegerField()
-    product_name = models.TextField(null=True)
-    variant_id = models.IntegerField(unique=True)
-    name = models.TextField()
-    description = models.TextField(null=True)
-    price = models.DecimalField(max_digits=7, decimal_places=2)
-    is_usage_based = models.BooleanField(default=False)
+    def __str__(self) -> str:
+        return f"{self.title} {self.comment[:10]}"
+    
+    @property
+    def full_name(self) -> str:
+        return f"{self.first_name} {self.last_name}"
+
+
+# class Plan(AbstractTime):
+#     product_id = models.IntegerField()
+#     product_name = models.TextField(null=True)
+#     variant_id = models.IntegerField(unique=True)
+#     name = models.TextField()
+#     description = models.TextField(null=True)
+#     price = models.DecimalField(max_digits=7, decimal_places=2)
+#     is_usage_based = models.BooleanField(default=False)
