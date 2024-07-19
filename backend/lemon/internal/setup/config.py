@@ -2,7 +2,7 @@ from typing import Callable
 
 from pydantic import BaseModel
 
-from utils import CONFIG_KEY, set_kv, Error
+from ..utils import CONFIG_KEY, set_kv, Error
 
 class Config(BaseModel):
     api_key: str | None = None

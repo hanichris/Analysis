@@ -5,7 +5,7 @@ from typing import Any
 import httpx
 from pydantic import BaseModel
 
-from utils import get_kv, CONFIG_KEY, API_BASE_URL, Error, JSONAPIError
+from ..utils import get_kv, CONFIG_KEY, API_BASE_URL, Error, JSONAPIError
 
 
 class HTTPVerbEnum(str, Enum):
