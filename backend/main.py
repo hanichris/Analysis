@@ -10,7 +10,7 @@ from lemon.internal.setup import lemon_squeezy_setup, Config
 
 def main():
     BASE_DIR = Path(__file__).resolve().parent
-    print(BASE_DIR)
+
     load_dotenv(os.path.join(BASE_DIR, '.env'))
 
     lemon_squeezy_setup(Config(
