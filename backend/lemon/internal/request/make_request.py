@@ -61,38 +61,41 @@ async def fetch(options: FetchOptions, requiresApi = True):
     async with httpx.AsyncClient(
         base_url=API_BASE_URL,
         headers=headers,
-        params=options.param
+        params=options.param,
+        follow_redirects=True
     ) as client:
-        match options.method:
-            case "GET":
-                res = await client.get(options.path)
-            case "POST":
-                res = await client.post(options.path, json=data)
-            case "DELETE":
-                res = await client.delete(options.path)
-            case "PATCH":
-                res = await client.patch(options.path, json=data)
-            case _:
-                print("Unrecognised HTTP verb", file=sys.stderr)
-                response["error"] = create_lemon_error(
-                    f"Unrecognised HTTP verb: {options.method}",
-                    "unknown HTTP verb"
-                )
-                return response
-    
-    if(res.status_code == httpx.codes.OK):
-        response["status_code"] = res.status_code
-        response["data"] = res.json()
-    else:
-        _data: dict[str, Any] = res.json()
-        _error = \
-        _data.get("errors") or \
-        _data.get("error") or \
-        _data.get("message") or \
-        "unknown cause"
+        try:
+            match options.method:
+                case "GET":
+                    res = await client.get(options.path)
+                case "POST":
+                    res = await client.post(options.path, json=data)
+                case "DELETE":
+                    res = await client.delete(options.path)
+                case "PATCH":
+                    res = await client.patch(options.path, json=data)
+                case _:
+                    print("Unrecognised HTTP verb", file=sys.stderr)
+                    response["error"] = create_lemon_error(
+                        f"Unrecognised HTTP verb: {options.method}",
+                        "unknown HTTP verb"
+                    )
+                    return response
+            res.raise_for_status()
+            response["status_code"] = res.status_code
+            response["data"] = res.json()
+        except httpx.RequestError as exc:
+            response["error"] = create_lemon_error(
+                f"{exc}", f"Error while requesting {exc.request.url!r}"
+            )
+        except httpx.HTTPStatusError as exc:
+            _data = exc.response.json()
+            _error = _data.get("errors") or \
+            _data.get("error") or \
+            _data.get("message") or "unknown cause"
 
-        response["status_code"] = res.status_code
-        response["data"] = _data
-        response["error"] = create_lemon_error(res.text, _error)
+            response["status_code"] = exc.response.status_code
+            response["data"] = _data
+            response["error"] = create_lemon_error(f"{exc}", _error)
 
     return response
