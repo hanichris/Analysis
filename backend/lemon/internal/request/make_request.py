@@ -32,7 +32,20 @@ def create_lemon_error(
     return error
 
 
-async def fetch(options: FetchOptions, requiresApi = True):
+async def fetch(options: FetchOptions, requiresApiKey = True):
+    """Customisation of request object.
+
+    Utilises `httpx` internally to query the lemon squeezy api asynchronously.
+
+    Args:
+        options: options to pass to httpx. These include the `url`, `HTTP Verb`,
+        `params` and request `body` if making a `POST` or `PATCH` request.
+        requiresApiKey: boolean. Whether or not the api endpoint needs an
+        accompanying api key to be sent with the request.
+
+    Returns:
+        Response. Includes `status_code`, `data` and `error`.
+    """
     response = {
         "status_code": None,
         "data": None,
@@ -54,7 +67,7 @@ async def fetch(options: FetchOptions, requiresApi = True):
         "Content-Type": "application/vnd.api+json",
     }
 
-    if requiresApi:
+    if requiresApiKey:
         headers["Authorization"] = f"Bearer {config["api_key"]}"
 
     data = options.body if options.method in {"PATCH", "POST"} else None
@@ -66,13 +79,13 @@ async def fetch(options: FetchOptions, requiresApi = True):
     ) as client:
         try:
             match options.method:
-                case "GET":
+                case HTTPVerbEnum.GET:
                     res = await client.get(options.path)
-                case "POST":
+                case HTTPVerbEnum.POST:
                     res = await client.post(options.path, json=data)
-                case "DELETE":
+                case HTTPVerbEnum.DELETE:
                     res = await client.delete(options.path)
-                case "PATCH":
+                case HTTPVerbEnum.PATCH:
                     res = await client.patch(options.path, json=data)
                 case _:
                     print("Unrecognised HTTP verb", file=sys.stderr)
