@@ -3,7 +3,6 @@ import pprint
 
 from request import fetch, FetchOptions
 from setup import lemon_squeezy_setup, Config
-from utils import get_kv, CONFIG_KEY
 
 if __name__ == "__main__":
     import os
