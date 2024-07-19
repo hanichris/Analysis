@@ -18,7 +18,7 @@ class HTTPVerbEnum(str, Enum):
 
 class FetchOptions(BaseModel):
     path: str
-    method: HTTPVerbEnum | None = None
+    method: HTTPVerbEnum = HTTPVerbEnum.GET
     param: dict[str, Any] | None = None
     body: dict[str, Any] | None = None
 
