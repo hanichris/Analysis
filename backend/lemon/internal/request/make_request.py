@@ -9,11 +9,11 @@ from ..utils import get_kv, CONFIG_KEY, API_BASE_URL, Error, JSONAPIError
 
 
 class HTTPVerbEnum(str, Enum):
-    get     = "GET"
-    post    = "POST"
-    delete  = "DELETE"
-    put     = "PUT"
-    patch   = "PATCH"
+    GET     = "GET"
+    POST    = "POST"
+    DELETE  = "DELETE"
+    PUT     = "PUT"
+    PATCH   = "PATCH"
 
 
 class FetchOptions(BaseModel):
