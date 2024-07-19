@@ -9,6 +9,15 @@ class Config(BaseModel):
     on_error: Callable[[Error], None] | None = None
 
 def lemon_squeezy_setup(config: Config) -> Config:
+    """Lemon Squeezy configuration.
+
+    Args:
+        config: the configuration object. Includes the api key and a callable
+        if available to call if an error occurs.
+
+    Returns:
+        the configuraton object.
+    """
     set_kv(
         CONFIG_KEY,
         {
