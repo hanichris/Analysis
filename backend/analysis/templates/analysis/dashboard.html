@@ -52,7 +52,7 @@
                     </div>
                     <div>
                         <span class="profile--link">
-                            <a href="http://">
+                            <a href="{% url 'analysis:profile' request.user.id %}">
                                 <div>
                                     Manage your Account
                                 </div>
@@ -136,7 +136,7 @@
 </script>
 {{ access_token|json_script:'token-data'}}
 <script>
-    const token = JSON.parse(document.getElementById('token-data').textContent);
+    // const token = JSON.parse(document.getElementById('token-data').textContent);
     const csrftoken = getCookie('csrftoken');
 
     mapboxgl.accessToken = token;
