@@ -16,6 +16,7 @@
     --color-isabelline: #f4f3ee;
     --color-light-grey: #f2f2f3;
     --color-grey: #7d7c83;
+    --color-dark-grey: #444746;
     --color-green: #08805b;
     --color-phthalo-green: #123534;
     --color-dark-green: #096A2E;
@@ -144,6 +145,7 @@ a.link {
     display: inline-block;
     position: relative;
     transition: color .1s;
+    text-decoration: none;
   }
 
 a.link--primary {
@@ -151,7 +153,7 @@ a.link--primary {
 }
 
 a.link--primary:hover {
-text-decoration: underline;
+    text-decoration: underline;
 }
 
 
