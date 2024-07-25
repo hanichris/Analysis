@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}User Profile{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'analysis/css/profile.css' %}">
+{% endblock css %}
+
+{% block content %}
+
+<div class="wrapper", id="profile">
+    <div>
+        <div class="container">
+            <header>
+                <div class="profile-image">
+                    <button type="button">
+                        {{ user.email.0|title }}
+                    </button>
+                </div>
+                <div class="salutation">
+                    Welcome, {% if user.name %} {{ user.name }} {% else %} {{ user }} {% endif %}
+                </div>
+                <div class="title">
+                    Update your profile and set your account preferences.
+                </div>
+            </header>
+        </div>
+        <div class="container container-xl">
+            <div class="container_sidebar-wrapper">
+                <div class="container_sidebar-sidebar">
+                    <div class="sidebar">
+                        <nav>
+                            <ul>
+                                <li><a href="general" class="link is-active">General</a></li>
+                                <li><a href="profile" class="link">Profile</a></li>
+                                <li><a href="subscription" class="link">Subscription</a></li>
+                                <li><a href="delete" class="link">Delete Account</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                <div class="container_sidebar-content">
+                    <div data-tab="general" class="is-visible">General</div>
+                    <div data-tab="profile">Profile</div>
+                    <div data-tab="subscription">Subscription</div>
+                    <div data-tab="delete">Delete Account</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
