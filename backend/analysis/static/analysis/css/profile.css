@@ -1,0 +1,105 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding-top: 8rem;
+}
+
+.container {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 84rem;
+    padding-left: .8rem;
+    padding-right: .8rem;
+}
+
+.container.container-xl {
+    max-width: 120rem;
+    width: auto;
+}
+
+header {
+
+    .profile-image {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        & > button {
+            background-color: var(--color-dark-green);
+            border-radius: 50%;
+            border: none;
+            color: var(--color-off-white);
+            font-size: var(--font-size-x-large);
+            font-variation-settings: 'wght' 600;
+            width: 14rem;
+            height: 14rem;
+
+
+        }
+    }
+
+    .salutation {
+        font-size: var(--font-size-x-large);
+        font-variation-settings: 'wght' 400;
+        margin-top: 1.8rem;
+        margin-bottom: 1.8rem;
+        color: var(--color-eerie-black);
+        text-align: center;
+    }
+
+    .title {
+        color: var(--color-dark-grey);
+        font-size: var(--font-size-medium);
+        font-variation-settings: 'wght' 400;
+        margin-top: 1.6rem;
+        text-align: center;
+    }
+}
+
+.container_sidebar-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+
+    .container_sidebar-sidebar {
+        flex-basis: 30rem;
+        flex-grow: 1;
+        margin: 2rem;
+
+        .sidebar {
+            padding: 3rem;
+            background-color: var(--color-light-grey);
+            border-radius: 1rem;
+        }
+
+        .sidebar nav {
+            font-size: var(--font-size-medium);
+            margin-top: -1rem;
+            margin-bottom: -1rem;
+
+            .link {
+                padding: 1rem 0;
+                font-variation-settings: 'wght' 500;
+                display: inline-block;
+            }
+
+            .link.is-active {
+                color: var(--color-dark-green);
+            }
+        }
+    }
+
+    .container_sidebar-content {
+        flex-basis: 60rem;
+        flex-grow: 100;
+        margin: 2rem;
+
+        *[data-tab] {
+            display: none;
+        }
+
+        *[data-tab].is-visible {
+            display: block;
+        }
+    }
+}
