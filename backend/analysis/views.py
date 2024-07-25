@@ -11,7 +11,7 @@ from django.db import transaction
 from django.http import HttpRequest, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, View
+from django.views.generic import CreateView, View, DetailView
 
 from pydantic import BaseModel, EmailStr, ValidationError
 
@@ -104,9 +104,6 @@ class SignUpView(CreateView):
     template_name = "registration/signup.html"
 
 
-class ProfileView(View):
-    def get(self, *args, **kwargs):
-        pass
-
-    def post(self, *args, **kwargs):
-        pass
+class UserProfileView(DetailView):
+    model = User
+    template_name = "analysis/profile.html"
