@@ -120,6 +120,13 @@ p.form-help {
     padding: 0.2rem 0 .5rem .5rem;
 }
 
+.footer--signin {
+    font-size: var(--font-size-small);
+    padding-top: 1.6rem;
+    text-align: center;
+    box-shadow: rgba(0, 0, 0, 0.075) 0 -1px;
+}
+
 @media (min-width: 640px) {
     .container {
         padding-left: 1.5rem;
