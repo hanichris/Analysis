@@ -409,9 +409,13 @@ header .menu-icon .navicon::after {
 
 /* Basic Form */
 .post-comments {
-    width: 80%;
+    /* width: 80%; */
     margin-bottom: auto;
-    padding-left: 7rem;
+
+    header {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
 
     .section-title {
         font-variant: small-caps;
@@ -733,6 +737,10 @@ fieldset {
                 }
             }
         }
+    }
+    .post-comments {
+        width: 80%;
+        padding-left: 6rem;
     }
 }
 
