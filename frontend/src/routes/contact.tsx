@@ -1,6 +1,13 @@
 import { FormEvent, useRef, useState } from "react";
 import { z } from "zod";
 import { handleZodValidation, ValidationError } from "../utils/error_handling";
+import Toast from "../components/toast/toast";
+
+
+interface IResponse {
+  msg?: string;
+  type?: string;
+};
 
 const invalid_type_error = "Invalid type provided for this field.";
 const required_error = "This field cannot be blank.";
@@ -50,6 +57,7 @@ const contactSchema = z.object({
 
 export default function Contact() {
   const [errors, setErrors] = useState<ValidationError<typeof contactSchema>>({});
+  const [response, setResponse] = useState<IResponse>({});
   const ref = useRef<HTMLDivElement>(null)
 
   const handleInput = (e: FormEvent<HTMLTextAreaElement>) => {
@@ -73,24 +81,56 @@ export default function Contact() {
     
     const data = Object.fromEntries(new FormData(e.currentTarget));
 
-    handleZodValidation({
-      onError: setErrors,
-      data: data,
-      onSuccess: async (res) => {
-        setErrors({});
-        const resp = await fetch("/", {
-          method: "POST",
-          body: JSON.stringify(res),
-          headers,
-          mode: "same-origin",
-        });
-        if (resp.ok) {
-          const data = await resp.json()
-          console.log(data);
-        }
-      },
-      schema: contactSchema,
-    });
+
+      handleZodValidation({
+        onError: setErrors,
+        data: data,
+        onSuccess: async (res, timeout = 5000) => {
+          setErrors({});
+          const controller = new AbortController();
+          const timeoutSignal = AbortSignal.timeout(timeout);
+          try {
+
+            const resp = await fetch("/", {
+              method: "POST",
+              body: JSON.stringify(res),
+              headers,
+              mode: "same-origin",
+              signal: AbortSignal.any([controller.signal, timeoutSignal]),
+            });
+  
+            switch (resp.status) {
+              case 201:
+              case 400:
+              case 500:
+                const respData:IResponse = await resp.json()
+                setResponse({
+                  ...respData
+                });
+                break;
+              case 404:
+                setResponse({
+                  "msg": "An error occurred, 404 (Not found)",
+                  "type": "info",
+                });
+                break;
+              default:
+                setResponse({
+                  "msg": "A problem occurred, please try again.",
+                  "type": "error",
+                });
+                break;
+            }
+
+          } catch (error) {
+            setResponse({
+              'msg': "A network error occurred.",
+              'type': "info",
+            });
+          }
+        },
+        schema: contactSchema,
+      });
   };
 
   return (
@@ -117,7 +157,6 @@ export default function Contact() {
                       type="text"
                       name="first_name"
                       placeholder="e.g Kgauhelo"
-                      pattern="[A-Za-zÀ-ž\s]{3,}"
                       maxLength={35}
                       required
                       accessKey="f"
@@ -143,7 +182,6 @@ export default function Contact() {
                       type="text"
                       name="last_name"
                       placeholder="e.g Hani"
-                      pattern="[A-Za-zÀ-ž\s]{3,}"
                       maxLength={40}
                       required
                       accessKey="l"
@@ -169,7 +207,6 @@ export default function Contact() {
                       type="email"
                       name="email"
                       placeholder="e.g youremail@gmail.com"
-                      pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                       maxLength={55}
                       required
                       accessKey="e"
@@ -200,7 +237,6 @@ export default function Contact() {
                       type="text"
                       name="title"
                       placeholder="e.g I need help with"
-                      pattern="[A-Za-zÀ-ž\s]{4,}"
                       maxLength={75}
                       required
                       accessKey="t"
@@ -243,6 +279,15 @@ export default function Contact() {
           </form>
         </div>
       </div>
+      {
+        response.type === "info" ?
+        <Toast render={true} type="info" message={`${response.msg}`}/> :
+        response.type === "error" ?
+        <Toast render={true} type="error" message={`${response.msg}`}/> :
+        response.type === "success" ?
+        <Toast render={true} type="success" message={`${response.msg}`}/> :
+        <Toast />
+      }
     </section>
   );
 }
