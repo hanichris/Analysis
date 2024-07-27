@@ -7,7 +7,7 @@ from pathlib import Path
 
 from django.core import serializers
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db import transaction
+from django.db import transaction, Error
 from django.http import HttpRequest, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -48,13 +48,20 @@ class IndexView(View):
         except ValidationError as err:
             logger.error(err)
             return JsonResponse({
-                "error": "Validation of the data failed."
+                "msg": "Validation of the data failed.",
+                "type": "error",
+            }, status_code=400)
+        except Error as err:
+            logger.error(err)
+            return JsonResponse({
+                "msg": "An error occurred while saving your message.",
+                "type": "error",
             }, status_code=500)
-
-        return JsonResponse({
-            "success": "comment has been created",
-            "error": None
-        })
+        else:
+            return JsonResponse({
+                "msg": "Your message has been saved",
+                "type": "success"
+            }, status=201)
 
 class DashboardView(LoginRequiredMixin, View):
     
