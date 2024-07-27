@@ -1,12 +1,13 @@
 import { FormEvent, useRef, useState } from "react";
 import { z } from "zod";
 import { handleZodValidation, ValidationError } from "../utils/error_handling";
-import Toast from "../components/toast/toast";
+import ToastContainer from "../components/toast/toastcontainer";
 
 
 interface IResponse {
   msg?: string;
-  type?: string;
+  type?: "info" | "success" | "error";
+  notify: boolean;
 };
 
 const invalid_type_error = "Invalid type provided for this field.";
@@ -57,7 +58,7 @@ const contactSchema = z.object({
 
 export default function Contact() {
   const [errors, setErrors] = useState<ValidationError<typeof contactSchema>>({});
-  const [response, setResponse] = useState<IResponse>({});
+  const [response, setResponse] = useState<IResponse>({notify: false});
   const ref = useRef<HTMLDivElement>(null)
 
   const handleInput = (e: FormEvent<HTMLTextAreaElement>) => {
@@ -105,27 +106,31 @@ export default function Contact() {
               case 500:
                 const respData:IResponse = await resp.json()
                 setResponse({
-                  ...respData
+                  ...respData,
+                  notify: true,
                 });
                 break;
               case 404:
                 setResponse({
-                  "msg": "An error occurred, 404 (Not found)",
-                  "type": "info",
+                  msg: "An error occurred, 404 (Not found)",
+                  type: "info",
+                  notify: true,
                 });
                 break;
               default:
                 setResponse({
-                  "msg": "A problem occurred, please try again.",
-                  "type": "error",
+                  msg: "A problem occurred, please try again.",
+                  type: "error",
+                  notify: true,
                 });
                 break;
             }
 
           } catch (error) {
             setResponse({
-              'msg': "A network error occurred.",
-              'type': "info",
+              msg: "A network error occurred.",
+              type: "info",
+              notify: true
             });
           }
         },
@@ -279,15 +284,9 @@ export default function Contact() {
           </form>
         </div>
       </div>
-      {
-        response.type === "info" ?
-        <Toast render={true} type="info" message={`${response.msg}`}/> :
-        response.type === "error" ?
-        <Toast render={true} type="error" message={`${response.msg}`}/> :
-        response.type === "success" ?
-        <Toast render={true} type="success" message={`${response.msg}`}/> :
-        <Toast />
-      }
+      <ToastContainer>
+        { {response, dispatch: setResponse} }
+      </ToastContainer>
     </section>
   );
 }
