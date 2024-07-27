@@ -68,13 +68,12 @@ class Comment(AbstractTime):
     comment = models.TextField()
     updated_at = None
 
-    def __str__(self) -> str:
-        return f"{self.title} {self.comment[:10]}"
-    
     @property
     def full_name(self) -> str:
         return f"{self.first_name} {self.last_name}"
 
+    def __str__(self) -> str:
+        return f"Name: `{self.full_name}` Title: `{self.title}` Comment: `{self.comment[:10]}...`"
 
 # class Plan(AbstractTime):
 #     product_id = models.IntegerField()
