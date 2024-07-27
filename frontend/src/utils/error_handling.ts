@@ -3,7 +3,7 @@ import { ZodError, ZodType } from "zod";
 type ZObjectType = ZodType<Record<string | number, unknown>>;
 
 type ZodParams<T extends ZObjectType> = {
-  onSuccess(data: T['_output']): void;
+  onSuccess(data: T['_output'], timeout?: number): void;
   onError(error: Partial<Record<keyof T['_output'], string>>): void;
   data: Record<string, unknown>;
   schema: T;
