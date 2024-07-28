@@ -59,6 +59,7 @@ const contactSchema = z.object({
 export default function Contact() {
   const [errors, setErrors] = useState<ValidationError<typeof contactSchema>>({});
   const [response, setResponse] = useState<IResponse>({notify: false});
+  const [loading, setLoading] = useState<Boolean>(false);
   const ref = useRef<HTMLDivElement>(null)
 
   const handleInput = (e: FormEvent<HTMLTextAreaElement>) => {
@@ -91,6 +92,7 @@ export default function Contact() {
           const controller = new AbortController();
           const timeoutSignal = AbortSignal.timeout(timeout);
           try {
+            setLoading(true);
 
             const resp = await fetch("/", {
               method: "POST",
@@ -125,8 +127,10 @@ export default function Contact() {
                 });
                 break;
             }
+            setLoading(false);
 
           } catch (error) {
+            setLoading(false);
             setResponse({
               msg: "A network error occurred.",
               type: "info",
@@ -277,7 +281,7 @@ export default function Contact() {
                   }
                 </div>
               </div>
-              <div className="form-group">
+              <div className={loading ? "form-group is-submitting" : "form-group"}>
                 <button type="submit" className="btn btn--m btn--primary">Submit</button>
               </div>
             </fieldset>
