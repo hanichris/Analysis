@@ -2,6 +2,52 @@
     display: flex;
     flex-direction: column;
     background-color: var(--color-baby-powder);
+
+    &:has(#error-page) {
+        background-color: var(--color-red);
+    }
+}
+
+#error-page {
+    align-self: center;
+    text-align: center;
+    height: 100dvh;
+    background-color: var(--color-gold);
+
+    & .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: inherit;
+    }
+
+    & h1 {
+        --min-font-size: calc(var(--font-size-xxx-large) + .7rem);
+        --max-font-size: calc(var(--font-size-xxx-large) + 3rem);
+        --scaler: 10vw;
+        color: var(--color-eerie-black);
+        font-size: clamp(var(--min-font-size), var(--scaler), var(--max-font-size));
+        font-variation-settings: 'wght' 800;
+        letter-spacing: -.2rem;
+        margin-bottom: 2rem;
+        white-space: normal;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    & p {
+        font-size: var(--font-size-small);
+        color: var(--color-eerie-black);
+        padding-right: 1rem;
+        padding-left: 1rem;
+        font-variation-settings: 'wght' 500;
+
+        &.error--type {
+            text-transform: uppercase;
+            font-variation-settings: 'wght' 600;
+            margin-top: 1rem;
+        }
+    }
 }
 
 .header {
@@ -431,6 +477,29 @@ form {
         color: var(--error-color);
         font-size: var(--font-size-small);
         padding-left: 1rem;
+    }
+
+    .is-submitting {
+
+        & > .btn::after {
+            opacity: 1;
+            animation: spin 1s linear infinite;
+        }
+
+        & > .btn--primary {
+            color: var(--valid-color);
+            background-color: var(--valid-color);
+        }
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
     }
 }
 
