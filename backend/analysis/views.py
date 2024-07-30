@@ -79,30 +79,9 @@ class DashboardView(LoginRequiredMixin, View):
             "analysis/dashboard.html",
             {
                 "access_token": self.access_token,
+                "data": data if data else None
             }
         )
-
-    def post(self, request: HttpRequest, *args, **kwargs):
-        data = json.loads(request.body.decode('utf-8'))
-        create_data = [
-            Geofield(
-                user=request.user,
-                feature_id=UUID(feature.get("id")),
-                geometry=feature.get("geometry")
-            )
-            for feature in data.get("features")
-        ]
-
-        with transaction.atomic():
-            objs = serializers.serialize(
-                'json',
-                Geofield.objects.bulk_create(
-                    create_data,
-                    ignore_conflicts=True
-                )
-            )
-
-        return JsonResponse({'success': True, "data": objs})
 
 class SignUpView(CreateView):
     form_class = UserCreationForm
@@ -111,6 +90,6 @@ class SignUpView(CreateView):
     template_name = "registration/signup.html"
 
 
-class UserProfileView(DetailView):
+class UserProfileView(LoginRequiredMixin, DetailView):
     model = User
     template_name = "analysis/profile.html"
