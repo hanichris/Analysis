@@ -19,6 +19,7 @@
         <div class="another">
             <div class="holder">
                 <div class="wrapper">
+                    <input type="hidden" id="user_id" value={{ user.id }} />
                     <button type="button" id="openModal">
                         {{ user.email.0|upper}}
                     </button>
@@ -136,7 +137,32 @@
 </script>
 {{ access_token|json_script:'token-data'}}
 <script>
-    // const token = JSON.parse(document.getElementById('token-data').textContent);
+    const _id = document.getElementById("user_id").value;
+    const ws = new WebSocket(`ws://${window.location.host}/ws/geo/`);
+    let init = undefined;
+
+    ws.onopen = (e) => {
+        console.log("[open] Connection established!!!.");
+        ws.send(JSON.stringify({'OP': 'GET'}));
+    }
+
+    ws.onclose = (e) => {
+        if (e.wasClean) {
+            console.log(`[close] Connection closed cleanly, code=${e.code} reason=${e.reason}`);
+        } else {
+            console.log("[close] Connection died");
+        }
+    };
+
+    ws.onerror = (err) => {
+        console.log(`[error] ${err}`);
+    };
+
+    ws.onmessage = (e) => {
+        init = JSON.parse(e.data);
+    }
+
+    const token = JSON.parse(document.getElementById('token-data').textContent);
     const csrftoken = getCookie('csrftoken');
 
     mapboxgl.accessToken = token;
@@ -159,9 +185,52 @@
             defaultMode: 'draw_polygon',
         })
 
-        map.on('load', () => {});
+        map.on('load', () => {
+
+            map.addSource(`${_id}-land`, {
+                type: 'geojson',
+                data: {
+                    type: 'FeatureCollection',
+                    features: init.content,
+                },
+                dynamic: true,
+            });
+
+            map.addLayer({
+                id: 'landaread',
+                source: `${_id}-land`,
+                type: 'fill',
+                layout: {},
+                paint: {
+                    'fill-color': '#0080ff',
+                    'fill-opacity': 0.5,
+                },
+            });
+
+            map.addLayer({
+                id: 'outline',
+                source: `${_id}-land`,
+                type: 'line',
+                layout: {},
+                paint: {
+                    'line-color': '#000',
+                    'line-width': 3,
+                },
+            });
+
+            ws.onmessage = (e) => {
+                const resp = JSON.parse(e.data);
+                console.log(resp);
+                map.getSource(`${_id}-land`).updateData({
+                    type: 'FeatureCollection',
+                    features: resp.content,
+                })
+            };
+        });
+
         map.addControl(draw);
         map.on('draw.create', saveCoord);
+        map.on('draw.update', saveCoord);
     }
 
     function getCookie(name){
@@ -171,25 +240,8 @@
     async function saveCoord(e) {
         const data = draw.getAll();
         if (data.features.length > 0) {
-            const res = await fetch("{% url 'analysis:dashboard' %}", {
-                method: "POST",
-                body: JSON.stringify(data),
-                headers: {
-                    'Accept': "application/json",
-                    'Content-Type': "application/json",
-                    'X-Requested-With': 'XMLHttpRequest',
-                    "X-CSRFToken": csrftoken,
-                }
-            });
-            if(res.ok){
-                console.log("Data below sent to backend");
-                console.log(data);
-                const resp = await res.json();
-                console.log('data received from the backend');
-                console.log(resp);
-            }
+            ws.send(JSON.stringify({...data, 'OP': 'POST'}));
         }
-        console.table({ data });
     }
 </script>
 
