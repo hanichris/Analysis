@@ -75,11 +75,25 @@ class Comment(AbstractTime):
     def __str__(self) -> str:
         return f"Name: `{self.full_name}` Title: `{self.title}` Comment: `{self.comment[:10]}...`"
 
-# class Plan(AbstractTime):
-#     product_id = models.IntegerField()
-#     product_name = models.TextField(null=True)
-#     variant_id = models.IntegerField(unique=True)
-#     name = models.TextField()
-#     description = models.TextField(null=True)
-#     price = models.DecimalField(max_digits=7, decimal_places=2)
-#     is_usage_based = models.BooleanField(default=False)
+class Plan(AbstractTime):
+    product_id = models.IntegerField()
+    product_name = models.TextField(null=True)
+    variant_id = models.IntegerField(unique=True)
+    name = models.TextField()
+    description = models.TextField(null=True)
+    price = models.TextField()
+    is_usage_based = models.BooleanField(default=False)
+    interval = models.TextField(null=True)
+    interval_count = models.IntegerField(null=True)
+    trial_interval = models.TextField(null=True)
+    trial_interval_count = models.IntegerField(null=True)
+    sort = models.IntegerField(null=True)
+
+    def __str__(self) -> str:
+        return f"{self.name} {self.price}"
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=["variant_id","name"]),
+            models.Index(fields=["variant_id"]),
+        ]
