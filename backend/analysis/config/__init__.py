@@ -1,0 +1,1 @@
+from .lemonsqueezy import configure_lemonsqueezy
