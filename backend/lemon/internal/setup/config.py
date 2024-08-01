@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, NoReturn
 
 from pydantic import BaseModel
 
@@ -6,7 +6,7 @@ from ..utils import CONFIG_KEY, set_kv, Error
 
 class Config(BaseModel):
     api_key: str | None = None
-    on_error: Callable[[Error], None] | None = None
+    on_error: Callable[[Error], NoReturn] | None = None
 
 def lemon_squeezy_setup(config: Config) -> Config:
     """Lemon Squeezy configuration.
