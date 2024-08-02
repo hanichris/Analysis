@@ -67,7 +67,7 @@ class UserManagersTests(TestCase):
         
 
 class SyncPlansTest(TestCase):
-    def test_command_operation(self):
+    def test_command_operation_syncPlans(self):
         out = StringIO()
         call_command("syncPlans", stdout=out)
         self.assertRaises(ValueError)
