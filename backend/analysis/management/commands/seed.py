@@ -1,6 +1,6 @@
 import logging
-import time
 
+from asyncio import get_event_loop
 from typing import Any
 
 from django.core.management.base import BaseCommand, CommandParser
@@ -33,32 +33,33 @@ class Command(BaseCommand):
 
     def handle(self, *args: Any, **options: Any) -> str | None:
         self.stdout.write("Seeding data....")
-        run_seed(options["file"], options["size"])
+        loop = get_event_loop()
+        loop.run_until_complete(run_seed(options["file"], options["size"]))
         self.stdout.write("done.")
 
 
-def clear_data():
+async def clear_data():
     """Deletes all the dummy users from the database."""
     logger.warn("Delete all users with no administrative permissions")
-    User.people.filter(email__icontains="example").delete()
+    await User.people.filter(email__icontains="example").adelete()
 
-def create_users(fake: Faker, num: int = 15):
+async def create_users(fake: Faker, num: int = 20):
     for num in range(num):
         fake_email = fake.unique.email()
         fake_pwd = fake.password()
         logger.info(f"{num}-{fake_email}-{fake_pwd}")
-        User.people.create_user(
+        await User.people.acreate_user(
             email=fake_email,
             password=fake_pwd
         )
 
-def run_seed(fileName: None | str = None, size: int | None = None):
-    clear_data()
+async def run_seed(fileName: None | str = None, size: int | None = None):
+    await clear_data()
     if not fileName:
         fake = Faker()
         if not size:
-            create_users(fake)
+            await create_users(fake)
         else:
-            create_users(fake, size)
+            await create_users(fake, size)
             
 
