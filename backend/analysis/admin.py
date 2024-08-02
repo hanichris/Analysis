@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from .models import User
+from .models import User, Geofield, Comment
 from .forms import UserChangeForm, UserCreationForm
 
 # Register your models here.
@@ -33,3 +33,5 @@ class UserAdmin(BaseUserAdmin):
     ordering = ("email",)
 
 admin.site.register(User, UserAdmin)
+admin.site.register(Geofield)
+admin.site.register(Comment)
