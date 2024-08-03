@@ -1,6 +1,7 @@
 import logging
 
-from asyncio import get_event_loop
+import asyncio
+from itertools import islice
 from typing import Any
 
 from django.core.management.base import BaseCommand, CommandParser
@@ -25,6 +26,13 @@ class Command(BaseCommand):
         )
 
         parser.add_argument(
+            "-b", "--batch",
+            type=int,
+            required=False,
+            help="Create the users in batches.",
+        )
+
+        parser.add_argument(
             "-s", "--size",
             type=int,
             required=False,
@@ -33,8 +41,14 @@ class Command(BaseCommand):
 
     def handle(self, *args: Any, **options: Any) -> str | None:
         self.stdout.write("Seeding data....")
-        loop = get_event_loop()
-        loop.run_until_complete(run_seed(options["file"], options["size"]))
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(
+            run_seed(
+                batch=options['batch'],
+                fileName=options['file'],
+                size=options['size']
+            )
+        )
         self.stdout.write("done.")
 
 
@@ -43,23 +57,41 @@ async def clear_data():
     logger.warn("Delete all users with no administrative permissions")
     await User.people.filter(email__icontains="example").adelete()
 
-async def create_users(fake: Faker, num: int = 20):
-    for num in range(num):
-        fake_email = fake.unique.email()
-        fake_pwd = fake.password()
-        logger.info(f"{num}-{fake_email}-{fake_pwd}")
-        await User.people.acreate_user(
-            email=fake_email,
-            password=fake_pwd
+async def create_users(batch_size: int = 999, num: int = 20):
+    users = (user for user in generate_user(num))
+    background_tasks = set()
+    batch_size = batch_size if 0 < batch_size < 1000 else 999
+    while batch := list(islice(users, batch_size)):
+        task = asyncio.create_task(
+            User.people.abulk_create(batch, batch_size)
         )
+        background_tasks.add(task)
+        task.add_done_callback(background_tasks.discard)
 
-async def run_seed(fileName: None | str = None, size: int | None = None):
+    await asyncio.gather(*background_tasks)
+
+async def run_seed(
+        *,
+        batch: int | None = None,
+        fileName: None | str = None,
+        size: int | None = None,
+):
     await clear_data()
     if not fileName:
-        fake = Faker()
-        if not size:
-            await create_users(fake)
-        else:
-            await create_users(fake, size)
-            
+        if not size and not batch:
+            await create_users()
+        elif size and not batch:
+            await create_users(num=size)
+        elif batch and not size:
+            await create_users(batch_size=batch)
+        elif batch and size:
+            await create_users(batch_size=batch, num=size)
 
+def generate_user(stop: int):
+    fake = Faker(use_weighting=False)
+    start = 0
+    while start < stop:
+        user = User(email=fake.unique.email())
+        user.set_password(fake.password())
+        yield user
+        start += 1
