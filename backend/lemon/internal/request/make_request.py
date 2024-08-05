@@ -1,12 +1,14 @@
 import sys
 from enum import Enum
-from typing import Any
+from typing import Any, Generic, TypeVar
 
 import httpx
 from pydantic import BaseModel
 
 from ..utils import get_kv, CONFIG_KEY, API_BASE_URL, Error, JSONAPIError
 
+
+P = TypeVar('P')
 
 class HTTPVerbEnum(str, Enum):
     GET     = "GET"
@@ -16,10 +18,10 @@ class HTTPVerbEnum(str, Enum):
     PATCH   = "PATCH"
 
 
-class FetchOptions(BaseModel):
+class FetchOptions(BaseModel, Generic[P]):
     path: str
     method: HTTPVerbEnum = HTTPVerbEnum.GET
-    param: dict[str, Any] | None = None
+    param: P | None = None
     body: dict[str, Any] | None = None
 
 
@@ -46,6 +48,7 @@ async def fetch(options: FetchOptions, requiresApiKey = True):
     Returns:
         Response. Includes `status_code`, `data` and `error`.
     """
+    options_valid = options.model_dump()
     response = {
         "status_code": None,
         "data": None,
@@ -74,7 +77,7 @@ async def fetch(options: FetchOptions, requiresApiKey = True):
     async with httpx.AsyncClient(
         base_url=API_BASE_URL,
         headers=headers,
-        params=options.param,
+        params=options_valid['param'],
         follow_redirects=True
     ) as client:
         try:
