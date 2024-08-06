@@ -18,17 +18,17 @@ class Pick[T]:
     
     @classmethod
     def pick(cls):
-        assert isinstance(cls.keys, list), "Provide the keys as a 'list' or 'tuple'"
+        assert isinstance(cls.keys, list), "Provide the keys as a 'list'"
         keys_model = create_model(
             'Keys', **{key: (RelationshipLinks, ...) for key in cls.keys}
         ) # type: ignore
         class Keys(RootModel):
             root: keys_model # type: ignore
 
-            def __getitem__(self, item: RelationshipKeys) -> RelationshipLinks:
+            def __getitem__(self, item: T) -> RelationshipLinks:
                 return self.root[item]
 
-            def __iter__(self) -> Iterator[RelationshipKeys]:
+            def __iter__(self) -> Iterator[T]:
                 return iter(self.root)
         
         return Keys
@@ -57,7 +57,7 @@ class Attributes(TypedDict):
 class StoreId(TypedDict):
     store_id: NotRequired[int | str]
 
-class ProductData(Data[Attributes, Pick[str](["stores", "variants"]).pick()]):
+class ProductData(Data[Attributes, Pick[RelationshipKeys](["stores", "variants"]).pick()]):
     pass
 
 class GetProductParams(Params[list[Literal['stores', 'variants']], dict[str, Any]]):

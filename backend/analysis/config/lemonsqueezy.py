@@ -1,7 +1,7 @@
 import os
 
-from lemon.internal.setup import Config, lemon_squeezy_setup
-from lemon.internal.utils import Error
+from lemon.src.internal.setup import Config, lemon_squeezy_setup
+from lemon.src.internal.utils import Error
 
 def err_fn(error: Error):
     """Raises a runtime exception with the provided `Error` message.

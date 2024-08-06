@@ -1,14 +1,16 @@
 from ..internal.request import fetch, FetchOptions
-from ..internal.utils import params_to_query_string
+from ..internal.utils import params_to_query_string, include_to_query_string
 from .types import GetProductParams, ListProductParams
 
 async def get_product(
         product_id: int | str,
-        params: GetProductParams = {} # type: ignore
+        params: dict = {}
 ):
-    options = FetchOptions[GetProductParams](
+    options = FetchOptions(
         path=f"/v1/products/{product_id}",
-        param=params
+        param=include_to_query_string(
+            GetProductParams(**params).include
+        )
     )
     return await fetch(options)
 

@@ -1,6 +1,6 @@
 import sys
 from enum import Enum
-from typing import Any, Generic, TypeVar
+from typing import Any, cast, Generic, TypeVar
 
 import httpx
 from pydantic import BaseModel
@@ -55,14 +55,16 @@ async def fetch(options: FetchOptions, requiresApiKey = True):
         "error": None | Error,
     }
 
-    config: dict | None = get_kv(CONFIG_KEY)
-    if config is None or (key := config.get("api_key") is None):
+    config: dict = cast(dict, get_kv(CONFIG_KEY))
+    if config.get("api_key") is None:
         response["error"] = create_lemon_error(
             "Please provide your Lemon Squeezy API key. Create a new API key at "
             "`https://app.lemonsqueezy.com/settings/api`",
             "Missing API key"
         )
-        print(response["error"], file=sys.stderr)
+        # print(response["error"], file=sys.stderr)
+        if (err_fn := config.get('on_error')):
+            err_fn(response["error"])
         return response
     
     headers = {
@@ -77,7 +79,7 @@ async def fetch(options: FetchOptions, requiresApiKey = True):
     async with httpx.AsyncClient(
         base_url=API_BASE_URL,
         headers=headers,
-        params=options_valid['param'],
+        params=options_valid.get('param'),
         follow_redirects=True
     ) as client:
         try:
@@ -104,6 +106,8 @@ async def fetch(options: FetchOptions, requiresApiKey = True):
             response["error"] = create_lemon_error(
                 f"{exc}", f"Error while requesting {exc.request.url!r}"
             )
+            if (err_fn := config.get('on_error')):
+                err_fn(response["error"])
         except httpx.HTTPStatusError as exc:
             _data = exc.response.json()
             _error = _data.get("errors") or \
@@ -113,5 +117,7 @@ async def fetch(options: FetchOptions, requiresApiKey = True):
             response["status_code"] = exc.response.status_code
             response["data"] = _data
             response["error"] = create_lemon_error(f"{exc}", _error)
+            if (err_fn := config.get('on_error')):
+                err_fn(response["error"])
 
     return response

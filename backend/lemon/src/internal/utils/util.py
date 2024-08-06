@@ -1,4 +1,4 @@
-import json
+from typing import Literal
 from ...types.response import Params
 
 
@@ -14,3 +14,10 @@ def params_to_query_string(params: Params) -> dict:
         else:
             search_params[key] = f'{val}' if val else val
     return search_params
+
+def include_to_query_string(include: list[Literal['stores', 'variants']] | None):
+    if isinstance(include, list):
+        return {
+            "include": ''.join(include)
+        }
+    return {}

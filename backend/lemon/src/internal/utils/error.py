@@ -22,7 +22,7 @@ class JSONAPIError(BaseModel):
 
 
 class Error:
-    name = "Lemon Squeezy Error"
+    name = "Lemon Squeezy API Error"
 
     def __init__(self, message: str) -> None:
         self.message = message
