@@ -18,7 +18,7 @@
                     </button>
                 </div>
                 <div class="salutation">
-                    Welcome, {% if user.name %} {{ user.name }} {% else %} {{ user }} {% endif %}
+                    Welcome, {% if user.first_name %} {{ user.first_name }} {% else %} {{ user }} {% endif %}
                 </div>
                 <div class="title">
                     Update your profile and set your account preferences.
@@ -32,7 +32,6 @@
                         <nav>
                             <ul>
                                 <li><a href="general" class="link is-active">General</a></li>
-                                <li><a href="profile" class="link">Profile</a></li>
                                 <li><a href="subscription" class="link">Subscription</a></li>
                                 <li><a href="reports" class="link">Reports</a></li>
                                 <li><a href="delete" class="link">Delete Account</a></li>
@@ -41,8 +40,209 @@
                     </div>
                 </div>
                 <div class="container_sidebar-content">
-                    <div data-tab="general" class="is-visible">General</div>
-                    <div data-tab="profile">Profile</div>
+                    <div data-tab="general" class="is-visible">
+                        <div class="content_wrapper">
+                            <div class="content">
+                                <div class="content_title">
+                                    <header>
+                                        <h2>Basic info</h2>
+                                        <div>
+                                            General information about yourself.
+                                        </div>
+                                    </header>
+                                </div>
+                                <div class="content_user_wrapper">
+                                    <div>
+                                        <a href="">
+                                            <div class="link_container">
+                                                <div class="user_wrapper">
+                                                    <div class="title">
+                                                        <span class="heading">
+                                                            Name
+                                                        </span>
+                                                    </div>
+                                                    <div class="user">
+                                                        <div>
+                                                            {% if user.full_name == "None None" %}
+                                                                <div class="user_content_empty">
+                                                                    Not set
+                                                                </div>
+                                                            {% else %}
+                                                                <div class="user_content">
+                                                                    {{ user.full_name }}
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="chev_icon">
+                                                    <svg height="20px" width="20px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 185.343 185.343" xml:space="preserve">
+                                                        <g>
+                                                            <g>
+                                                                <path style="fill:currentColor;" d="M51.707,185.343c-2.741,0-5.493-1.044-7.593-3.149c-4.194-4.194-4.194-10.981,0-15.175
+                                                                    l74.352-74.347L44.114,18.32c-4.194-4.194-4.194-10.987,0-15.175c4.194-4.194,10.987-4.194,15.18,0l81.934,81.934
+                                                                    c4.194,4.194,4.194,10.987,0,15.175l-81.934,81.939C57.201,184.293,54.454,185.343,51.707,185.343z"/>
+                                                            </g>
+                                                        </g>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="content_user_wrapper">
+                                    <div class="content_spacing">
+                                        <div class="spacer"></div>
+                                    </div>
+                                    <div>
+                                        <a href="">
+                                            <div class="link_container">
+                                                <div class="user_wrapper">
+                                                    <div class="title">
+                                                        <span class="heading">
+                                                            Birthday
+                                                        </span>
+                                                    </div>
+                                                    <div class="user">
+                                                        <div>
+                                                            {% if user.birth_date is None %}
+                                                                <div class="user_content_empty">
+                                                                    Not set
+                                                                </div>
+                                                            {% else %}
+                                                                <div class="user_content">
+                                                                    {{ user.birth_date|date:"d N, Y" }}
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="chev_icon">
+                                                    <svg height="20px" width="20px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 185.343 185.343" xml:space="preserve">
+                                                        <g>
+                                                            <g>
+                                                                <path style="fill:currentColor;" d="M51.707,185.343c-2.741,0-5.493-1.044-7.593-3.149c-4.194-4.194-4.194-10.981,0-15.175
+                                                                    l74.352-74.347L44.114,18.32c-4.194-4.194-4.194-10.987,0-15.175c4.194-4.194,10.987-4.194,15.18,0l81.934,81.934
+                                                                    c4.194,4.194,4.194,10.987,0,15.175l-81.934,81.939C57.201,184.293,54.454,185.343,51.707,185.343z"/>
+                                                            </g>
+                                                        </g>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="content_user_wrapper">
+                                    <div class="content_spacing">
+                                        <div class="spacer"></div>
+                                    </div>
+                                    <div>
+                                        <a href="">
+                                            <div class="link_container">
+                                                <div class="user_wrapper">
+                                                    <div class="title">
+                                                        <span class="heading">
+                                                            Email
+                                                        </span>
+                                                    </div>
+                                                    <div class="user">
+                                                        <div>
+                                                            {% if user.email is None %}
+                                                                <div class="user_content_empty">
+                                                                    Not set
+                                                                </div>
+                                                            {% else %}
+                                                                <div class="user_content">
+                                                                    {{ user.email }}
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="chev_icon">
+                                                    <svg height="20px" width="20px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 185.343 185.343" xml:space="preserve">
+                                                        <g>
+                                                            <g>
+                                                                <path style="fill:currentColor;" d="M51.707,185.343c-2.741,0-5.493-1.044-7.593-3.149c-4.194-4.194-4.194-10.981,0-15.175
+                                                                    l74.352-74.347L44.114,18.32c-4.194-4.194-4.194-10.987,0-15.175c4.194-4.194,10.987-4.194,15.18,0l81.934,81.934
+                                                                    c4.194,4.194,4.194,10.987,0,15.175l-81.934,81.939C57.201,184.293,54.454,185.343,51.707,185.343z"/>
+                                                            </g>
+                                                        </g>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="content_user_wrapper">
+                                    <div class="content_spacing">
+                                        <div class="spacer"></div>
+                                    </div>
+                                    <div>
+                                        <div id="date_joined">
+                                            <div class="link_container">
+                                                <div class="user_wrapper">
+                                                    <div class="title">
+                                                        <span class="heading">
+                                                            Date Joined
+                                                        </span>
+                                                    </div>
+                                                    <div class="user">
+                                                        <div>
+                                                            <div class="user_content">
+                                                                {{ user.created_at|date:"d N, Y P" }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="content_wrapper">
+                            <div class="content">
+                                <div class="content_title">
+                                    <header>
+                                        <h2>
+                                            Password
+                                        </h2>
+                                        <div>A secure password helps protect your account.</div>
+                                    </header>
+                                </div>
+                                <div class="content_user_wrapper">
+                                    <div>
+                                        <a href="">
+                                            <div class="link_container">
+                                                <div class="user_wrapper">
+                                                    <div class="user">
+                                                        <div>
+                                                            <div class="user_content">
+                                                                ••••••••••••••••
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="chev_icon">
+                                                    <svg height="20px" width="20px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 185.343 185.343" xml:space="preserve">
+                                                        <g>
+                                                            <g>
+                                                                <path style="fill:currentColor;" d="M51.707,185.343c-2.741,0-5.493-1.044-7.593-3.149c-4.194-4.194-4.194-10.981,0-15.175
+                                                                    l74.352-74.347L44.114,18.32c-4.194-4.194-4.194-10.987,0-15.175c4.194-4.194,10.987-4.194,15.18,0l81.934,81.934
+                                                                    c4.194,4.194,4.194,10.987,0,15.175l-81.934,81.939C57.201,184.293,54.454,185.343,51.707,185.343z"/>
+                                                            </g>
+                                                        </g>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-tab="reports">Reports</div>
                     <div data-tab="subscription">Subscription</div>
                     <div data-tab="delete">Delete Account</div>
                 </div>
