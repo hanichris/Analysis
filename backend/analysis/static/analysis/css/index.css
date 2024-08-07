@@ -134,10 +134,6 @@ a {
     cursor: pointer;
 }
 
-a:visited{
-    font-style: italic;
-}
-
 a.link {
     display: inline-block;
     position: relative;
