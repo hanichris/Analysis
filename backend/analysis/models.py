@@ -24,7 +24,9 @@ class User(PermissionsMixin, AbstractTime, AbstractBaseUser):
         editable=False
     )
     email = models.EmailField(_('email address'), unique=True, db_index=True)
-    name = models.CharField(max_length=255, null=True)
+    first_name = models.CharField(max_length=50, null=True)
+    last_name = models.CharField(max_length=50, null=True)
+    birth_date = models.DateField(null=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
@@ -41,6 +43,10 @@ class User(PermissionsMixin, AbstractTime, AbstractBaseUser):
 
     def __str__(self) -> str:
         return self.email
+    
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
     
 class Geofield(AbstractTime):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
