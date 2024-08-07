@@ -31,16 +31,16 @@
                     <div class="sidebar">
                         <nav>
                             <ul>
-                                <li><a href="general" class="link is-active">General</a></li>
-                                <li><a href="subscription" class="link">Subscription</a></li>
-                                <li><a href="reports" class="link">Reports</a></li>
-                                <li><a href="delete" class="link">Delete Account</a></li>
+                                <li><a id="general" class="link">General</a></li>
+                                <li><a id="subscription" class="link">Subscription</a></li>
+                                <li><a id="reports" class="link">Reports</a></li>
+                                <li><a id="delete" class="link">Delete Account</a></li>
                             </ul>
                         </nav>
                     </div>
                 </div>
                 <div class="container_sidebar-content">
-                    <div data-tab="general" class="is-visible">
+                    <div data-tab="general">
                         <div class="content_wrapper">
                             <div class="content">
                                 <div class="content_title">
@@ -250,5 +250,24 @@
         </div>
     </div>
 </div>
+<script>
+    window.onload = () => {
+        const links = document.querySelectorAll('li > a');
+        let activeDiv = document.querySelector('[data-tab="general"]');;
+        let activeLink = links[0];
+        activeDiv.classList.add('is-visible');
+        activeLink.classList.add('is-active');
 
+        links.forEach((elem) => {
+            elem.addEventListener('click', (e) => {
+                activeLink.classList.remove('is-active');
+                activeLink = elem;
+                activeLink.classList.add('is-active');
+                activeDiv.classList.remove('is-visible');
+                activeDiv = document.querySelector(`[data-tab="${activeLink.id}"]`);
+                activeDiv.classList.add('is-visible');
+            })
+        });
+    }
+</script>
 {% endblock content %}
