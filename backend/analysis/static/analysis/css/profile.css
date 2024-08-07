@@ -99,7 +99,124 @@ header {
         }
 
         *[data-tab].is-visible {
-            display: block;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            width: 100%;
+        }
+
+        .content_wrapper{
+            border-radius: 8px;
+            box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.11);
+            background-color: var(--color-white);
+            display: flex;
+            flex-grow: 1;
+            flex-shrink: 1;
+            margin-bottom: 3.4rem;
+
+            & > .content {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+
+                .content_title {
+                    padding: 1.6rem 1.6rem .8rem;
+                    width: 100%;
+                    display: flex;
+
+                    header {
+                        display: flex;
+                        flex-direction: column;
+                        flex: 1 1 0;
+
+                        & > h2 {
+                            color: var(--color-eerie-black);
+                            font-variation-settings: 'wght' 500;
+                            font-size: var(--font-size-medium);
+                        }
+
+                        & > h2 + div {
+                            padding-top: .8rem;
+                            color: #444746;
+                            font-size: var(--font-size-small);
+                            font-variation-settings: 'wght' 400;
+                            hyphens: auto;
+                            word-break: break-word;
+                        }
+                    }
+                }
+
+                .content_user_wrapper {
+
+                    .content_spacing {
+                        padding-left: 1.6rem;
+
+                        .spacer {
+                            border-top: 1px solid rgba(0, 0, 0, 0.11);
+                        }
+                    }
+
+                    a, #date_joined {
+                        padding: 1.5rem 1.6rem 1.6rem;
+                        display: block;
+                        text-align: left;
+                        width: 100%;
+
+                        &:hover {
+                            background-color: var(--color-light-grey);
+                        }
+
+                        & > .link_container {
+                            display: flex;
+                            align-items: center;
+
+                            .title {
+                                display: flex;
+                                padding-top: .4rem;
+                                align-items: center;
+                            }
+
+                            .user_wrapper {
+                                flex: 1 1 0;
+
+                                .user {
+                                    margin-right: 2.4rem;
+                                }
+                            }
+                        }
+                    }
+                    #date_joined:hover {
+                        background-color: transparent;
+                    }
+                }
+            }
         }
     }
+}
+
+span.heading {
+    font-variation-settings: 'wght' 500;
+    font-size: var(--font-size-x-small);
+    color: #444746;
+}
+
+div.user_content, div.user_content_empty {
+    padding-top: .4rem;
+    font-size: var(--font-size-medium);
+    font-variation-settings: 'wght' 400;
+    hyphens: auto;
+    word-break: break-word;
+}
+
+div.user_content {
+    color: var(--color-eerie-black);
+}
+div.user_content_empty {
+    color: #444746;
+    font-variation-settings: 'wght' 200;
+    font-size: var(--font-size-small);
+}
+
+.chev_icon {
+    color: #444746;
 }
