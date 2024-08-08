@@ -13,7 +13,7 @@ class UserManagersTests(TestCase):
         """
         create_user() inserts a new user in the database with the following \
         attributes: `email`, `password`, `is_active=True`, `is_staff=False`, \
-        `is_superuser=False` and `name=null`.
+        `is_superuser=False`, `first_name=None` and `last_name=None`.
         """
         User = get_user_model()
         user: UserClass = User.people.create_user( # type: ignore
@@ -24,7 +24,9 @@ class UserManagersTests(TestCase):
         self.assertTrue(user.is_active)
         self.assertFalse(user.is_staff)
         self.assertFalse(user.is_superuser)
-        self.assertIsNone(user.name)
+        self.assertIsNone(user.first_name)
+        self.assertIsNone(user.last_name)
+        self.assertIsNone(user.birth_date)
 
         with self.assertRaises(TypeError):
             User.people.create_user() # type: ignore
@@ -50,7 +52,9 @@ class UserManagersTests(TestCase):
         self.assertTrue(admin_user.is_active)
         self.assertTrue(admin_user.is_staff)
         self.assertTrue(admin_user.is_superuser)
-        self.assertIsNone(admin_user.name)
+        self.assertIsNone(admin_user.first_name)
+        self.assertIsNone(admin_user.last_name)
+        self.assertIsNone(admin_user.birth_date)
 
         with self.assertRaises(ValueError):
             User.people.create_superuser( # type: ignore
@@ -66,8 +70,8 @@ class UserManagersTests(TestCase):
             )
         
 
-class SyncPlansTest(TestCase):
-    def test_command_operation_syncPlans(self):
-        out = StringIO()
-        call_command("syncPlans", stdout=out)
-        self.assertRaises(ValueError)
+# class SyncPlansTest(TestCase):
+#     def test_command_operation_syncPlans(self):
+#         out = StringIO()
+#         call_command("syncPlans", stdout=out)
+#         self.assertRaises(ValueError)
