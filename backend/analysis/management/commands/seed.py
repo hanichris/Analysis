@@ -1,6 +1,6 @@
 import logging
 
-import asyncio
+
 from itertools import islice
 from typing import Any
 
@@ -41,51 +41,41 @@ class Command(BaseCommand):
 
     def handle(self, *args: Any, **options: Any) -> str | None:
         self.stdout.write("Seeding data....")
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(
-            run_seed(
-                batch=options['batch'],
-                fileName=options['file'],
-                size=options['size']
-            )
+        run_seed(
+            batch=options['batch'],
+            fileName=options['file'],
+            size=options['size']
         )
         self.stdout.write("done.")
 
 
-async def clear_data():
+def clear_data():
     """Deletes all the dummy users from the database."""
     logger.warn("Delete all users with no administrative permissions")
-    await User.people.filter(email__icontains="example").adelete()
+    User.people.filter(email__icontains="example").delete()
 
-async def create_users(batch_size: int = 999, num: int = 20):
+def create_users(batch_size: int = 500, num: int = 20):
     users = (user for user in generate_user(num))
-    background_tasks = set()
     batch_size = batch_size if 0 < batch_size < 1000 else 999
     while batch := list(islice(users, batch_size)):
-        task = asyncio.create_task(
-            User.people.abulk_create(batch, batch_size)
-        )
-        background_tasks.add(task)
-        task.add_done_callback(background_tasks.discard)
+        User.people.bulk_create(batch, batch_size)
 
-    await asyncio.gather(*background_tasks)
-
-async def run_seed(
+def run_seed(
         *,
         batch: int | None = None,
         fileName: None | str = None,
         size: int | None = None,
 ):
-    await clear_data()
+    clear_data()
     if not fileName:
         if not size and not batch:
-            await create_users()
+            create_users()
         elif size and not batch:
-            await create_users(num=size)
+            create_users(num=size)
         elif batch and not size:
-            await create_users(batch_size=batch)
+            create_users(batch_size=batch)
         elif batch and size:
-            await create_users(batch_size=batch, num=size)
+            create_users(batch_size=batch, num=size)
 
 def generate_user(stop: int):
     fake = Faker(use_weighting=False)
