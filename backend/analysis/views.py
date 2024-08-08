@@ -30,7 +30,8 @@ class PostData(BaseModel):
 class IndexView(View):
     parents = Path(__file__).parents
     new_path = parents[1].joinpath('static/manifest.json')
-    manifest: dict = json.load(new_path.open(encoding='utf-8'))
+    with new_path.open(encoding='utf-8') as fd:
+        manifest: dict = json.load(fd)
 
     def get(self, request: HttpRequest, *args, **kwargs):
         return render(
