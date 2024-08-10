@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'analysis/css/auth.css' %}">
+{% endblock css %}
+
+{% block content %}
+<div class="container">
+    <header>
+        <h2></h2>
+    </header>
+    <main>
+        <div class="wrapper">
+            <form action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="fieldWrapper">
+                        {% if field.auto_id == 'id_file' %}
+                            <div class="presentation">
+                                <label for="{{field.auto_id}}">
+                                    <span class="icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                            <polyline points="17 8 12 3 7 8"></polyline>
+                                            <line x1="12" x2="12" y1="3" y2="15"></line>
+                                        </svg>
+                                    </span>
+                                    <span class="info">Choose report file(s) to upload:</span>
+                                </label>
+                                {{ field }}
+                                <span class="tag">Accepts .pdf files</span>
+                            </div>
+                        {% else %}
+                        {{ field.label_tag }}
+                        {{ field }}
+                        <p class="form-help" id="{{ field.auto_id }}_helptext">
+                            {{ field.help_text|safe }}
+                        </p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <div class="fieldWrapper">
+                    <button type="submit" class="btn btn--m btn--primary">Upload</button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
+<script>
+    const input = document.getElementById("id_file");
+    const preview = document.querySelector(".tag");
+    const label = document.querySelector('label[for="id_file"]');
+    
+    function updateDocDisplay() {
+        const curFiles = input.files;
+        if (curFiles.length > 0) {
+            preview.classList.add('not-visible')
+            label.classList.add('not-visible')
+            const preview = document.createElement('div')
+            const previewChild = document.createElement('div')
+            
+            document.insertBefore(label, preview);
+        } else {
+            preview.classList.remove('not-visible')
+            label.classList.remove('not-visible')
+        }
+    }
+
+    input.addEventListener('change', updateDocDisplay);
+
+</script>
+{% endblock content %}
