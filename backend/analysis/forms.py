@@ -89,3 +89,33 @@ class UserChangeForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ("email", "password", "is_staff", "is_superuser")
+
+
+class MultipleFileInput(forms.ClearableFileInput):
+    allow_multiple_selected = True
+
+class MutlipleFileField(forms.FileField):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("widget", MultipleFileInput())
+        super().__init__(*args, **kwargs)
+    
+    def clean(self, data: Any, initial: Any | None = None) -> Any:
+        single_file_clean = super().clean
+        if isinstance(data, list | tuple):
+            result = [single_file_clean(d, initial) for d in data]
+        else:
+            result = [single_file_clean(data, initial)]
+        return result
+
+
+class UploadFileForm(forms.Form):
+    email = forms.EmailField(
+        label=_("Email address"),
+        help_text=_("Email should be a valid email address matching RFC standard"),
+        widget=forms.EmailInput(attrs={'placeholder': 'john@email.com'})
+    )
+    file = MutlipleFileField(
+        widget=MultipleFileInput(attrs={
+            'accept': 'application/pdf, .pdf',
+        })
+    )
