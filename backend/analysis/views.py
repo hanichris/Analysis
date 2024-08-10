@@ -2,12 +2,10 @@ import json
 import logging
 import os
 
-from uuid import UUID
 from pathlib import Path
 
-from django.core import serializers
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db import transaction, Error
+from django.db import Error
 from django.http import HttpRequest, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -15,8 +13,8 @@ from django.views.generic import CreateView, View, DetailView
 
 from pydantic import BaseModel, EmailStr, ValidationError
 
-from .forms import UserCreationForm
-from .models import User, Geofield, Comment
+from .forms import UserCreationForm, UploadFileForm
+from .models import User, Comment
 
 logger = logging.getLogger(__name__)
 
@@ -87,3 +85,23 @@ class SignUpView(CreateView):
 class UserProfileView(LoginRequiredMixin, DetailView):
     model = User
     template_name = "analysis/profile.html"
+
+class UploadReport(LoginRequiredMixin, View):
+    def get(self, request: HttpRequest, *args, **kwargs):
+        return render(
+            request,
+            "analysis/upload.html",
+            {
+                'form': UploadFileForm(),
+            }
+        )
+    
+    def post(self, request: HttpRequest, *args, **kwargs):
+        form = UploadFileForm(request.POST, request.FILES)
+        # for file in form.files['file']:
+        #     print(file)
+        print(form.files)
+        return JsonResponse({
+            'msg': 'File has been uploaded',
+            'type': 'success',
+        }, status=201)
