@@ -64,6 +64,10 @@ label {
     font-variation-settings: 'wght' 550;
 }
 
+svg {
+    display: none;
+}
+
 .presentation {
     border-radius: 5px;
     border: 1px dashed rgb(187, 186, 184);
@@ -73,6 +77,10 @@ label {
     margin-top: 0;
     padding: 2rem;
     position: relative;
+
+    div {
+        margin-top: 0;
+    }
 
     .tag {
         display: block;
@@ -87,7 +95,49 @@ label {
     }
 
     .preview {
-        margin-top: 0;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        align-self: center;
+
+        .prev--container {
+            border-radius: .5rem;
+            box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 1px 0px, rgba(61, 59, 53, 0.16) 0px 0px 0px 1px, rgba(61, 59, 53, 0.08) 0px 2px 5px 0px;
+            display: flex;
+            flex-direction: column;
+            width: 20rem;
+
+            & div:first-child {
+                align-items: center;
+                display: flex;
+                height: 20rem;
+                justify-content: center;
+            }
+
+            & div:last-child {
+                border-top: 1px solid rgba(55, 53, 47, 0.09);
+                display: flex;
+                font-size: var(--font-size-x-small);
+                font-variation-settings: 'wght' 500;
+                justify-content: space-between;
+                padding: .4rem;
+                padding-left: 1rem;
+
+                span {
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                button {
+                    cursor: pointer;
+                    flex-shrink: 0;
+                    background: transparent;
+                    border: none;
+                    padding: 0;
+                }
+            }
+        }
     }
 }
 
