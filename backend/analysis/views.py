@@ -100,7 +100,7 @@ class UploadReport(LoginRequiredMixin, View):
         form = UploadFileForm(request.POST, request.FILES)
         # for file in form.files['file']:
         #     print(file)
-        print(form.files)
+        print(form)
         return JsonResponse({
             'msg': 'File has been uploaded',
             'type': 'success',
