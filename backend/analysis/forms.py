@@ -119,3 +119,12 @@ class UploadFileForm(forms.Form):
             'accept': 'application/pdf, .pdf',
         })
     )
+
+    def clean_email(self):
+        pat = re.compile(
+            r"[\w!#$%&'*+\/=?`\{\|\}~^\-]+(?:\.[\w!#$%&'*+\/=?`\{\|\}~^\-])*@(?:[a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,6}"
+        )
+        email: str | Any = self.cleaned_data.get("email")
+        if pat.fullmatch(email) is None:
+            raise ValidationError(_("The provided email address is not valid."))
+        return email
