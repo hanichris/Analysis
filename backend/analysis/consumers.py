@@ -1,7 +1,6 @@
 import json
 from uuid import UUID
 
-from django.core import serializers
 from django.db import transaction
 
 from channels.generic.websocket import WebsocketConsumer
