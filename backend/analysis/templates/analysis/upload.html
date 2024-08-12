@@ -12,6 +12,7 @@
     </header>
     <main>
         <div class="wrapper">
+            {{ form.non_field_errors }}
             <form action="" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% for field in form %}
@@ -29,6 +30,7 @@
                                     <span class="info">Choose report file(s) to upload:</span>
                                 </label>
                                 {{ field }}
+                                {{ field.errors }}
                                 <span class="tag">Accepts .pdf files</span>
                             </div>
                         {% else %}
@@ -37,6 +39,7 @@
                         <p class="form-help" id="{{ field.auto_id }}_helptext">
                             {{ field.help_text|safe }}
                         </p>
+                        {{ field.errors }}
                         {% endif %}
                     </div>
                 {% endfor %}
@@ -66,16 +69,34 @@
     const del = document.querySelector('[data-svg="del"]');
     const svg = document.querySelector('[data-svg="rec"]');
     const presentation = document.querySelector('.presentation');
+
+    function removeFile(index) {
+        const dt = new DataTransfer();
+        const input = document.getElementById("id_file");
+        const { files } = input;
+        console.log(index);
+        for (let i = 0; i < files.length; i++) {
+            if (index !== i){
+                dt.items.add(files[i]);
+            } 
+        }
+        console.log(dt.files);
+        input.files = dt.files
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+    }
     
     function updateDocDisplay() {
         const curFiles = input.files;
         if (curFiles.length > 0) {
             tag.classList.add('not-visible');
             label.classList.add('not-visible');
+            const elem = document.getElementById('preview');
+            if (elem) elem.remove();
             const preview = document.createElement('div');
             preview.classList.add('preview');
-            let count = 0;
-            for (const file of curFiles) {
+            preview.setAttribute('id', 'preview');
+
+            for (let count = 0; count < curFiles.length; count++) {
                 const svgClone = svg.cloneNode(true);
                 const delClone = del.cloneNode(true);
                 const container = document.createElement('div');
@@ -83,18 +104,17 @@
                 container.classList.add('prev--container');
                 const childOne = document.createElement('div');
                 const childTwo = document.createElement('div');
-
+                
                 const span = document.createElement('span');
-                span.textContent = file.name;
+                span.textContent = curFiles[count].name;
                 const btn = document.createElement('button');
                 delClone.style.display = 'block'
                 btn.appendChild(delClone);
                 btn.addEventListener('click', (e) => {
                     e.preventDefault();
-                    let k = count;
-                    console.log(k);
-                    // const elem = document.getElementById(`${count}`);
-                    // preview.removeChild(elem);
+                    const elem = document.getElementById(`${count}`);
+                    preview.removeChild(elem);
+                    removeFile(count);
                 }, false);
 
                 childTwo.appendChild(span);
@@ -104,15 +124,13 @@
                 container.appendChild(childOne)
                 container.appendChild(childTwo)
                 preview.appendChild(container);
-                count++;
             }
-
-    
-
             presentation.appendChild(preview);
         } else {
             tag.classList.remove('not-visible');
             label.classList.remove('not-visible');
+            const elem = document.getElementById('preview');
+            if (elem) elem.remove();
         }
     }
 
