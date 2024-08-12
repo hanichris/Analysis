@@ -65,7 +65,20 @@ class Message(AbstractTime):
 
     def __str__(self) -> str:
         return f"{self.message[:10]}"
+
+class Report(AbstractTime):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    file = models.FileField(upload_to='pdfs')
+    updated_at = None
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["file"])
+        ]
     
+    def __str__(self) -> str:
+        return self.file.url
+
 class Comment(AbstractTime):
     first_name = models.CharField(max_length=35)
     last_name = models.CharField(max_length=40)
