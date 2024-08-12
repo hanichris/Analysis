@@ -75,8 +75,11 @@ svg {
     display: flex;
     flex-direction: column;
     margin-top: 0;
+    max-height: 50rem;
+    overflow-y: auto;
     padding: 2rem;
     position: relative;
+    transition: .3s;
 
     div {
         margin-top: 0;
@@ -222,6 +225,14 @@ input[type=text]:focus:not(:disabled) {
 .fieldWrapper:focus-within .form-help {
     max-height: 3rem;
     padding: 0.2rem 0 .5rem .5rem;
+}
+
+.fieldWrapper:has(.errorlist) {
+    input[type=email],
+    input[type=password],
+    input[type=text] {
+        box-shadow: inset var(--color-red) 0 0 0 1px
+    }
 }
 
 .footer--signin {
