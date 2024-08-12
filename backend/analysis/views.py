@@ -5,16 +5,17 @@ import os
 from pathlib import Path
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db import Error
+from django.core.files.uploadedfile import UploadedFile
+from django.db import Error, transaction
 from django.http import HttpRequest, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, View, DetailView
 
 from pydantic import BaseModel, EmailStr, ValidationError
 
 from .forms import UserCreationForm, UploadFileForm
-from .models import User, Comment
+from .models import User, Comment, Report
 
 logger = logging.getLogger(__name__)
 
@@ -98,10 +99,35 @@ class UploadReport(LoginRequiredMixin, View):
     
     def post(self, request: HttpRequest, *args, **kwargs):
         form = UploadFileForm(request.POST, request.FILES)
-        # for file in form.files['file']:
-        #     print(file)
-        print(form)
-        return JsonResponse({
-            'msg': 'File has been uploaded',
-            'type': 'success',
-        }, status=201)
+        if form.is_valid():
+            email = request.POST['email']
+            user = get_object_or_404(User, email=email)
+            self.handle_uploaded_file(user, form.cleaned_data['file'])
+        else:
+            return render(
+                request,
+                'analysis/upload.html',
+                {
+                    'form': form
+                }
+            )
+            
+        return render(
+            request,
+            "analysis/upload.html",
+            {
+                'form': UploadFileForm(),
+            }
+        )
+
+    def handle_uploaded_file(self, user: User, files: list[UploadedFile]):
+        uploaded_files = [
+            Report(
+                user=user,
+                file=file
+            )
+            for file in files
+        ]
+
+        with transaction.atomic():
+            Report.objects.bulk_create(uploaded_files)
