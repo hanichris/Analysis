@@ -251,6 +251,62 @@
                                         <div>Your generated reports.</div>
                                     </header>
                                 </div>
+                                <div class="content_user_wrapper">
+                                    <div class="content_spacing table">
+                                        <div class="spacer"></div>
+                                    </div>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Report</th>
+                                                <th>Date Uploaded</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for report in page_obj %}
+                                                <tr>
+                                                    <td data-label="No.">{{ forloop.counter }}</td>
+                                                    <td data-label="Report">
+                                                        <a href="{{ report.file.url }}">
+                                                            {{ report.name }}
+                                                        </a>
+                                                    </td>
+                                                    <td data-label="Date">{{ report.created_at|date:"d N Y P" }}</td>
+                                                </tr>
+                                            {% empty %}
+                                                <div class="no-reports">
+                                                    <div>
+                                                        <svg height="90px" width="90px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 279.967 279.967" xml:space="preserve">
+                                                            <path style="fill:currentColor;" d="M272.467,161.817c4.142,0,7.5-3.358,7.5-7.5V69.458c0-4.142-3.358-7.5-7.5-7.5H60.907
+                                                                c-4.142,0-7.5,3.358-7.5,7.5V220.58c0,10.441-8.495,18.937-18.937,18.937h-0.534C23.495,239.516,15,231.021,15,220.58V40.451
+                                                                h215.204c4.142,0,7.5-3.358,7.5-7.5s-3.358-7.5-7.5-7.5H7.5c-4.142,0-7.5,3.358-7.5,7.5V220.58
+                                                                c0,18.713,15.224,33.937,33.937,33.937h0.534h201.198c24.426,0,44.299-19.873,44.299-44.299c0-4.142-3.358-7.5-7.5-7.5
+                                                                s-7.5,3.358-7.5,7.5c0,16.156-13.144,29.299-29.299,29.299H62.619c3.653-5.412,5.788-11.93,5.788-18.937V76.958h196.56v77.359
+                                                                C264.967,158.459,268.325,161.817,272.467,161.817z"/>
+                                                        </svg>
+                                                        <span>You don't have any reports generated yet.</span>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="pagination">
+                                    <span class="step-links">
+                                        {% if page_obj.has_previous %}
+                                            <a href="?page=1">&laquo; first</a>
+                                            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                                        {% endif %}
+                                        <span class="current">
+                                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                                        </span>
+                                        {% if page_obj.has_next %}
+                                            <a href="?page={{ page_obj.next_page_number }}">next</a>
+                                            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                                        {% endif %}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -286,8 +342,16 @@
 <script>
     window.onload = () => {
         const links = document.querySelectorAll('li > a');
-        let activeDiv = document.querySelector('[data-tab="general"]');;
-        let activeLink = links[0];
+        let activeDiv;
+        let activeLink;
+        if (window.location.search.length > 0) {
+            activeLink = document.getElementById('reports');
+            activeDiv = document.querySelector('[data-tab="reports"]');
+        } else {
+            activeDiv = document.querySelector('[data-tab="general"]');
+            activeLink = links[0];
+        }
+        
         activeDiv.classList.add('is-visible');
         activeLink.classList.add('is-active');
 
