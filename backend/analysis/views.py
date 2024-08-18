@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator
 from django.core.files.uploadedfile import UploadedFile
 from django.db import Error, transaction
 from django.http import HttpRequest, JsonResponse
@@ -83,9 +84,21 @@ class SignUpView(CreateView):
     template_name = "registration/signup.html"
 
 
-class UserProfileView(LoginRequiredMixin, DetailView):
-    model = User
-    template_name = "analysis/profile.html"
+class UserProfileView(LoginRequiredMixin, View):
+    def get(self, request: HttpRequest, *args, **kwargs):
+        reports = Report.objects.filter(user=request.user).order_by('-created_at')
+        paginator = Paginator(reports, 3)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return render(
+            request,
+            'analysis/profile.html',
+            {
+                'page_obj': page_obj
+            }
+        )
+    def post(self, *args, **kwargs):
+        pass
 
 class UploadReport(LoginRequiredMixin, View):
     def get(self, request: HttpRequest, *args, **kwargs):
