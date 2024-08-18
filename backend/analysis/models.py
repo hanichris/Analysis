@@ -73,11 +73,16 @@ class Report(AbstractTime):
 
     class Meta:
         indexes = [
+            models.Index(fields=["id"]),
             models.Index(fields=["file"])
         ]
     
     def __str__(self) -> str:
         return self.file.url
+    
+    @property
+    def name(self):
+        return self.file.name.rsplit('/', maxsplit=1)[-1]
 
 class Comment(AbstractTime):
     first_name = models.CharField(max_length=35)
