@@ -19,6 +19,12 @@
 }
 
 header {
+    position: relative;
+
+    #back {
+        position: absolute;
+        left: 1rem;
+    }
 
     .profile-image {
         display: flex;
