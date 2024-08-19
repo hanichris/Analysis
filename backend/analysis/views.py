@@ -4,18 +4,18 @@ import os
 
 from pathlib import Path
 
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.core.files.uploadedfile import UploadedFile
-from django.db import Error, transaction
-from django.http import HttpRequest, JsonResponse
+from django.db import Error
+from django.http import HttpRequest, JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, View, DetailView
+from django.views.generic import CreateView, View
 
 from pydantic import BaseModel, EmailStr, ValidationError
 
 from .forms import UserCreationForm, UploadFileForm
+from .mixins import AsyncLoginRequiredMixin, AsyncUserPassesTestMixin
 from .models import User, Comment, Report
 
 logger = logging.getLogger(__name__)
@@ -33,7 +33,7 @@ class IndexView(View):
     with new_path.open(encoding='utf-8') as fd:
         manifest: dict = json.load(fd)
 
-    def get(self, request: HttpRequest, *args, **kwargs):
+    async def get(self, request: HttpRequest, *args, **kwargs):
         return render(
             request,
             "analysis/home.html",
@@ -42,10 +42,10 @@ class IndexView(View):
             }
         )
     
-    def post(self, request: HttpRequest, *args, **kwargs):
+    async def post(self, request: HttpRequest, *args, **kwargs):
         try:
             data = PostData(**json.loads(request.body.decode('utf-8')))
-            Comment.objects.create(**data.model_dump())
+            await Comment.objects.acreate(**data.model_dump())
         except ValidationError as err:
             logger.error(err)
             return JsonResponse({
@@ -64,16 +64,18 @@ class IndexView(View):
                 "type": "success"
             }, status=201)
 
-class DashboardView(LoginRequiredMixin, View):
+class DashboardView(AsyncLoginRequiredMixin, View):
     
     access_token = os.getenv('MAPBOX_ACCESS_TOKEN')
 
-    def get(self, request: HttpRequest, *args, **kwargs):
+    async def get(self, request: HttpRequest, *args, **kwargs):
+        user = await request.auser() # type: ignore
         return render(
             request,
             "analysis/dashboard.html",
             {
-                "access_token": self.access_token
+                "access_token": self.access_token,
+                "user": user
             }
         )
 
@@ -84,24 +86,30 @@ class SignUpView(CreateView):
     template_name = "registration/signup.html"
 
 
-class UserProfileView(LoginRequiredMixin, View):
-    def get(self, request: HttpRequest, *args, **kwargs):
-        reports = Report.objects.filter(user=request.user).order_by('-created_at')
-        paginator = Paginator(reports, 3)
+class UserProfileView(AsyncLoginRequiredMixin, View):
+    async def get(self, request: HttpRequest, *args, **kwargs):
+        user = await request.auser() # type: ignore
+        reports =  [
+            report
+            async for report in 
+            Report.objects.filter(user=user).order_by('-created_at')
+        ]
         page_number = request.GET.get('page')
+        paginator = Paginator(reports, 3)
         page_obj = paginator.get_page(page_number)
         return render(
             request,
             'analysis/profile.html',
             {
-                'page_obj': page_obj
+                'page_obj': page_obj,
+                'user': user,
             }
         )
-    def post(self, *args, **kwargs):
+    async def post(self, *args, **kwargs):
         pass
 
-class UploadReport(LoginRequiredMixin, View):
-    def get(self, request: HttpRequest, *args, **kwargs):
+class UploadReport(AsyncLoginRequiredMixin, AsyncUserPassesTestMixin, View):
+    async def get(self, request: HttpRequest, *args, **kwargs):
         return render(
             request,
             "analysis/upload.html",
@@ -110,12 +118,12 @@ class UploadReport(LoginRequiredMixin, View):
             }
         )
     
-    def post(self, request: HttpRequest, *args, **kwargs):
+    async def post(self, request: HttpRequest, *args, **kwargs):
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             email = request.POST['email']
             user = get_object_or_404(User, email=email)
-            self.handle_uploaded_file(user, form.cleaned_data['file'])
+            await self.handle_uploaded_file(user, form.cleaned_data['file'])
         else:
             return render(
                 request,
@@ -133,7 +141,7 @@ class UploadReport(LoginRequiredMixin, View):
             }
         )
 
-    def handle_uploaded_file(self, user: User, files: list[UploadedFile]):
+    async def handle_uploaded_file(self, user: User, files: list[UploadedFile]):
         uploaded_files = [
             Report(
                 user=user,
@@ -142,5 +150,4 @@ class UploadReport(LoginRequiredMixin, View):
             for file in files
         ]
 
-        with transaction.atomic():
-            Report.objects.bulk_create(uploaded_files)
+        await Report.objects.abulk_create(uploaded_files)
