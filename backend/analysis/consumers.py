@@ -1,8 +1,6 @@
 import json
 from uuid import UUID
 
-from django.db import transaction
-
 from channels.generic.websocket import WebsocketConsumer
 
 from .models import Geofield
@@ -30,13 +28,12 @@ class GeoConsumer(WebsocketConsumer):
                 for feature in data.get("features") # type: ignore
             ]
 
-            with transaction.atomic():
-                created_objects = Geofield.objects.bulk_create(
-                    create_data,
-                    update_conflicts=True,
-                    update_fields=["geometry"],
-                    unique_fields=["feature_id"]   
-                )
+            created_objects = Geofield.objects.bulk_create(
+                create_data,
+                update_conflicts=True,
+                update_fields=["geometry"],
+                unique_fields=["feature_id"]   
+            )
 
             content['msg'] = 'Successfully saved the coordinates into the database'
             content['op'] = "POST",
@@ -55,7 +52,6 @@ class GeoConsumer(WebsocketConsumer):
             qs = Geofield.objects.select_related(
                 "user"
             ).filter(user__email=self.user)
-
             content['msg'] = 'Successfully retrieved data from the database'
             content['op'] = 'GET'
             content['success'] = True
@@ -68,7 +64,6 @@ class GeoConsumer(WebsocketConsumer):
                 }
                 for entry in qs
             ]
-            
         self.send(text_data=json.dumps(content))
 
     def disconnect(self):
