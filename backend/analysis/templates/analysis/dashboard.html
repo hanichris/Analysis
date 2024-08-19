@@ -33,7 +33,7 @@
         <div class="modal_cell">
             <div class="modal_element" id="element">
                 <div class="modal_title">
-                    <div class="user_email">{{  request.user.email }}</div>
+                    <div class="user_email">{{  user.email }}</div>
                 </div>
                 <button type="button" id="closeModal" class="button">
                     <svg width="22" height="22" viewBox="1 1 22 22" focusable="false">
@@ -53,7 +53,7 @@
                     </div>
                     <div>
                         <span class="profile--link">
-                            <a href="{% url 'analysis:profile' request.user.id %}">
+                            <a href="{% url 'analysis:profile' user.id %}">
                                 <div>
                                     Manage your Account
                                 </div>
