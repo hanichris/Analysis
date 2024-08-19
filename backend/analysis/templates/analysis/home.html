@@ -8,6 +8,7 @@
 {% endblock css%}
 
 {% block content %}
+{% csrf_token %}
 <div id="root"></div>
 <script type="module" src="{% static 'index-bundle.js' %}"></script>
 {% endblock content %}
