@@ -274,7 +274,7 @@
                                                 <tr>
                                                     <td data-label="No.">{{ forloop.counter }}</td>
                                                     <td data-label="Report">
-                                                        <a href="{{ report.file.url }}">
+                                                        <a href="{% url 'analysis:download_file' report.id %}" download>
                                                             {{ report.name }}
                                                         </a>
                                                     </td>
