@@ -4,7 +4,8 @@ from ...types.response import Params
 
 def params_to_query_string(params: Params) -> dict:
     valid_params = params.model_dump()
-    valid_params['include'] = ','.join(valid_params['include'])
+    if isinstance(valid_params['include'], list):
+        valid_params['include'] = ','.join(valid_params['include'])
     search_params = {}
     for key in valid_params:
         val = valid_params[key]
