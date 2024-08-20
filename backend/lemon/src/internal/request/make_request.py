@@ -1,8 +1,10 @@
 import sys
+
 from enum import Enum
 from typing import Any, cast, Generic, TypeVar
 
 import httpx
+
 from pydantic import BaseModel
 
 from ..utils import get_kv, CONFIG_KEY, API_BASE_URL, Error, JSONAPIError
@@ -46,7 +48,8 @@ async def fetch(options: FetchOptions, requiresApiKey = True):
         accompanying api key to be sent with the request.
 
     Returns:
-        Response. Includes `status_code`, `data` and `error`.
+        Response: `dict`. Includes `status_code`, `data` and `error` as the keys
+        to the response dictionary.
     """
     options_valid = options.model_dump()
     response = {
