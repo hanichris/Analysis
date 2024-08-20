@@ -25,7 +25,6 @@ class TestListProducts(unittest.IsolatedAsyncioTestCase):
 
     async def test_list_all_products(self):
         """Tests that a paginated list of products is returned."""
-        global PRODUCT_ID
         response = await list_products({
             "filter": {
                 "store_id": self.store_id
