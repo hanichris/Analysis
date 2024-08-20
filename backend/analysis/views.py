@@ -7,8 +7,8 @@ from pathlib import Path
 from django.core.paginator import Paginator
 from django.core.files.uploadedfile import UploadedFile
 from django.db import Error
-from django.http import HttpRequest, JsonResponse, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.http import HttpRequest, JsonResponse
+from django.shortcuts import render, aget_object_or_404 # type: ignore
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, View
 
@@ -122,7 +122,7 @@ class UploadReport(AsyncLoginRequiredMixin, AsyncUserPassesTestMixin, View):
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             email = request.POST['email']
-            user = get_object_or_404(User, email=email)
+            user = await aget_object_or_404(User, email=email)
             await self.handle_uploaded_file(user, form.cleaned_data['file'])
         else:
             return render(
@@ -151,3 +151,8 @@ class UploadReport(AsyncLoginRequiredMixin, AsyncUserPassesTestMixin, View):
         ]
 
         await Report.objects.abulk_create(uploaded_files)
+
+
+async def download_file(request, pk: int):
+    uploaded_file = await Report.objects.aget(pk=pk)
+    print(uploaded_file.file.name)
