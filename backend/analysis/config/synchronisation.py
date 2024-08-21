@@ -8,10 +8,15 @@ from analysis.models import Plan
 from lemon.src.products import list_products, get_product
 from lemon.src.prices import list_prices
 
-async def sync_plans():
+async def sync_plans() -> list[Plan] | None:
     """Synchronises the product variants from Lemon Squeezy with the database.
 
-    Only synchronises the `subscription` variants.
+    Only synchronises the `subscription` variants. If there were variants
+    obtained from Lemon Squeezy, then they are made available to the caller.
+
+    Returns:
+        list[Plan] | None. The saved plan objects if there were any variants
+        obtained from Lemon Squeezy. Otherwise, None.
     """
     configure_lemonsqueezy()
 
@@ -42,7 +47,7 @@ async def sync_plans():
                 )
             ]
         response = [result[-1] for result in map(lambda x: x.result(), tasks) if result[0]]
-        await save_variants(response)
+        return await save_variants(response)
 
 async def get_variant_details(
         variant: dict
@@ -113,9 +118,9 @@ async def get_variant_details(
         
     return is_subscription, variant_obj
 
-async def save_variants(data: list[dict]):
+async def save_variants(data: list[dict]) -> list[Plan]:
     """Saves the information regarding the retrieved variants into the database.
-    
+
     Args:
         data: a list of objects holding information about each variant.
     
@@ -147,3 +152,4 @@ async def save_variants(data: list[dict]):
 
     for plan in saved_plans:
         print(f"{plan.name} synced with the database...")
+    return saved_plans
