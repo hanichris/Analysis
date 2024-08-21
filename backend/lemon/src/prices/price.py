@@ -17,7 +17,7 @@ async def get_price(
         params: Optional dictionary of parameters.
 
     Returns:
-        dict. Response object with the keys `data`, `error`
+        Response object with the keys `data`, `error`
         and `status_code`.
 
     Raises:
@@ -42,7 +42,7 @@ async def list_prices(params: dict = {}):
         params: Optional set of path parameters.
 
     Returns:
-        dict. Response object with the keys `data`, `error`, and
+        Response object with the keys `data`, `error`, and
         `status_code`.
 
     Raises:
