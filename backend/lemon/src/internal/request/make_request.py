@@ -83,7 +83,8 @@ async def fetch(options: FetchOptions, requiresApiKey = True):
         base_url=API_BASE_URL,
         headers=headers,
         params=options_valid.get('param'),
-        follow_redirects=True
+        follow_redirects=True,
+        timeout=None
     ) as client:
         try:
             match options.method:
