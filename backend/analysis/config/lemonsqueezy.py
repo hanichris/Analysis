@@ -8,7 +8,7 @@ def err_fn(error: Error):
 
     Args:
         error: The error that has occurred.
-    
+
     Raises:
         RuntimeError: When an unexpected error occurs during execution.
     """
@@ -30,7 +30,7 @@ def configure_lemonsqueezy():
     required_vars = (
         "LEMONSQUEEZY_API_KEY",
         "LEMONSQUEEZY_STORE_ID",
-        "LEMONSQUEEZY_WEBHOOK_SECRET",
+        # "LEMONSQUEEZY_WEBHOOK_SECRET",
     )
 
     missing_vars = [x for x in required_vars if os.getenv(x) is None]
