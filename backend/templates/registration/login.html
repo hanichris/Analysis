@@ -19,6 +19,9 @@
             {{ form.non_field_errors }}
             <form method="post" action="{% url 'login' %}">
                 {% csrf_token %}
+                {% if next %}
+                <input type="hidden" name="next" value="{{ next }}" />
+                {% endif %}
                 {% for field in form %}
                 <div class="fieldWrapper">
                     {{ field.label_tag }}
