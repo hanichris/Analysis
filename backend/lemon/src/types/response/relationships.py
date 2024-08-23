@@ -27,7 +27,7 @@ type Types = Literal[
     "webhooks",
 ]
 
-type RelationshipKeys = Literal[
+type _Keys = Literal[
     "store",
     "product",
     "variant",
@@ -40,8 +40,9 @@ type RelationshipKeys = Literal[
     "subscription-item",
     "discount",
     "license-key",
-    Types
 ]
+
+type RelationshipKeys = _Keys | Types
 
 class Links(TypedDict):
     related: str
@@ -72,13 +73,8 @@ class Pick(BaseModel, Generic[T]):
     keys: Sequence[T]
 
     def pick(self):
-        config = {
-            'extra': 'forbid',
-            'validate_assignment': True
-        }
         keys_model = create_model(
             'Keys',
-            __config__=ConfigDict(**config),
             **{key: (RelationshipLinks, ...) for key in self.keys}
         ) # type: ignore
         class Keys(RootModel):
@@ -95,7 +91,7 @@ class Pick(BaseModel, Generic[T]):
 
 if __name__ == "__main__":
 
-    Model = Pick[RelationshipKeys](keys=['store', 'variant']).pick()
+    Model = Pick[RelationshipKeys](keys=['store', 'variants']).pick()
     
     data = {
         'store': {
@@ -110,7 +106,7 @@ if __name__ == "__main__":
                 }
             ]
         },
-        'variant': {
+        'variants': {
             'link': {
                 'related': '',
                 'self': '',
@@ -118,4 +114,5 @@ if __name__ == "__main__":
         },
     }
     valid = Model(data)
+    print(valid)
     
