@@ -6,6 +6,7 @@ from . import views
 app_name = "analysis"
 urlpatterns = [
     path("", cache_page(60 * 60)(views.IndexView.as_view()), name="index"),
+    path("billing/", views.Billing.as_view(), name="billing"),
     path("dashboard/", views.DashboardView.as_view(), name='dashboard'),
     path("users/<uuid:pk>", views.UserProfileView.as_view(), name='profile'),
     path("download/<int:pk>", views.download_file, name="download_file"),
