@@ -28,6 +28,7 @@
     --error-color: var(--color-vermilion);
     --text-color: var(--color-eerie-black);
     --valid-color: var(--color-dark-green);
+    --surface-color: hsl(220, 37%, 97%);
 
     --font-size-x-small: 1.2rem;
     --font-size-small: 1.4rem;
@@ -42,6 +43,7 @@
 
     /* --font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; */
     --font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    --font-family-accent: "Young Serif", serif;
 
     /* FOOTER */
     --footer-padding: 5rem 0rem 1rem;
