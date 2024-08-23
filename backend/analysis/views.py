@@ -14,9 +14,10 @@ from django.views.generic import CreateView, View
 
 from pydantic import BaseModel, EmailStr, ValidationError
 
+from .config import sync_plans
 from .forms import UserCreationForm, UploadFileForm
 from .mixins import AsyncLoginRequiredMixin, AsyncUserPassesTestMixin
-from .models import User, Comment, Report
+from .models import User, Comment, Report, Plan
 
 logger = logging.getLogger(__name__)
 
@@ -156,3 +157,17 @@ class UploadReport(AsyncLoginRequiredMixin, AsyncUserPassesTestMixin, View):
 async def download_file(request, pk: int):
     uploaded_file = await Report.objects.aget(pk=pk)
     print(uploaded_file.file.name)
+
+class Billing(View):
+    async def get(self, request: HttpRequest, *args, **kwargs):
+        count = await Plan.objects.acount()
+        plans = await sync_plans() if count == 0 else [
+            plan async for plan in Plan.objects.all()
+        ]
+        return render(
+            request,
+            'analysis/billing.html',
+            {
+                'plans': plans,
+            }
+        )
