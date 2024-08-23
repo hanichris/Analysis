@@ -1,41 +1,16 @@
-from typing import Any, Sequence, TypedDict, NotRequired, Literal, Iterator
-
-from pydantic import create_model, RootModel
+from typing import Any, TypedDict, NotRequired, Literal
 
 from ..types.response import (
     Data,
     Params,
+    Pick,
     RelationshipKeys,
-    RelationshipLinks,
 )
 
 type Category = Literal["one_time", "subscription", "lead_magnet", "pwyw"]
 type Scheme = Literal["standard", "package", "graduated", "volume"]
 type UsageAggregation = Literal["sum", "last_during_period", "last_ever", "max"]
 type TaxCode = Literal["eservice", "ebook", "saas"]
-
-
-class Pick[T]:
-    keys: Sequence[T]
-    def __init__(self, keys: Sequence[T]) -> None:
-        Pick.keys = keys
-    
-    @classmethod
-    def pick(cls):
-        assert isinstance(cls.keys, list), "Provide the keys as a 'list'"
-        keys_model = create_model(
-            'Keys', **{key: (RelationshipLinks, ...) for key in cls.keys}
-        ) # type: ignore
-        class Keys(RootModel):
-            root: keys_model # type: ignore
-
-            def __getitem__(self, item: T) -> RelationshipLinks:
-                return self.root[item]
-
-            def __iter__(self) -> Iterator[T]:
-                return iter(self.root)
-        
-        return Keys
 
 class Tier(TypedDict):
     last_unit: str | int
@@ -68,7 +43,7 @@ class Attributes(TypedDict):
 class VariantId(TypedDict):
     variant_id: NotRequired[int | str]
 
-class PriceData(Data[Attributes, Pick[RelationshipKeys](["stores", "variants"]).pick()]):
+class PriceData(Data[Attributes, Pick[RelationshipKeys](keys=["stores", "variants"]).pick()]):
     pass
 
 class GetPriceParams(Params[list[Literal['stores', 'variants']], dict[str, Any]]):
