@@ -43,11 +43,11 @@ class Attributes(TypedDict):
 class VariantId(TypedDict):
     variant_id: NotRequired[int | str]
 
-class PriceData(Data[Attributes, Pick[RelationshipKeys](keys=["stores", "variants"]).pick()]):
+class PriceData(Data[Attributes, Pick[RelationshipKeys](keys=["variant"]).pick()]):
     pass
 
-class GetPriceParams(Params[list[Literal['stores', 'variants']], dict[str, Any]]):
+class GetPriceParams(Params[list[Literal['variant']], dict[str, Any]]):
     pass
 
-class ListPriceParams(Params[list[Literal['stores', 'variants']], VariantId]):
+class ListPriceParams(Params[list[Literal['variant']], VariantId]):
     pass

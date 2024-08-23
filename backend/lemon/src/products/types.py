@@ -31,11 +31,11 @@ class Attributes(TypedDict):
 class StoreId(TypedDict):
     store_id: NotRequired[int | str]
 
-class ProductData(Data[Attributes, Pick[RelationshipKeys](keys=["stores", "variants"]).pick()]):
+class ProductData(Data[Attributes, Pick[RelationshipKeys](keys=["store", "variants"]).pick()]):
     pass
 
-class GetProductParams(Params[list[Literal['stores', 'variants']], dict[str, Any]]):
+class GetProductParams(Params[list[Literal['store', 'variants']], dict[str, Any]]):
     pass
 
-class ListProductParams(Params[list[Literal['stores', 'variants']], StoreId]):
+class ListProductParams(Params[list[Literal['store', 'variants']], StoreId]):
     pass
