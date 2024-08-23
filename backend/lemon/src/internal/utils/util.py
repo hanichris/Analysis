@@ -16,9 +16,9 @@ def params_to_query_string(params: Params) -> dict:
             search_params[key] = f'{val}' if val else val
     return search_params
 
-def include_to_query_string(include: list[Literal['stores', 'variants']] | None):
+def include_to_query_string(include: list | None):
     if isinstance(include, list):
         return {
-            "include": ''.join(include)
+            "include": ','.join(include)
         }
     return {}
