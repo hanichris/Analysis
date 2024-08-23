@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bleach_tags %}
+
+{% block title %}Billing{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'analysis/css/billing.css' %}">
+{% endblock css %}
+
+
+{% block content %}
+<main>
+    <div class="wrapper">
+        <article>
+            <header class="text-center">
+                <h1 class="page-title">
+                    Get the most out of your account with the right subscription.
+                </h1>
+                <p class="subtitle">
+                    Boot your farm's productivity with Divergent AG. Get real-time analytics tailored to your location. Subscribe now.
+                </p>
+            </header>
+            <ul class="even-columns pricing">
+                {% for plan in plans %}
+                    <li class="plan plan--{{ plan.name|lower }}">
+                        <h2 class="plan__title">{{ plan.product_name}} ({{ plan.name }})</h2>
+                        <p class="plan__price">{{ plan.price }} <span>/month</span></p>
+                        {% if plan.description %}
+                            <div class="description">
+                                {{ plan.description|bleach }}
+                            </div>
+                        {% endif %}
+                        <button class="button">Add subscription</button>
+                    </li>
+                {% empty %}
+                    <li>No plans available at the moment.</li>
+                {% endfor %}
+            </ul>
+        </article>
+    </div>
+</main>
+
+<script>
+    const prices = document.querySelectorAll('.plan__price');
+    prices.forEach((price) => {
+        let amount = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+        }).format((price.textContent.split('/')[0]) / 130);
+        
+        price.innerHTML = `${amount} <span>/month</span>`;
+    })
+</script>
+{% endblock content %}
