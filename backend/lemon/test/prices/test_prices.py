@@ -26,7 +26,7 @@ class TestListPrices(unittest.IsolatedAsyncioTestCase):
         """Tests that a paginated list of prices is returned."""
         response = await list_prices()
         self.assertEqual(response.get('status_code'), 200)
-        self.assertTrue(type(response.get('error') == None | Error))
+        self.assertIsNone(response.get('error'))
         self.assertTrue(response.get('data'))
 
         data: list[dict] = response['data']['data']
@@ -63,7 +63,7 @@ class TestListPrices(unittest.IsolatedAsyncioTestCase):
             },
         })
         self.assertEqual(response.get('status_code'), 200)
-        self.assertTrue(type(response.get('error') == None | Error))
+        self.assertIsNone(response.get('error'))
         self.assertTrue(response.get('data'))
 
         data: list[dict] = response['data']['data']
@@ -102,7 +102,7 @@ class TestGetPrice(unittest.IsolatedAsyncioTestCase):
         variant_id = 437958
         response = await get_price(price_id)
         self.assertEqual(response.get('status_code'), 200)
-        self.assertTrue(type(response.get('error') == None | Error))
+        self.assertIsNone(response.get('error'))
         self.assertTrue(response.get('data'))
 
         data: dict = response['data']['data']

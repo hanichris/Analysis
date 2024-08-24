@@ -31,7 +31,7 @@ class TestListProducts(unittest.IsolatedAsyncioTestCase):
             }
         })
         self.assertEqual(response.get('status_code'), 200)
-        self.assertTrue(type(response.get('error') == None | Error))
+        self.assertIsNone(response.get('error'))
         self.assertTrue(response.get('data'))
 
         data: list = response['data']['data']
@@ -68,7 +68,7 @@ class TestListProducts(unittest.IsolatedAsyncioTestCase):
             }
         })
         self.assertEqual(response.get('status_code'), 200)
-        self.assertTrue(type(response.get('error') == None | Error))
+        self.assertIsNone(response.get('error'))
         self.assertTrue(response.get('data'))
 
         data: list = response['data']['data']
@@ -88,7 +88,7 @@ class TestListProducts(unittest.IsolatedAsyncioTestCase):
             "include": ["variants"],
         })
         self.assertEqual(response.get('status_code'), 200)
-        self.assertTrue(type(response.get('error') == None | Error))
+        self.assertIsNone(response.get('error'))
         self.assertTrue(response.get('data'))
 
         data: list = response['data']['data']
@@ -117,7 +117,7 @@ class TestListProducts(unittest.IsolatedAsyncioTestCase):
             }
         })
         self.assertEqual(response.get('status_code'), 200)
-        self.assertTrue(type(response.get('error') == None | Error))
+        self.assertIsNone(response.get('error'))
         self.assertTrue(response.get('data'))
 
         links: dict = response['data']['links']
@@ -166,7 +166,7 @@ class TestGetProduct(unittest.IsolatedAsyncioTestCase):
         """
         response = await get_product(cast(str | int, self.product_id))
         self.assertEqual(response.get('status_code'), 200)
-        self.assertTrue(type(response.get('error') == None | Error))
+        self.assertIsNone(response.get('error'))
         self.assertTrue(response.get('data'))
 
         data: dict = response['data']['data']

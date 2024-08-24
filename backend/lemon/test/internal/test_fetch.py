@@ -31,7 +31,7 @@ class TestFetchFunctionalisty(unittest.IsolatedAsyncioTestCase):
         ))
 
         self.assertEqual(response.get('status_code'), 200)
-        self.assertTrue(type(response.get('error') == None | Error))
+        self.assertIsNone(response.get('error'))
         self.assertTrue(response.get('data'))
 
     async def test_empty_api_key(self):
@@ -86,7 +86,7 @@ class TestFetchFunctionalisty(unittest.IsolatedAsyncioTestCase):
         ))
 
         self.assertEqual(response.get('status_code'), 200)
-        self.assertTrue(type(response.get('error') == None | Error))
+        self.assertIsNone(response.get('error'))
         self.assertTrue(response.get('data'))
 
 
@@ -125,5 +125,5 @@ class TestFetchFunctionalisty(unittest.IsolatedAsyncioTestCase):
         ))
 
         self.assertEqual(response.get('status_code'), 201)
-        self.assertTrue(type(response.get('error') == None | Error))
+        self.assertIsNone(response.get('error'))
         self.assertTrue(response.get('data'))
