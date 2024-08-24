@@ -4,10 +4,10 @@ class MetaUrls(TypedDict):
     download_invoice: str
 
 MetaPage = TypedDict('MetaPage', {
-    "current_page": int,
+    "currentPage": int,
     "from": int,
-    "last_page": int,
-    "per_page": int,
+    "lastPage": int,
+    "perPage": int,
     "to": int,
     "total": int,
 })
