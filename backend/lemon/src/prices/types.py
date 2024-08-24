@@ -2,6 +2,8 @@ from typing import Any, TypedDict, NotRequired, Literal, ClassVar
 
 from ..types.response import (
     Data,
+    LemonSqueezyResponse,
+    MetaPage,
     Params,
     Pick,
     RelationshipKeys,
@@ -51,4 +53,29 @@ class GetPriceParams(Params[list[Literal['variant']], dict[str, Any]]):
     page: ClassVar
 
 class ListPriceParams(Params[list[Literal['variant']], VariantId]):
+    pass
+
+Link = TypedDict('Link', {'self': str})
+ListLink = TypedDict('ListLink', {'first': str, 'last': str})
+Meta = TypedDict('Meta', {'page': MetaPage})
+
+class Price(
+    LemonSqueezyResponse[
+        PriceData,
+        Link,
+        Any,
+        Data[dict[str, Any], Any]
+    ]
+):
+    meta: ClassVar
+
+
+class ListPrices(
+    LemonSqueezyResponse[
+        list[PriceData],
+        ListLink,
+        Meta,
+        Data[dict[str, Any], Any]
+    ]
+):
     pass
