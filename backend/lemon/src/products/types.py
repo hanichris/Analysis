@@ -3,6 +3,8 @@ from typing import Literal, TypedDict, Any, NotRequired, ClassVar
 from ..types.response import (
     RelationshipKeys,
     Data,
+    LemonSqueezyResponse,
+    MetaPage,
     Params,
     Pick
 )
@@ -14,8 +16,8 @@ class Attributes(TypedDict):
     description: str
     status: Literal["published", "draft"]
     status_formatted: str
-    thumb_url: str
-    large_thumb_url: str
+    thumb_url: str | None
+    large_thumb_url: str | None
     price: int
     price_formatted: str
     from_price: int | None
@@ -41,4 +43,28 @@ class GetProductParams(Params[list[Literal['store', 'variants']], dict[str, Any]
     page: ClassVar
 
 class ListProductParams(Params[list[Literal['store', 'variants']], StoreId]):
+    pass
+
+Link = TypedDict('Link', {'self': str})
+ListLink = TypedDict('ListLink', {'first': str, 'last': str})
+Meta = TypedDict('Meta', {'page': MetaPage})
+
+class Product(
+    LemonSqueezyResponse[
+        ProductData,
+        Link,
+        Any,
+        Data[dict[str, Any], Any]
+    ]
+):
+    meta: ClassVar
+
+class ListProducts(
+    LemonSqueezyResponse[
+        list[ProductData],
+        ListLink,
+        Meta,
+        Data[dict[str, Any], Any]
+    ]
+):
     pass
