@@ -55,7 +55,7 @@ async def fetch(options: FetchOptions, requiresApiKey = True):
     response = {
         "status_code": None,
         "data": None,
-        "error": None | Error,
+        "error": cast(None | Error, None),
     }
 
     config: dict = cast(dict, get_kv(CONFIG_KEY))
