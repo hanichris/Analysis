@@ -1,4 +1,4 @@
-from typing import Literal, TypedDict, Any, NotRequired
+from typing import Literal, TypedDict, Any, NotRequired, ClassVar
 
 from ..types.response import (
     RelationshipKeys,
@@ -31,11 +31,14 @@ class Attributes(TypedDict):
 class StoreId(TypedDict):
     store_id: NotRequired[int | str]
 
-class ProductData(Data[Attributes, Pick[RelationshipKeys](keys=["store", "variants"]).pick()]):
+class ProductData(
+    Data[Attributes, Pick[RelationshipKeys](keys=["store", "variants"]).pick()]
+):
     pass
 
 class GetProductParams(Params[list[Literal['store', 'variants']], dict[str, Any]]):
-    pass
+    filter: ClassVar
+    page: ClassVar
 
 class ListProductParams(Params[list[Literal['store', 'variants']], StoreId]):
     pass

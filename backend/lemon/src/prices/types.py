@@ -1,4 +1,4 @@
-from typing import Any, TypedDict, NotRequired, Literal
+from typing import Any, TypedDict, NotRequired, Literal, ClassVar
 
 from ..types.response import (
     Data,
@@ -47,7 +47,8 @@ class PriceData(Data[Attributes, Pick[RelationshipKeys](keys=["variant"]).pick()
     pass
 
 class GetPriceParams(Params[list[Literal['variant']], dict[str, Any]]):
-    pass
+    filter: ClassVar
+    page: ClassVar
 
 class ListPriceParams(Params[list[Literal['variant']], VariantId]):
     pass
