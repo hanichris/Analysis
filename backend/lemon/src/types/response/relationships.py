@@ -53,7 +53,7 @@ class Data(TypedDict):
     type: Types
 
 class RelationshipLinks(BaseModel, revalidate_instances='always'):
-    link: Links
+    links: Links
     data: list[Data] | Data | None = None
 
     def __getitem__(self, item) -> Links | list[Data] | None:
