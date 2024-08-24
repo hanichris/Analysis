@@ -1,10 +1,12 @@
-from typing import Literal, TypedDict, ClassVar, Any
+from typing import Literal, NotRequired, TypedDict, ClassVar, Any
 
 from pydantic import Field
 
 from ..types import ISO3166Alpha2CountryCode, ISO4217CurrencyCode
 from ..types.response import (
     Data,
+    LemonSqueezyResponse,
+    MetaPage,
     Params,
     RelationshipKeys,
     Pick
@@ -149,4 +151,33 @@ class GetCheckoutParams(Params[list[Literal['store', 'variant']], dict[str, Any]
     page: ClassVar
 
 class ListCheckoutParams(Params[list[Literal['store', 'variant']], IDS]):
+    pass
+
+class ListLinks(TypedDict):
+    first: str
+    last: str
+    next: NotRequired[str]
+    prev: NotRequired[str]
+
+Link = TypedDict('Link', {'self': str})
+Meta = TypedDict('Meta', {'page': MetaPage})
+
+class Checkout(
+    LemonSqueezyResponse[
+        CheckoutResponseData,
+        Link,
+        Any,
+        Data[dict[str, Any], Any]
+    ]
+):
+    meta: ClassVar
+
+class ListCheckouts(
+    LemonSqueezyResponse[
+        list[CheckoutResponseData],
+        ListLinks,
+        Meta,
+        Data[dict[str, Any], Any]
+    ]
+):
     pass
