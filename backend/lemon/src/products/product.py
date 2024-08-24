@@ -12,15 +12,18 @@ async def get_product(
     lemonSqueezy API for the product with the given id.
 
     Args:
-        product_id: The id of the product of interest.
-        params: Optional dictionary of parameters.
+        `product_id`: The id of the product of interest.
+        `params`: (Optional) Additional parameters.
+        `params['include']`: (Optional) Related resources.
 
     Returns:
-        Response object with the keys `data`, `error` and `status_code`.
+        Response object with the keys `data`, `error` and `status_code`. The
+        `data` key holds the product object.
 
     Raises:
         ValidationError: If the parameters passed do not match the required
-        signature.
+        signature or if the LemonSqueezy API response doesn't match the provided
+        pydantic schema.
     """
     options = FetchOptions(
         path=f"/v1/products/{product_id}",
@@ -37,14 +40,26 @@ async def list_products(params: dict = {}):
     lemonSqueezy API for a list of products.
 
     Args:
-        params: Optional set of path parameters.
+        `params`: (Optional) Additional parameters.
+        `params['filter']`: (Optional) Filter parameters.
+        `params['filter']['store_id']`: (Optional) Only return products belonging
+        to the store with this ID.
+        `params['page']`: (Optional) Custom paginated queries.
+        `params['page']['number']`: (Optional) The parameter determine which page
+        to retrieve.
+        `params['page']['size']`: (Optional) The parameter to determine how many
+        results to return per page.
+        `params['include']`: (Optional) Related resources.
 
     Returns:
-        Response object with the keys `data`, `error`, and `status_code`.
+        Response object with the keys `data`, `error`, and `status_code`. The
+        `data` key holds the paginated list of product objects ordered by
+        `created_at` (descending).
 
     Raises:
         ValidationError: If the parameters passed do not match the required
-        signature.
+        signature or if the LemonSqueezy API response doesn't match the provided
+        pydantic schema.
     """
     options = FetchOptions(
         path="/v1/products",
