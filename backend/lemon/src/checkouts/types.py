@@ -13,7 +13,7 @@ from ..types.response import (
 )
 
 
-class Variant(TypedDict):
+class VariantQuantity(TypedDict):
     variant_id: int
     quantity: int
 
@@ -126,7 +126,7 @@ class OptionalCheckoutData(TypedDict, total=False):
     tax_number: str
     discount_code: str
     custom: list | dict
-    variant_quantities: list[Variant]
+    variant_quantities: list[VariantQuantity]
 
 class NewCheckout(TypedDict, total=False):
     custom_price: int
