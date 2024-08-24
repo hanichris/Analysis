@@ -1,6 +1,6 @@
-from ..internal.request import fetch, FetchOptions
+from ..internal.request import fetch, FetchOptions, FetchResponse
 from ..internal.utils import params_to_query_string, include_to_query_string
-from .types import GetProductParams, ListProductParams
+from .types import GetProductParams, ListProductParams, Product, ListProducts
 
 async def get_product(
         product_id: int | str,
@@ -28,7 +28,7 @@ async def get_product(
             GetProductParams(**params).include
         )
     )
-    return await fetch(options)
+    return FetchResponse[Product](**await fetch(options)).model_dump()
 
 async def list_products(params: dict = {}):
     """Retrieve a list of products.
@@ -50,4 +50,4 @@ async def list_products(params: dict = {}):
         path="/v1/products",
         param=params_to_query_string(ListProductParams(**params))
     )
-    return await fetch(options)
+    return FetchResponse[ListProducts](**await fetch(options)).model_dump()
