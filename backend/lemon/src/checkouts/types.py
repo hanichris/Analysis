@@ -1,6 +1,7 @@
 from typing import Literal, NotRequired, TypedDict, ClassVar, Any
+from decimal import Decimal
 
-from pydantic import Field
+
 
 from ..types import ISO3166Alpha2CountryCode, ISO4217CurrencyCode
 from ..types.response import (
@@ -17,7 +18,7 @@ class VariantQuantity(TypedDict):
     variant_id: int
     quantity: int
 
-class BillingAddress(TypedDict):
+class BillingAddress(TypedDict, total=False):
     country: ISO3166Alpha2CountryCode
     zip: str
 
@@ -52,17 +53,17 @@ class CheckoutOptions(TypedDict):
 
 class Preview(TypedDict):
     currency: ISO4217CurrencyCode
-    currency_rate: int
-    subtotal: int
-    discount_total: int
-    tax: int
-    setup_fee_usd: int
-    setup_fee: int
-    total: int
-    subtotal_usd: int
-    discount_total_usd: int
-    tax_usd: int
-    total_usd: int
+    currency_rate: Decimal
+    subtotal: Decimal
+    discount_total: Decimal
+    tax: Decimal
+    setup_fee_usd: Decimal
+    setup_fee: Decimal
+    total: Decimal
+    subtotal_usd: Decimal
+    discount_total_usd: Decimal
+    tax_usd: Decimal
+    total_usd: Decimal
     subtotal_formatted: str
     discount_total_formatted: str
     setup_fee_formatted: str
@@ -142,7 +143,7 @@ class IDS(TypedDict, total=False):
     variant_id: int | str
 
 class CheckoutResponseData(
-    Data[Attributes, Pick[RelationshipKeys](keys=['store', 'variant']).pick]
+    Data[Attributes, Pick[RelationshipKeys](keys=['store', 'variant']).pick()]
 ):
     pass
 
