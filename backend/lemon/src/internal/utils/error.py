@@ -1,24 +1,22 @@
-from typing import Any
+from typing import Any, TypedDict
 
-from pydantic import BaseModel
+class Links(TypedDict, total=False):
+    about: str
+    type: str
 
-class Links(BaseModel):
-    about: str | None = None
-    type: str | None = None
+class Source(TypedDict, total=False):
+    pointer: str
+    parameter: str
 
-class Source(BaseModel):
-    pointer: str | None = None
-    parameter: str | None = None
-
-class JSONAPIError(BaseModel):
-    id: str | None = None
-    links: Links | None = None
-    status: str | None = None
-    code: str | None = None
+class JSONAPIError(TypedDict, total=False):
+    id: str
+    links: Links
+    status: str
+    code: str
     title: str
-    detail: str | None = None
-    source: Source | None = None
-    meta: dict[str, Any] | None = None
+    detail: str
+    source: Source
+    meta: dict[str, Any]
 
 
 class Error:
