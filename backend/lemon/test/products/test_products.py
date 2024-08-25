@@ -1,13 +1,13 @@
 import os
 import unittest
 
-from dotenv import load_dotenv
 from numbers import Number
 from pathlib import Path
 from typing import cast
 
+from dotenv import load_dotenv
+
 from src.internal.setup import lemon_squeezy_setup, Config
-from src.internal.utils import Error
 from src.products import list_products, get_product
 
 
