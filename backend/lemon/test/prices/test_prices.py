@@ -3,6 +3,7 @@ import unittest
 
 from numbers import Number
 from pathlib import Path
+from typing import cast
 
 from dotenv import load_dotenv
 
@@ -20,6 +21,7 @@ class TestListPrices(unittest.IsolatedAsyncioTestCase):
         lemon_squeezy_setup(Config(
             api_key= os.getenv("LEMONSQUEEZY_API_KEY"),
         ))
+        self.variant_id = os.getenv("LEMONSQUEEZY_VARIANT_ID")
     
     async def test_list_all_prices(self):
         """Tests that a paginated list of prices is returned."""
@@ -55,10 +57,9 @@ class TestListPrices(unittest.IsolatedAsyncioTestCase):
     
     async def test_filter_parameter(self):
         """Test should return a paginated list of prices filtered by variant_id"""
-        variant_id = 437958
         response = await list_prices({
             "filter": {
-                "variant_id": variant_id,
+                "variant_id": self.variant_id,
             },
         })
         self.assertEqual(response.get('status_code'), 200)
@@ -76,7 +77,7 @@ class TestListPrices(unittest.IsolatedAsyncioTestCase):
 
         filtered_data = [
             item for item in filter(
-                lambda x: x['attributes']['variant_id'] == variant_id,
+                lambda x: x['attributes']['variant_id'] == int(cast(str, self.variant_id)),
                 data
             )
         ]
@@ -94,12 +95,13 @@ class TestGetPrice(unittest.IsolatedAsyncioTestCase):
         lemon_squeezy_setup(Config(
             api_key= os.getenv("LEMONSQUEEZY_API_KEY"),
         ))
+        self.variant_id = os.getenv("LEMONSQUEEZY_VARIANT_ID")
+        self.price_id = os.getenv("LEMONSQUEEZY_PRICE_ID")
     
     async def test_get_price_object(self):
         """Test should return the corresponding price object given the price id"""
-        price_id = 646468
-        variant_id = 437958
-        response = await get_price(price_id)
+
+        response = await get_price(cast(str, self.price_id))
         self.assertEqual(response.get('status_code'), 200)
         self.assertIsNone(response.get('error'))
         self.assertTrue(response.get('data'))
@@ -110,7 +112,7 @@ class TestGetPrice(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(data)
         self.assertEqual(
             links['self'],
-            f"https://api.lemonsqueezy.com/v1/prices/{price_id}"
+            f"https://api.lemonsqueezy.com/v1/prices/{self.price_id}"
         )
 
         _id = data['id']
@@ -118,7 +120,7 @@ class TestGetPrice(unittest.IsolatedAsyncioTestCase):
         relationships = data['relationships']
         attributes = data['attributes']
 
-        self.assertEqual(_id, str(price_id))
+        self.assertEqual(_id, str(self.price_id))
         self.assertEqual(_type, "prices")
         self.assertTrue(relationships)
         self.assertTrue(attributes)
@@ -148,7 +150,7 @@ class TestGetPrice(unittest.IsolatedAsyncioTestCase):
         for item in items:
             if item:
                 self.assertIsInstance(item, bool | str | Number)
-        self.assertEqual(attributes['variant_id'], variant_id)
+        self.assertEqual(attributes['variant_id'], int(cast(str, self.variant_id)))
         self.assertEqual(len(attributes), len(items))
 
         variant = relationships['variant']
