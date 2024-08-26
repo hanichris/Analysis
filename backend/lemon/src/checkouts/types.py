@@ -73,7 +73,7 @@ class Preview(TypedDict):
 class CheckoutData(TypedDict):
     email: str
     name: str
-    billing_address: BillingAddress
+    billing_address: BillingAddress | list
     tax_number: str
     discount_code: str
     custom: list | dict
@@ -88,7 +88,7 @@ class Attributes(TypedDict):
     product_options: ProductOptions
     checkout_options: CheckoutOptions
     checkout_data: CheckoutData
-    preview: Preview
+    preview: Preview | bool
     expires_at: None | str
     created_at: str
     updated_at: str
