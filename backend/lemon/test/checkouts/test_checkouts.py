@@ -355,7 +355,7 @@ class TestGetCheckout(unittest.IsolatedAsyncioTestCase):
         self.assertIn('errors', cast(dict, response.get('data')))
 
     async def test_successful_retrival_of_checkout(self):
-        """Tests the api responds with the """
+        """Tests the api responds with the wanted checkout object."""
 
         response = await get_checkout(cast(str, self.checkout_id))
         self.assertTrue(response.get('data'))
