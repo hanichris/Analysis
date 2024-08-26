@@ -94,6 +94,8 @@ async def fetch(options: FetchOptions, requiresApiKey = True):
                     res = await client.post(options.path, json=data)
                 case HTTPVerbEnum.DELETE:
                     res = await client.delete(options.path)
+                    response["status_code"] = res.status_code
+                    return response
                 case HTTPVerbEnum.PATCH:
                     res = await client.patch(options.path, json=data)
                 case _:
