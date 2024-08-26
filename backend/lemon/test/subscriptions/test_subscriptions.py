@@ -290,12 +290,12 @@ class TestGetSubscriptions(unittest.IsolatedAsyncioTestCase):
         self.assertIsNone(response.get('error'))
         self.assertEqual(response.get('status_code'), 200)
 
-        data: list = response['data']['data']
+        data: dict = response['data']['data']
         links: dict = response['data']['links']
         included: list = response['data']['included']
 
         self.assertTrue(links)
-        self.assertIsInstance(data, list)
+        self.assertTrue(data)
         self.assertIsInstance(included, list)
         self.assertIsNotNone(
             next(filter(lambda x: x['type'] == 'products', included), None)
