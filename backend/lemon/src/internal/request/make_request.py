@@ -50,6 +50,10 @@ async def fetch(options: FetchOptions, requiresApiKey = True):
     Returns:
         Response: `dict`. Includes `status_code`, `data` and `error` as the keys
         to the response dictionary.
+    
+    Raises:
+        `RuntimeError` if an error function is configured for lemon squeezy setup
+        to raise a Runtime error when an erroneous object is generated.
     """
     options_valid = options.model_dump()
     response = {
