@@ -80,6 +80,9 @@ class Webhook(
 ):
     meta: ClassVar
 
+    def __getitem__(self, item):
+        return getattr(self, item)
+
 class ListWebhooks(
     LemonSqueezyResponse[
         list[WebhookData],
