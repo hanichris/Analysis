@@ -46,8 +46,8 @@
     prices.forEach((price) => {
         let amount = new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: 'USD',
-        }).format((price.textContent.split('/')[0]) / 130);
+            currency: 'KES',
+        }).format((price.textContent.split('/')[0] / 100));
         
         price.innerHTML = `${amount} <span>/month</span>`;
     });
