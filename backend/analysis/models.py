@@ -101,15 +101,15 @@ class Comment(AbstractTime):
 
 class Plan(AbstractTime):
     product_id = models.IntegerField()
-    product_name = models.TextField()
+    product_name = models.TextField(default='')
     variant_id = models.IntegerField(unique=True)
     name = models.TextField()
-    description = models.TextField()
+    description = models.TextField(default='')
     price = models.TextField()
     is_usage_based = models.BooleanField(default=False)
-    interval = models.TextField()
+    interval = models.TextField(default='')
     interval_count = models.IntegerField(null=True)
-    trial_interval = models.TextField()
+    trial_interval = models.TextField(default='')
     trial_interval_count = models.IntegerField(null=True)
     sort = models.IntegerField(null=True)
 
