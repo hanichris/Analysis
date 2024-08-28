@@ -11,4 +11,4 @@ class Command(BaseCommand):
 
     def handle(self, *args: Any, **options: Any) -> str | None:
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(setup_webhook()) 
+        loop.run_until_complete(setup_webhook())
