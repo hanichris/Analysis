@@ -23,18 +23,18 @@
             </header>
             <ul class="even-columns pricing">
                 {% for plan in plans %}
-                    <li class="plan plan--{{ plan.name|lower }}">
-                        <h2 class="plan__title">{{ plan.product_name}} ({{ plan.name }})</h2>
-                        <p class="plan__price">{{ plan.price }} <span>/month</span></p>
-                        {% if plan.description %}
+                    <li class="plan plan--{{ plan.0.name|lower }}">
+                        <h2 class="plan__title">{{ plan.0.product_name}} ({{ plan.0.name }})</h2>
+                        <p class="plan__price">{{ plan.0.price }} <span>/month</span></p>
+                        {% if plan.0.description %}
                             <div class="description">
-                                {{ plan.description|bleach }}
+                                {{ plan.0.description|bleach }}
                             </div>
                         {% endif %}
-                        <button class="button">Add subscription</button>
+                        <button class="button" data-checkout-url="{{ plan.1 }}">Add subscription</button>
                     </li>
                 {% empty %}
-                    <li>No plans available at the moment.</li>
+                    <li class="no_plans">No plans available at the moment.</li>
                 {% endfor %}
             </ul>
         </article>
@@ -50,6 +50,15 @@
         }).format((price.textContent.split('/')[0]) / 130);
         
         price.innerHTML = `${amount} <span>/month</span>`;
+    });
+    const buttons = document.querySelectorAll('.button');
+    buttons.forEach((button) => {
+        button.addEventListener('click', (event) => {
+            if (button.dataset.checkoutUrl) {
+                window.LemonSqueezy.Url.Open(button.dataset.checkoutUrl);
+            }
+        })
     })
 </script>
+<script src="https://app.lemonsqueezy.com/js/lemon.js" defer></script>
 {% endblock content %}
