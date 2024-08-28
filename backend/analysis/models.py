@@ -101,15 +101,15 @@ class Comment(AbstractTime):
 
 class Plan(AbstractTime):
     product_id = models.IntegerField()
-    product_name = models.TextField(null=True)
+    product_name = models.TextField()
     variant_id = models.IntegerField(unique=True)
     name = models.TextField()
-    description = models.TextField(null=True)
+    description = models.TextField()
     price = models.TextField()
     is_usage_based = models.BooleanField(default=False)
-    interval = models.TextField(null=True)
+    interval = models.TextField()
     interval_count = models.IntegerField(null=True)
-    trial_interval = models.TextField(null=True)
+    trial_interval = models.TextField()
     trial_interval_count = models.IntegerField(null=True)
     sort = models.IntegerField(null=True)
 
@@ -121,3 +121,28 @@ class Plan(AbstractTime):
             models.Index(fields=["variant_id","name"]),
             models.Index(fields=["variant_id"]),
         ]
+
+class WebhookEvent(AbstractTime):
+    id = models.IntegerField(primary_key=True, editable=False)
+    event_name = models.TextField()
+    proccessed = models.BooleanField(default=False)
+    proccessing_error = models.TextField()
+    body = models.JSONField(encoder=DjangoJSONEncoder)
+    updated_at = None
+
+class Subscription(AbstractTime):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    plan = models.ForeignKey(Plan, on_delete=models.CASCADE)
+    lemonsqueezy_id = models.TextField(unique=True)
+    order_id = models.IntegerField()
+    name = models.TextField()
+    email = models.EmailField(_('email address'))
+    status = models.TextField()
+    status_formatted = models.TextField()
+    renews_at = models.TextField()
+    ends_at = models.TextField()
+    trial_ends_at = models.TextField()
+    price = models.TextField()
+    is_usage_based = models.BooleanField(default=False)
+    is_paused = models.BooleanField(default=False)
+    subscription_item_id = models.IntegerField()
