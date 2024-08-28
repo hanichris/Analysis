@@ -44,7 +44,7 @@ class UpdateWebhook(TypedDict, total=False):
 class Attributes(TypedDict):
     store_id: int
     url: str
-    events: list[Events]
+    events: list[Events] | None
     last_sent_at: str | None
     created_at: str
     updated_at: str
