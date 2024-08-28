@@ -4,9 +4,10 @@ import os
 from typing import cast
 
 from analysis.config import configure_lemonsqueezy
-from analysis.models import Plan
+from analysis.models import Plan, User
 from lemon.src.products import list_products, get_product
 from lemon.src.prices import list_prices
+from lemon.src.checkouts import create_checkout
 
 async def sync_plans() -> list[Plan] | None:
     """Synchronises the product variants from Lemon Squeezy with the database.
@@ -153,3 +154,34 @@ async def save_variants(data: list[dict]) -> list[Plan]:
     for plan in saved_plans:
         print(f"{plan.name} synced with the database...")
     return saved_plans
+
+
+async def get_checkout_url(variant_id: int, user: User, embed: bool = True):
+    configure_lemonsqueezy()
+
+    response = await create_checkout(
+        cast(str, os.getenv("LEMONSQUEEZY_STORE_ID")),
+        variant_id,
+        {
+            'checkout_options': {
+                'embed': embed,
+                'media': False,
+                'logo': True,
+            },
+            'checkout_data': {
+                'email': user.email,
+                'custom': {
+                    'user_id': user.id.hex,
+                },
+            },
+            'product_options': {
+                'enabled_variants': [variant_id],
+                'redirect_url': f"{os.getenv('PUBLIC_URL')}/dashboard",
+                'receipt_button_text': 'Go to Dashboard',
+                'receipt_thank_you_note': 'Thank you for signing up to Divergent AG'
+            },
+            'preview': True, # if missing, LEMONSQUEEZY returns a 500 server error.
+        }
+    )
+    return response['data']['data']['attributes']['url']
+
