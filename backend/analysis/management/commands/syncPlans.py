@@ -1,6 +1,6 @@
 import asyncio
 
-from typing import Any, cast
+from typing import Any
 from django.core.management.base import BaseCommand
 
 from analysis.config import sync_plans
