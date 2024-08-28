@@ -123,12 +123,10 @@ class Plan(AbstractTime):
         ]
 
 class WebhookEvent(AbstractTime):
-    id = models.IntegerField(primary_key=True, editable=False)
     event_name = models.TextField()
     proccessed = models.BooleanField(default=False)
     proccessing_error = models.TextField()
     body = models.JSONField(encoder=DjangoJSONEncoder)
-    updated_at = None
 
 class Subscription(AbstractTime):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
