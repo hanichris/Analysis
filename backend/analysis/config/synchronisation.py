@@ -8,6 +8,7 @@ from analysis.models import Plan, User
 from lemon.src.products import list_products, get_product
 from lemon.src.prices import list_prices
 from lemon.src.checkouts import create_checkout
+from lemon.src.webhooks import create_webhook, list_webhooks, NewWebhook, Webhook
 
 async def sync_plans() -> list[Plan] | None:
     """Synchronises the product variants from Lemon Squeezy with the database.
@@ -156,7 +157,20 @@ async def save_variants(data: list[dict]) -> list[Plan]:
     return saved_plans
 
 
-async def get_checkout_url(variant_id: int, user: User, embed: bool = True):
+async def get_checkout_url(variant_id: int, user: User, embed: bool = True) -> str:
+    """Retrieve a checkout url for a given variant.
+
+    Generates a checkout on Lemon Squeezy for a particular variant for a given user
+    and retrieves the url from that operation.
+
+    Args:
+        variant_id: The id of the variant of interest.
+        user: The signed in user.
+        embed: whether to generate an overlay for the url or not.
+
+    Returns:
+        str: The checkout url.
+    """
     configure_lemonsqueezy()
 
     response = await create_checkout(
@@ -185,3 +199,90 @@ async def get_checkout_url(variant_id: int, user: User, embed: bool = True):
     )
     return response['data']['data']['attributes']['url']
 
+
+async def has_webhook():
+    """Investigates the existence of a webhook on Lemon Squeezy.
+
+    It will check if a given webhook exists on Lemon Squeezy. If present, it
+    returns that webhook, otherwise, it returns `None`.
+
+    Returns:
+        The found `Webhook`. Otherwise, `None`.
+
+    Raises:
+        `ValueError`: If a webhook url is not present in the environment variables.
+    """
+    configure_lemonsqueezy()
+
+    webhook_url = os.getenv("WEBHOOK_URL")
+    if webhook_url is None:
+        raise ValueError(
+            "Missing required `WEBHOOK_URL` env variable. Please, set it in your"
+            " .env file."
+        )
+
+    if not webhook_url.endswith("/"):
+        webhook_url = f"{webhook_url}/"
+    
+    webhook_url = f"{webhook_url}api/webhook"
+    
+    webhooks = await list_webhooks({
+        'filter': {
+            'store_id': os.getenv("LEMONSQUEEZY_STORE_ID")
+        }
+    })
+
+    webhook = cast(Webhook | None, next(filter(
+        lambda x: 
+            x['attributes']['url'] == webhook_url and x['attributes']['test_mode'],
+        webhooks['data']['data']
+    ), None))
+
+    return webhook
+
+
+async def setup_webhook():
+    """Sets up a webhook on Lemon Squeezy.
+    
+    It sets a webhook on Lemon Squeezy only if one for the given url does not
+    already exist. This webhook will then be used to listen for subscription
+    events.
+
+    Raises:
+        `ValueError`: If a webhook url is not present in the environment variables.
+    """
+    configure_lemonsqueezy()
+
+    webhook_url = os.getenv("WEBHOOK_URL")
+    if webhook_url is None:
+        raise ValueError(
+            "Missing required `WEBHOOK_URL` env variable. Please, set it in your"
+            " .env file."
+        )
+    
+    if not webhook_url.endswith("/"):
+        webhook_url = f"{webhook_url}/"
+    
+    webhook_url = f"{webhook_url}api/webhook"
+
+    print(f"Setting up a webhook on Lemon Squeezy (Test mode)...")
+
+    webhook = await has_webhook()
+
+    if webhook is None:
+        new_webhook = await create_webhook(
+            cast(str, os.getenv("LEMONSQUEEZY_STORE_ID")),
+            {
+                'secret': cast(str, os.getenv("LEMONSQUEEZY_WEBHOOK_SECRET")),
+                'url': webhook_url,
+                'test_mode': True,
+                'events': [
+                    'subscription_created',
+                    'subscription_expired',
+                    'subscription_updated',
+                ]
+            },
+        )
+        webhook = new_webhook['data']['data']
+
+    print(f"Webhook {webhook['id']} created on Lemon Squeezy.")
