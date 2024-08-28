@@ -1,20 +1,23 @@
+import asyncio
 import json
 import logging
 import os
 
+from asgiref.sync import sync_to_async
 from pathlib import Path
+from typing import cast
 
+from django.contrib.auth import aauthenticate, alogin
 from django.core.paginator import Paginator
 from django.core.files.uploadedfile import UploadedFile
 from django.db import Error
 from django.http import HttpRequest, JsonResponse
-from django.shortcuts import render, aget_object_or_404 # type: ignore
-from django.urls import reverse_lazy
-from django.views.generic import CreateView, View
+from django.shortcuts import render, redirect, aget_object_or_404 # type: ignore
+from django.views.generic import View
 
 from pydantic import BaseModel, EmailStr, ValidationError
 
-from .config import sync_plans
+from .config import sync_plans, get_checkout_url
 from .forms import UserCreationForm, UploadFileForm
 from .mixins import AsyncLoginRequiredMixin, AsyncUserPassesTestMixin
 from .models import User, Comment, Report, Plan
@@ -80,16 +83,35 @@ class DashboardView(AsyncLoginRequiredMixin, View):
             }
         )
 
-class SignUpView(CreateView):
-    form_class = UserCreationForm
-    model = User
-    success_url = reverse_lazy('login')
-    template_name = "registration/signup.html"
+class SignUpView(View):
+    async def get(self, request: HttpRequest, *args, **kwargs):
+        form = UserCreationForm()
+        return render(request, 'registration/signup.html', {'form': form})
+
+    async def post(self, request: HttpRequest, *args, **kwargs):
+        form = UserCreationForm(request.POST)
+        if await sync_to_async(form.is_valid)():
+            await sync_to_async(form.save)()
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password1']
+            user = await aauthenticate(request, email=email, password=password)
+            await alogin(request, user)
+            return redirect('/billing/')
+        return render(
+            request, 'registration/signup.html', {'form': form}
+        )
+
+
+# class SignUpView(CreateView):
+#     form_class = UserCreationForm
+#     model = User
+#     success_url = reverse_lazy('login')
+#     template_name = "registration/signup.html"
 
 
 class UserProfileView(AsyncLoginRequiredMixin, View):
     async def get(self, request: HttpRequest, *args, **kwargs):
-        user = await request.auser() # type: ignore
+        user= cast(User, await request.auser()) # type: ignore
         reports =  [
             report
             async for report in 
@@ -122,7 +144,7 @@ class UploadReport(AsyncLoginRequiredMixin, AsyncUserPassesTestMixin, View):
     async def post(self, request: HttpRequest, *args, **kwargs):
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            email = request.POST['email']
+            email = form.cleaned_data['email']
             user = await aget_object_or_404(User, email=email)
             await self.handle_uploaded_file(user, form.cleaned_data['file'])
         else:
@@ -158,16 +180,27 @@ async def download_file(request, pk: int):
     uploaded_file = await Report.objects.aget(pk=pk)
     print(uploaded_file.file.name)
 
-class Billing(View):
+class Billing(AsyncLoginRequiredMixin, View):
     async def get(self, request: HttpRequest, *args, **kwargs):
+        user = await request.auser() # type: ignore
         count = await Plan.objects.acount()
         plans = await sync_plans() if count == 0 else [
             plan async for plan in Plan.objects.all()
         ]
+
+        async with asyncio.TaskGroup() as tg:
+            tasks = [
+                tg.create_task(get_checkout_url(plan.variant_id, user))
+                for plan in cast(list[Plan], plans)
+            ]
+        urls = [task.result() for task in tasks]
         return render(
             request,
             'analysis/billing.html',
             {
-                'plans': plans,
+                'plans': zip(cast(list[Plan], plans), urls),
             }
         )
+
+    async def post(self, request: HttpRequest, *args, **kwargs):
+        pass
