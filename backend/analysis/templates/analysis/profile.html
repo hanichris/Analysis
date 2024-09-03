@@ -20,11 +20,11 @@
                 </a>
                 <div class="profile-image">
                     <button type="button">
-                        {{ user.email.0|title }}
+                        {% if user.full_name %} {{ user.full_name.0 }} {% else %} {{ user.email.0|upper }} {% endif %}
                     </button>
                 </div>
                 <div class="salutation">
-                    Welcome, {% if user.first_name %} {{ user.first_name }} {% else %} {{ user }} {% endif %}
+                    Welcome, {% if user.full_name %} {{ user.full_name }} {% else %} {{ user.email }} {% endif %}
                 </div>
                 <div class="title">
                     Update your profile and set your account preferences.
@@ -59,7 +59,7 @@
                                 </div>
                                 <div class="content_user_wrapper">
                                     <div>
-                                        <a href="">
+                                        <a href="{% url 'analysis:edit_profile' user.id %}?field=name">
                                             <div class="link_container">
                                                 <div class="user_wrapper">
                                                     <div class="title">
@@ -69,13 +69,13 @@
                                                     </div>
                                                     <div class="user">
                                                         <div>
-                                                            {% if user.full_name == "None None" %}
-                                                                <div class="user_content_empty">
-                                                                    Not set
+                                                            {% if user.full_name %}
+                                                                <div class="user_content">
+                                                                    {{ user.full_name|capfirst }}
                                                                 </div>
                                                             {% else %}
-                                                                <div class="user_content">
-                                                                    {{ user.full_name }}
+                                                                <div class="user_content_empty">
+                                                                    Not set
                                                                 </div>
                                                             {% endif %}
                                                         </div>
@@ -101,7 +101,7 @@
                                         <div class="spacer"></div>
                                     </div>
                                     <div>
-                                        <a href="">
+                                        <a href="{% url 'analysis:edit_profile' user.id %}?field=birthday">
                                             <div class="link_container">
                                                 <div class="user_wrapper">
                                                     <div class="title">
@@ -111,13 +111,13 @@
                                                     </div>
                                                     <div class="user">
                                                         <div>
-                                                            {% if user.birth_date is None %}
-                                                                <div class="user_content_empty">
-                                                                    Not set
-                                                                </div>
-                                                            {% else %}
+                                                            {% if user.birth_date %}
                                                                 <div class="user_content">
                                                                     {{ user.birth_date|date:"d N, Y" }}
+                                                                </div>
+                                                            {% else %}
+                                                                <div class="user_content_empty">
+                                                                    Not set
                                                                 </div>
                                                             {% endif %}
                                                         </div>
@@ -143,7 +143,7 @@
                                         <div class="spacer"></div>
                                     </div>
                                     <div>
-                                        <a href="">
+                                        <a href="{% url 'analysis:edit_profile' user.id %}?field=email">
                                             <div class="link_container">
                                                 <div class="user_wrapper">
                                                     <div class="title">
@@ -219,7 +219,7 @@
                                 </div>
                                 <div class="content_user_wrapper">
                                     <div>
-                                        <a href="">
+                                        <a href="{% url 'analysis:edit_profile' user.id %}?field=password">
                                             <div class="link_container">
                                                 <div class="user_wrapper">
                                                     <div class="user">
