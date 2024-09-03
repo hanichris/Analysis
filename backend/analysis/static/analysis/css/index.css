@@ -188,6 +188,10 @@ button {
     box-shadow: rgba(255, 255, 255, 0) 0 0 0 3px, rgba(0, 102, 255, 0) 0 0 0 4px;
 }
 
+.btn--cancel {
+    color: var(--color-blue);
+}
+
 .btn::after {
     content: '';
     border-radius: 50%;
