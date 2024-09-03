@@ -1,5 +1,7 @@
 import uuid
 
+from datetime import date
+
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import Group, Permission, PermissionsMixin
@@ -46,7 +48,24 @@ class User(PermissionsMixin, AbstractTime, AbstractBaseUser):
     
     @property
     def full_name(self):
-        return f"{self.first_name} {self.last_name}"
+        if self.first_name and self.last_name:
+            name = f"{self.first_name} {self.last_name}"
+            return name.title()
+        elif self.first_name:
+            return self.first_name.capitalize()
+        elif self.last_name:
+            return self.last_name.capitalize()
+        return ""
+    
+    @property
+    def age(self):
+        if self.birth_date:
+            today = date.today()
+            return today.year - self.birth_date.year - (
+                (today.month, today.day) <
+                (self.birth_date.month, self.birth_date.day)
+            )
+        return None
     
 class Geofield(AbstractTime):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
