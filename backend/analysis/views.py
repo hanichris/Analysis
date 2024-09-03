@@ -4,21 +4,29 @@ import logging
 import os
 
 from asgiref.sync import sync_to_async
+from datetime import date
 from pathlib import Path
 from typing import cast
 
-from django.contrib.auth import aauthenticate, alogin
+from django.contrib.auth import aauthenticate, alogin, aupdate_session_auth_hash # type: ignore
 from django.core.paginator import Paginator
 from django.core.files.uploadedfile import UploadedFile
 from django.db import Error
-from django.http import HttpRequest, JsonResponse
+from django.http import HttpRequest, JsonResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render, redirect, aget_object_or_404 # type: ignore
 from django.views.generic import View
 
 from pydantic import BaseModel, EmailStr, ValidationError
 
 from .config import sync_plans, get_checkout_url
-from .forms import UserCreationForm, UploadFileForm
+from .forms import (
+    UserCreationForm,
+    UploadFileForm,
+    UserEditBirthdayForm,
+    UserEditEmailForm,
+    UserEditNameForm,
+    UserEditPasswordForm,
+)
 from .mixins import AsyncLoginRequiredMixin, AsyncUserPassesTestMixin
 from .models import User, Comment, Report, Plan
 
@@ -128,8 +136,97 @@ class UserProfileView(AsyncLoginRequiredMixin, View):
                 'user': user,
             }
         )
-    async def post(self, *args, **kwargs):
-        pass
+
+class UserProfileEditView(AsyncLoginRequiredMixin, View):
+    async def get(self, request: HttpRequest, *args, **kwargs):
+        user= cast(User, await request.auser()) # type: ignore
+        field = request.GET.get('field')
+        title = ''
+        form = None
+        match(field):
+            case 'name':
+                title = 'name'
+                form = UserEditNameForm(initial={
+                    'first_name': user.first_name.capitalize() if user.first_name else '',
+                    'last_name': user.last_name.capitalize() if user.last_name else '',
+                })
+            case 'birthday':
+                title = 'birthday'
+                form = UserEditBirthdayForm(initial={
+                    'month': user.birth_date.month if user.birth_date else '',
+                    'day': user.birth_date.day if user.birth_date else '',
+                    'year': user.birth_date.year if user.birth_date else '',
+                })
+            case 'email':
+                title = 'email'
+                form = UserEditEmailForm(initial={'email': user.email})
+            case 'password':
+                title = 'password'
+                form = UserEditPasswordForm()
+            case _:
+                return HttpResponseNotFound()
+        return render(
+            request,
+            'analysis/edit.html',
+            {
+                'form': form,
+                'title': title,
+                'user': user,
+            }
+        )
+
+    async def post(self, request: HttpRequest, *args, **kwargs):
+        user= cast(User, await request.auser()) # type: ignore
+        field = request.POST.get('field')
+        form = None
+        title = ''
+        match(field):
+            case 'name':
+                title = 'name'
+                form = UserEditNameForm(request.POST)
+            case 'birthday':
+                title = 'birthday'
+                form = UserEditBirthdayForm(request.POST)
+            case 'email':
+                title = 'email'
+                form = UserEditEmailForm(request.POST)
+            case 'password':
+                title = 'password'
+                form = UserEditPasswordForm(request.POST)
+            case _:
+                return HttpResponseNotFound()
+        
+        if form.is_valid():
+            match(field):
+                case 'name':
+                    user.first_name = cast(str, form.cleaned_data['first_name']).lower()
+                    user.last_name = cast(str, form.cleaned_data['last_name']).lower()
+                case 'birthday':
+                    day = form.cleaned_data['day']
+                    month = form.cleaned_data['month']
+                    year = form.cleaned_data['year']
+                    iso_date = f"{year:0>4}-{month:0>2}-{day:0>2}"
+                    user.birth_date = date.fromisoformat(iso_date)
+                case 'email':
+                    user.email = form.cleaned_data['email']
+                case 'password':
+                    user.set_password(form.cleaned_data['password1'])
+                case _:
+                    return HttpResponseNotFound()
+            await user.asave()
+            await aupdate_session_auth_hash(request, user) if field == 'password' else None
+        else:
+            return render(
+                request,
+                'analysis/edit.html',
+                {
+                    'form': form,
+                    'title': title,
+                    'user': user,
+                }
+            )
+        return HttpResponseRedirect(f'/users/{user.id}/')
+
 
 class UploadReport(AsyncLoginRequiredMixin, AsyncUserPassesTestMixin, View):
     async def get(self, request: HttpRequest, *args, **kwargs):
@@ -187,20 +284,18 @@ class Billing(AsyncLoginRequiredMixin, View):
         plans = await sync_plans() if count == 0 else [
             plan async for plan in Plan.objects.all()
         ]
-
-        async with asyncio.TaskGroup() as tg:
-            tasks = [
-                tg.create_task(get_checkout_url(plan.variant_id, user))
-                for plan in cast(list[Plan], plans)
-            ]
-        urls = [task.result() for task in tasks]
+        if plans:
+            async with asyncio.TaskGroup() as tg:
+                tasks = [
+                    tg.create_task(get_checkout_url(plan.variant_id, user))
+                    for plan in plans
+                ]
+            urls = [task.result() for task in tasks]
+            plans = zip(plans, urls)
         return render(
             request,
             'analysis/billing.html',
             {
-                'plans': zip(cast(list[Plan], plans), urls),
+                'plans': plans,
             }
         )
-
-    async def post(self, request: HttpRequest, *args, **kwargs):
-        pass
