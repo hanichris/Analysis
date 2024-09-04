@@ -1,4 +1,6 @@
 import asyncio
+import hashlib
+import hmac
 import json
 import logging
 import os
@@ -16,9 +18,15 @@ from django.http import HttpRequest, JsonResponse, HttpResponseNotFound, HttpRes
 from django.shortcuts import render, redirect, aget_object_or_404 # type: ignore
 from django.views.generic import View
 
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.request import Request
+
 from pydantic import BaseModel, EmailStr, ValidationError
 
-from .config import sync_plans, get_checkout_url
+from .serialisers import WebhookEventSerializer
+from .config import sync_plans, get_checkout_url, webhook_has_meta
 from .forms import (
     UserCreationForm,
     UploadFileForm,
@@ -28,7 +36,7 @@ from .forms import (
     UserEditPasswordForm,
 )
 from .mixins import AsyncLoginRequiredMixin, AsyncUserPassesTestMixin
-from .models import User, Comment, Report, Plan
+from .models import User, Comment, Report, Plan, WebhookEvent
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +46,33 @@ class PostData(BaseModel):
     email: EmailStr
     title: str
     comment: str
+
+@api_view(['POST'])
+def webhook(request: Request):
+    secret = os.getenv('LEMONSQUEEZY_WEBHOOK_SECRET')
+    if secret is None:
+        return Response(
+            'Lemon Squeezy Webhook Secret not set in .env',
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+    signature = request.META['HTTP_X_SIGNATURE']
+    digest = hmac.new(secret.encode(), request.body, hashlib.sha256).hexdigest()
+    if not hmac.compare_digest(digest, signature):
+        return Response('Invalid signature', status=status.HTTP_400_BAD_REQUEST)
+    
+    data = request.data
+    if webhook_has_meta(data):
+        _data = cast(dict, data)
+        serializer = WebhookEventSerializer(
+            data={'event_name': _data['meta']['event_name'], 'body': _data}
+        )
+        if serializer.is_valid():
+            event = cast(WebhookEvent, serializer.save())
+            return Response(status=status.HTTP_200_OK)
+
+    return Response('Invalid data', status=status.HTTP_400_BAD_REQUEST)
+    
+
 
 class IndexView(View):
     parents = Path(__file__).parents
