@@ -26,8 +26,8 @@ class User(PermissionsMixin, AbstractTime, AbstractBaseUser):
         editable=False
     )
     email = models.EmailField(_('email address'), unique=True, db_index=True)
-    first_name = models.CharField(max_length=50, null=True)
-    last_name = models.CharField(max_length=50, null=True)
+    first_name = models.CharField(max_length=50, default='')
+    last_name = models.CharField(max_length=50, default='')
     birth_date = models.DateField(null=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -143,8 +143,8 @@ class Plan(AbstractTime):
 
 class WebhookEvent(AbstractTime):
     event_name = models.TextField()
-    proccessed = models.BooleanField(default=False)
-    proccessing_error = models.TextField()
+    processed = models.BooleanField(default=False)
+    processing_error = models.TextField(default='')
     body = models.JSONField(encoder=DjangoJSONEncoder)
 
 class Subscription(AbstractTime):
@@ -156,9 +156,9 @@ class Subscription(AbstractTime):
     email = models.EmailField(_('email address'))
     status = models.TextField()
     status_formatted = models.TextField()
-    renews_at = models.TextField()
-    ends_at = models.TextField()
-    trial_ends_at = models.TextField()
+    renews_at = models.TextField(default='')
+    ends_at = models.TextField(default='')
+    trial_ends_at = models.TextField(default='')
     price = models.TextField()
     is_usage_based = models.BooleanField(default=False)
     is_paused = models.BooleanField(default=False)
