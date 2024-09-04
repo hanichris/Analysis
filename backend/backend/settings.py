@@ -24,12 +24,13 @@ load_dotenv(os.path.join(BASE_DIR, '.env'))
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-)tc0$n@3mg)bi7u6#0cjp5*4r(rqkz+)20wiik_q$hb44mf2j7'
+SECRET_KEY = os.getenv('SECRET_KEY_NEW')
+SECRET_KEY_FALLBACKS = [os.getenv('SECERET_KEY_OLD')]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", ".ngrok-free.app"]
 
 
 # Custom user model to use
@@ -39,6 +40,7 @@ AUTH_USER_MODEL = "analysis.User"
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'analysis.apps.AnalysisConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -46,6 +48,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_bleach',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -95,6 +99,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'backend.wsgi.application'
+ASGI_APPLICATION = 'backend.asgi.application'
 
 
 # Database
@@ -104,7 +109,16 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
-        'OPTIONS': {}
+        'OPTIONS': {
+            'transaction_mode': 'IMMEDIATE',
+            'init_command': """
+                PRAGMA journal_mode=WAL;
+                PRAGMA synchronous=NORMAL;
+                PRAGMA mmap_size=134217728;
+                PRAGMA journal_size_limit=27103364;
+                PRAGMA cache_size=2000;
+            """,
+        }
     }
 }
 
@@ -142,6 +156,14 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
+USE_S3 = os.getenv('USE_S3') == 'TRUE'
+
+if USE_S3:
+    pass
+else:
+    MEDIA_URL = 'media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
+
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
@@ -155,6 +177,25 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Login redirect url
-LOGIN_URL = '/accounts/login'
-LOGIN_REDIRECT_URL = '/dashboard'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = 'accounts:login'
+LOGIN_REDIRECT_URL = 'analysis:dashboard'
+LOGOUT_REDIRECT_URL = 'analysis:index'
+
+# CSRF settings
+CSRF_TRUSTED_ORIGINS = ['https://previously-funny-bee.ngrok-free.app']
+
+# Bleach Configuration
+# Allowed HTML tags
+BLEACH_ALLOWED_TAGS = ['p', 'strong', 'ul', 'li']
+
+# Strip unknown tags if True, replace with HTML escaped characters if False
+BLEACH_STRIP_TAGS = True
+
+# Strip comments, or leave them in.
+BLEACH_STRIP_COMMENTS = False
+
+
+# Celery Configuration
+CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+
+CELERY_TIMEZONE = TIME_ZONE
