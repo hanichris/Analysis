@@ -8,7 +8,7 @@ from datetime import date
 from pathlib import Path
 from typing import cast
 
-from django.contrib.auth import aauthenticate, alogin, aupdate_session_auth_hash # type: ignore
+from django.contrib.auth import aauthenticate, alogin, update_session_auth_hash, aupdate_session_auth_hash # type: ignore
 from django.core.paginator import Paginator
 from django.core.files.uploadedfile import UploadedFile
 from django.db import Error
@@ -214,7 +214,12 @@ class UserProfileEditView(AsyncLoginRequiredMixin, View):
                 case _:
                     return HttpResponseNotFound()
             await user.asave()
-            await aupdate_session_auth_hash(request, user) if field == 'password' else None
+            if field == 'password':
+                # Updating the password logs out the current user from existing session.
+                # Thus, log them back in. Provided functions do not work as intended.
+                await alogin(request, user)
+                # await sync_to_async(update_session_auth_hash)(request, user)
+                # await aupdate_session_auth_hash(request, user)
         else:
             return render(
                 request,
