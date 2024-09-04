@@ -225,8 +225,10 @@ header {
                             white-space: nowrap;
 
                             a {
+                                color: var(--color-vibrant-blue);
+                                font-variation-settings: 'wght' 450;
+                                font-size: var(--font-size-medium);
                                 text-decoration: underline;
-                                color: var(--color-blue);
                             }
                         }
 
