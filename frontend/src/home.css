@@ -263,6 +263,7 @@ header .menu-icon .navicon::after {
 .section-inner .mobile-subheading {
     margin-top: 1.5rem;
     display: flex;
+    flex-direction: column;
     grid-column-start: 1;
     grid-column-end: span 2;
     text-align: center;
