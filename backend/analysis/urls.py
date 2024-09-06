@@ -6,6 +6,7 @@ from . import views
 app_name = "analysis"
 urlpatterns = [
     path("", cache_page(60 * 60)(views.IndexView.as_view()), name="index"),
+    path("api/webhook", views.webhook, name='lswhk_endpoint'),
     path("billing/", views.Billing.as_view(), name="billing"),
     path("dashboard/", views.DashboardView.as_view(), name='dashboard'),
     path("users/<uuid:pk>/", include(
