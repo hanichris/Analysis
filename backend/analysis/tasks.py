@@ -103,6 +103,8 @@ async def process_webhook_event(webhook_event_pk):
                         'subscription_item_id': attributes[
                             'first_subscription_item'
                         ]['id'],
+                        'user': user,
+                        'plan': plan,
                     }
 
                     if ends_at := attributes['ends_at']:
@@ -111,11 +113,15 @@ async def process_webhook_event(webhook_event_pk):
                         update_data['trial_ends_at'] = trial_ends_at
                     if is_usage_based:
                         update_data['is_usage_based'] = is_usage_based
-                    # has a conflict because of unique key constraint on the lemonsqueezy_id field.
-                    new_subscription = Subscription(**update_data)
-                    new_subscription.user = user
-                    new_subscription.plan = plan
-                    await new_subscription.asave()
+                    
+                    await Subscription.objects.aupdate_or_create(
+                        lemonsqueezy_id = update_data['lemonsqueezy_id'],
+                        defaults={
+                            k: update_data[k] for k in update_data
+                            if k != 'lemonsqueezy_id'
+                        },
+                        create_defaults=update_data
+                    )
 
         elif webhook_event.event_name.startswith('order_'):
             pass
