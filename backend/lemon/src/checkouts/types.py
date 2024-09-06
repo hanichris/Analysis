@@ -14,7 +14,7 @@ from ..types.response import (
 )
 
 
-class VariantQuantity(TypedDict):
+class VariantQuantity(TypedDict, total=False):
     variant_id: int
     quantity: int
 
@@ -26,7 +26,7 @@ class OptionalBillingAddress(TypedDict, total=False):
     country: ISO3166Alpha2CountryCode
     zip: str
 
-class ProductOptions(TypedDict):
+class ProductOptions(TypedDict, total=False):
     name: str
     description: str
     media: list[str]
@@ -39,7 +39,7 @@ class ProductOptions(TypedDict):
     confirmation_message: str
     confirmation_button_text: str
 
-class CheckoutOptions(TypedDict):
+class CheckoutOptions(TypedDict, total=False):
     embed: bool
     media: bool
     logo: bool
@@ -51,7 +51,7 @@ class CheckoutOptions(TypedDict):
     subscription_preview: bool
     button_color: str
 
-class Preview(TypedDict):
+class Preview(TypedDict, total=False):
     currency: ISO4217CurrencyCode
     currency_rate: Decimal
     subtotal: Decimal
@@ -70,7 +70,7 @@ class Preview(TypedDict):
     tax_formatted: str
     total_formatted: str
 
-class CheckoutData(TypedDict):
+class CheckoutData(TypedDict, total=False):
     email: str
     name: str
     billing_address: BillingAddress | list
@@ -78,7 +78,7 @@ class CheckoutData(TypedDict):
     discount_code: str
     custom: list | dict
     # An array of variant IDs to enable for this checkout. If this is empty, all variants will be enabled.
-    variant_quantities: list[int]
+    variant_quantities: list[str]
 
 
 class Attributes(TypedDict):
