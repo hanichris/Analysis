@@ -26,6 +26,7 @@ from rest_framework.request import Request
 from pydantic import BaseModel, EmailStr, ValidationError
 
 from .serialisers import WebhookEventSerializer
+from .tasks import send_to_zoho, process_webhook_event
 from .config import sync_plans, get_checkout_url, webhook_has_meta
 from .forms import (
     UserCreationForm,
@@ -59,7 +60,7 @@ def webhook(request: Request):
     digest = hmac.new(secret.encode(), request.body, hashlib.sha256).hexdigest()
     if not hmac.compare_digest(digest, signature):
         return Response('Invalid signature', status=status.HTTP_400_BAD_REQUEST)
-    
+
     data = request.data
     if webhook_has_meta(data):
         _data = cast(dict, data)
@@ -68,6 +69,7 @@ def webhook(request: Request):
         )
         if serializer.is_valid():
             event = cast(WebhookEvent, serializer.save())
+            process_webhook_event.delay_on_commit(event.pk)
             return Response(status=status.HTTP_200_OK)
 
     return Response('Invalid data', status=status.HTTP_400_BAD_REQUEST)
@@ -93,6 +95,8 @@ class IndexView(View):
         try:
             data = PostData(**json.loads(request.body.decode('utf-8')))
             await Comment.objects.acreate(**data.model_dump())
+            send_to_zoho.delay(data.model_dump())
+
         except ValidationError as err:
             logger.error(err)
             return JsonResponse({
@@ -139,6 +143,7 @@ class SignUpView(View):
             password = form.cleaned_data['password1']
             user = await aauthenticate(request, email=email, password=password)
             await alogin(request, user)
+            # Send sing up email
             return redirect('/billing/')
         return render(
             request, 'registration/signup.html', {'form': form}
