@@ -8,7 +8,7 @@ from analysis.models import Plan, User
 from lemon.src.products import list_products, get_product
 from lemon.src.prices import list_prices
 from lemon.src.checkouts import create_checkout
-from lemon.src.webhooks import create_webhook, list_webhooks, NewWebhook, Webhook
+from lemon.src.webhooks import create_webhook, list_webhooks, Webhook
 
 async def sync_plans() -> list[Plan] | None:
     """Synchronises the product variants from Lemon Squeezy with the database.
