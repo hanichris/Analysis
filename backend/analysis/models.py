@@ -152,7 +152,7 @@ class Subscription(AbstractTime):
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE)
     lemonsqueezy_id = models.TextField(unique=True)
     order_id = models.IntegerField()
-    name = models.TextField()
+    name = models.TextField(default='')
     email = models.EmailField(_('email address'))
     status = models.TextField()
     status_formatted = models.TextField()
@@ -163,3 +163,8 @@ class Subscription(AbstractTime):
     is_usage_based = models.BooleanField(default=False)
     is_paused = models.BooleanField(default=False)
     subscription_item_id = models.IntegerField()
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["lemonsqueezy_id"]),
+        ]
