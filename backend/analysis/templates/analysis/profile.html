@@ -321,9 +321,94 @@
                             <div class="content">
                                 <div class="content_title">
                                     <header>
-                                        <h2>Subscription</h2>
+                                        <h2>Your plan</h2>
                                         <div>Information about your chosen package deal.</div>
                                     </header>
+                                </div>
+                                <div class="content_user_wrapper">
+                                    <div class="content_spacing" style="padding-right: 1.6rem;">
+                                        <div class="spacer"></div>
+                                    </div>
+                                    <div class="panel_body">
+                                        <div id="account_subscription_plan_boxes">
+                                            {% for subscription in subscriptions %}
+                                                <div class="subscription-info">
+                                                    <header class="subscription-info_title">
+                                                        <div class="product_title">
+                                                            <h2>{{ subscription.plan.product_name }} ({{ subscription.plan.name }})</h2>
+                                                        </div>
+                                                        {% if subscription.status == 'active' %}
+                                                            <div class="change_product">
+                                                                <a href="{ url 'analysis:change_plan' subscription.plan.id }">Change plan</a>
+                                                                <div class="subscription_actions">
+                                                                    <button class="dropdown-btn">
+                                                                        <svg width="30px" height="30px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                                                                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                                                                        </svg>
+                                                                    </button>
+                                                                    <div class="dropdown-content">
+                                                                        <menu>
+                                                                            <li>Pause payments</li>
+                                                                            <li>Customer portal</li>
+                                                                            <li>Update payment method</li>
+                                                                            <li>Cancel subscription</li>
+                                                                        </menu>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+                                                    </header>
+                                                    <div class="subscription-info_content">
+                                                        <div class="subscription-info_price">
+                                                            {% if subscription.ends_at %}
+                                                            {% else %}
+                                                                {% if subscription.plan.is_usage_based %}
+                                                                    {% if subscription.plan.interval_count and subscription.plan.interval_count != 1 %}
+                                                                        <p><span id="price">{{ subscription.price }}</span>/unit every {{ subscription.plan.interval_count }} {{ subscription.plan.interval }}</p>
+                                                                    {% else %}
+                                                                        <p><span id="price">{{ subscription.price }}</span>/unit every {{ subscription.plan.interval }}</p>
+                                                                    {% endif %}
+                                                                {% else %}
+                                                                    {% if subscription.plan.interval_count and subscription.plan.interval_count != 1 %}
+                                                                        <p><span id="price">{{ subscription.price }}</span> every {{ subscription.plan.interval_count }} {{ subscription.plan.interval }}</p>
+                                                                    {% else %}
+                                                                        <p><span id="price">{{ subscription.price }}</span> every {{ subscription.plan.interval }}</p>
+                                                                    {% endif %}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="subscription-info_status">
+                                                            {% if subscription.is_paused %}
+                                                                <div class="badge badge-paused">
+                                                                    <span>Paused</span>
+                                                                </div>
+                                                            {% else %}
+                                                            <div class="badge badge-{{ subscription.status }}">
+                                                                <span>{{ subscription.status_formatted }}</span>
+                                                            </div>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="subscription-info_date">
+                                                            {% if subscription.ends_at %}
+                                                                <input type="hidden" name="ends_at" value={{ subscription.ends_at }} id="ends_at">
+                                                            {% endif %}
+                                                            {% if subscription.trial_ends_at %}
+                                                                <input type="hidden" name="trial_ends_at" value={{ subscription.trial_ends_at }} id="trial_ends_at">
+                                                            {% endif %}
+                                                            <p id="date_msg">Renews on {{ subscription.renews_at }}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% empty %}
+                                                <div id="account_subscription_plan-info">
+                                                    <div>
+                                                        <div id="account_subscription_plan-info_name">Free</div>
+                                                        <div id="account_subscription_plan-info_price">KES 0/month</div>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -337,6 +422,11 @@
                                         <div>Delete your account and all the associated data permanently.</div>
                                     </header>
                                 </div>
+                                <div class="content_user_wrapper">
+                                    <div class="panel_body">
+                                        
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -346,31 +436,56 @@
     </div>
 </div>
 <script>
-    window.onload = () => {
-        const links = document.querySelectorAll('li > a');
-        let activeDiv;
-        let activeLink;
-        if (window.location.search.length > 0) {
-            activeLink = document.getElementById('reports');
-            activeDiv = document.querySelector('[data-tab="reports"]');
-        } else {
-            activeDiv = document.querySelector('[data-tab="general"]');
-            activeLink = links[0];
-        }
-        
-        activeDiv.classList.add('is-visible');
-        activeLink.classList.add('is-active');
-
-        links.forEach((elem) => {
-            elem.addEventListener('click', (e) => {
-                activeLink.classList.remove('is-active');
-                activeLink = elem;
-                activeLink.classList.add('is-active');
-                activeDiv.classList.remove('is-visible');
-                activeDiv = document.querySelector(`[data-tab="${activeLink.id}"]`);
-                activeDiv.classList.add('is-visible');
-            })
-        });
+    function formatPrice(priceInCents) {
+        const shillings = parseFloat(priceInCents) / 100;
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'KES',
+            minimumFractionDigits: shillings % 1 !== 0 ? 2 : 0,
+        }).format(shillings);
     }
+    function formatDate(date) {
+        return date ? new Date(date).toLocaleString('en-US', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+        }) : '';
+    }
+    // Format the message displayed in regards to the renewwal or expiration dates.
+    const msg = document.getElementById('date_msg');
+    let date = msg.textContent.split(' ')[2];
+    date = formatDate(date);
+    msg.innerText = `Renews on ${date}`;
+
+    // Format the display of the price value.
+    const price_msg = document.getElementById('price');
+    price_msg.innerText = formatPrice(price_msg.textContent);
+
+
+
+    const links = document.querySelectorAll('li > a');
+    let activeDiv;
+    let activeLink;
+    if (window.location.search.length > 0) {
+        activeLink = document.getElementById('reports');
+        activeDiv = document.querySelector('[data-tab="reports"]');
+    } else {
+        activeDiv = document.querySelector('[data-tab="general"]');
+        activeLink = links[0];
+    }
+    
+    activeDiv.classList.add('is-visible');
+    activeLink.classList.add('is-active');
+
+    links.forEach((elem) => {
+        elem.addEventListener('click', (e) => {
+            activeLink.classList.remove('is-active');
+            activeLink = elem;
+            activeLink.classList.add('is-active');
+            activeDiv.classList.remove('is-visible');
+            activeDiv = document.querySelector(`[data-tab="${activeLink.id}"]`);
+            activeDiv.classList.add('is-visible');
+        })
+    });
 </script>
 {% endblock content %}
