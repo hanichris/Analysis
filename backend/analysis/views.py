@@ -34,10 +34,10 @@ from .forms import (
 )
 from .config import get_checkout_url, webhook_has_meta
 from .mixins import AsyncLoginRequiredMixin, AsyncUserPassesTestMixin
-from .models import User, Comment, Report, Plan, WebhookEvent
+from .models import User, Comment, Report, WebhookEvent
 from .serialisers import WebhookEventSerializer
 from .tasks import send_to_zoho, process_webhook_event
-from .utils import PostData, get_user_reports, get_plans, save_report_files
+from .utils import PostData, get_user_reports, get_plans, save_report_files, get_user_subscriptions
 
 logger = logging.getLogger(__name__)
 
@@ -150,7 +150,11 @@ class SignUpView(View):
 class UserProfileView(AsyncLoginRequiredMixin, View):
     async def get(self, request: HttpRequest, *args, **kwargs):
         user= cast(User, await request.auser()) # type: ignore
-        reports = await get_user_reports(user)
+        async with asyncio.TaskGroup() as tg:
+            report_task = tg.create_task(get_user_reports(user))
+            sub_task = tg.create_task(get_user_subscriptions(user))
+        reports = report_task.result()
+        subscriptions = sub_task.result()
         page_number = request.GET.get('page')
         paginator = Paginator(reports, 3)
         page_obj = paginator.get_page(page_number)
@@ -160,6 +164,7 @@ class UserProfileView(AsyncLoginRequiredMixin, View):
             {
                 'page_obj': page_obj,
                 'user': user,
+                'subscriptions': subscriptions,
             }
         )
 
