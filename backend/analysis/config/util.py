@@ -109,15 +109,18 @@ def cache_results(
                 cache_key = f'{prefix}_{cache_key}'
             # On cache hit: return the cachced result.
             if cached_result := await cache.aget(cache_key):
-                print('cache hit')
+                print('\033[34;1mINFO: Cache hit.\033[0m')
                 return cached_result
             
             # On cache miss: compute the result, cache it and return.
             if result := await f(*args, *kwargs):
-                print('cache miss')
+                print('\033[34;1mINFO: Cache miss.\033[0m')
                 await cache.aset(cache_key, result, timeout=timeout)
             else:
-                print('WARNING: `None` result is not cached.', file=sys.stderr)
+                print(
+                    '\033[33;1mWARNING: `None` result is not cached.\033[0m',
+                    file=sys.stderr
+                )
             return result
         return wrapper_func
     return decorator_func
