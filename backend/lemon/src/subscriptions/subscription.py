@@ -35,7 +35,7 @@ async def get_subscription(subscription_id: int | str, params: dict = {}):
     )
     return FetchResponse[Subscription](**await fetch(options)).model_dump()
 
-async def updated_subscription(
+async def update_subscription(
         subscription_id: int | str,
         update_subscription: UpdateSubscription
 ):

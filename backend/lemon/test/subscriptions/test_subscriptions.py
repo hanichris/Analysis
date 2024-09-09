@@ -12,7 +12,7 @@ from src.subscriptions import (
     cancel_subscription,
     get_subscription,
     list_subscriptions,
-    updated_subscription
+    update_subscription
 )
 
 
