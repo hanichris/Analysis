@@ -1,8 +1,11 @@
+from functools import cmp_to_key
+from operator import attrgetter
+
 from django.core.files.uploadedfile import UploadedFile
 from pydantic import BaseModel, EmailStr
 
 from .config import cache_results, sync_plans
-from .models import Plan, Report, User
+from .models import Plan, Report, Subscription, User
 
 class PostData(BaseModel):
     first_name: str
@@ -10,6 +13,30 @@ class PostData(BaseModel):
     email: EmailStr
     title: str
     comment: str
+
+f = attrgetter('status')
+
+def custom_order(a, b):
+    if f(a) == 'active' and f(b) == 'active':
+        return -1
+    if f(a) == 'paused' and f(b) == 'cancelled':
+        return -1
+    return 0
+
+
+async def get_plans():
+    """Retrieves the billing plans.
+
+    Fetches the plans from the database if they are available. Otherwise, retrieves
+    the plans from lemon squeezy and saves them in the database for future use. The
+    saved plans are then returned to the caller.
+    Returns:
+        A list of `Plan` model instances if available. Otherwise, `None`.
+    """
+    plans = [plan async for plan in Plan.objects.all()]
+    if len(plans) == 0:
+        plans = await sync_plans()
+    return plans
 
 @cache_results(timeout=60)
 async def get_user_reports(user: User):
@@ -25,6 +52,25 @@ async def get_user_reports(user: User):
         async for report in
         Report.objects.filter(user=user).order_by('-created_at')
     ]
+@cache_results(timeout=60)
+async def get_user_subscriptions(user: User):
+    """Retrieves the subscriptions for a particular user.
+
+    The retrieved subscriptions are ordered based on their status, i.e.
+    1. Active Subscriptions
+    2. Paused Subscriptions
+    3. Cancelled Subscriptions
+    Args:
+        user: The user whose subscriptions are to be obtained.
+    Returns:
+        list: All the subscriptions for the given user.
+    """
+    subs = [
+        sub
+        async for sub in
+        Subscription.objects.filter(user=user).select_related('plan')
+    ]
+    return sorted(subs, key=cmp_to_key(custom_order))
 
 async def save_report_files(user: User, files: list[UploadedFile]):
     """Saves the report files for a particular user in the database.
@@ -35,17 +81,3 @@ async def save_report_files(user: User, files: list[UploadedFile]):
     """
     uploaded_files = [ Report(user=user, file=file) for file in files ]
     await Report.objects.abulk_create(uploaded_files)
-
-async def get_plans():
-    """Retrieves the billing plans.
-
-    Fetches the plans from the database if they are available. Otherwise, retrieves
-    the plans from lemon squeezy and saves them in the database for future use. The
-    saved plans are then returned to the caller.
-    Returns:
-        A list of `Plan` model instances if available. Otherwise, `None`.
-    """
-    plans = [plan async for plan in Plan.objects.all()]
-    if len(plans) == 0:
-        plans = await sync_plans()
-    return plans
