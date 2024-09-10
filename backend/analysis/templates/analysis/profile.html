@@ -339,19 +339,19 @@
                                                         </div>
                                                         {% if subscription.status == 'active' %}
                                                             <div class="change_product">
-                                                                <a href="{ url 'analysis:change_plan' subscription.plan.id }">Change plan</a>
+                                                                <span><a href="{ url 'analysis:change_plan' subscription.plan.id }" class="link link--btn">Change plan</a></span>
                                                                 <div class="subscription_actions">
-                                                                    <button class="dropdown-btn">
-                                                                        <svg width="30px" height="30px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                                                                    <button class="btn btn--icon btn--transparent dropbtn" onclick="toggleDropdown()">
+                                                                        <svg width="25px" height="25px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
                                                                             <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
                                                                         </svg>
                                                                     </button>
-                                                                    <div class="dropdown-content">
+                                                                    <div class="dropdown-content" id="dropdown-content">
                                                                         <menu>
-                                                                            <li>Pause payments</li>
-                                                                            <li>Customer portal</li>
-                                                                            <li>Update payment method</li>
-                                                                            <li>Cancel subscription</li>
+                                                                            <a href="">Pause payments</a>
+                                                                            <a href="" id="portal">Customer portal</a>
+                                                                            <a href="">Update payment method</a>
+                                                                            <a href="">Cancel subscription</a>
                                                                         </menu>
                                                                     </div>
                                                                 </div>
@@ -378,17 +378,19 @@
                                                             {% endif %}
                                                         </div>
                                                         <div class="subscription-info_status">
+                                                            <span class="bullet">&bull;</span>
                                                             {% if subscription.is_paused %}
                                                                 <div class="badge badge-paused">
                                                                     <span>Paused</span>
                                                                 </div>
                                                             {% else %}
-                                                            <div class="badge badge-{{ subscription.status }}">
+                                                            <div class="badge badge--{{ subscription.status }}">
                                                                 <span>{{ subscription.status_formatted }}</span>
                                                             </div>
                                                             {% endif %}
                                                         </div>
                                                         <div class="subscription-info_date">
+                                                            <span class="bullet">&bull;</span>
                                                             {% if subscription.ends_at %}
                                                                 <input type="hidden" name="ends_at" value={{ subscription.ends_at }} id="ends_at">
                                                             {% endif %}
@@ -436,6 +438,10 @@
     </div>
 </div>
 <script>
+    function toggleDropdown() {
+        document.getElementById('dropdown-content').classList.toggle('show');
+    }
+
     function formatPrice(priceInCents) {
         const shillings = parseFloat(priceInCents) / 100;
         return new Intl.NumberFormat('en-US', {
