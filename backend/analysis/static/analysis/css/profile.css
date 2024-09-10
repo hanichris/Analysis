@@ -162,6 +162,12 @@ header {
                         }
                     }
 
+                    .panel_body {
+                        padding-inline: 1.6rem;
+                        padding-block-start: 1.4rem;
+                        position: relative;
+                    }
+
                     .content_spacing.table {
                         padding-right: 1.6rem;
                         margin-bottom: 2rem;
@@ -260,6 +266,176 @@ header {
             }
         }
     }
+}
+
+#account_subscription_plan_boxes {
+    display: flex;
+    flex-wrap: wrap;
+    margin: -1.6rem;
+
+    & > div {
+        align-items: flex-start;
+        border-radius: 1rem;
+        display: flex;
+        flex-direction: column;
+        flex-basis: 25rem;
+        flex-grow: 1;
+        justify-content: center;
+        margin: 1.6rem;
+        padding: 3rem;
+
+        & > div:first-child {
+            flex-grow: 1;
+        }
+    }
+
+    header {
+        width: 100%;
+    }
+
+    .subscription-info {
+        border: 1px solid var(--color-light-grey);
+    }
+
+    .subscription-info_title {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 3rem;
+
+        .change_product {
+            grid-column: 2 / 3;
+            margin-left: 3rem;
+            display: flex;
+            position: relative;
+            justify-content: flex-end;
+            gap: 1rem
+        }
+    }
+
+    .subscription-info_content {
+        color: hsl(249, 3%, 50%);
+        display: flex;
+        font-size: var(--font-size-small);
+        font-variation-settings: 'wght' 500;
+        gap: .6rem;
+        margin-top: 2rem;
+
+        & > div {
+            display: flex;
+        }
+    }
+}
+
+.bullet {
+    margin-right: .5rem;
+}
+
+.badge {
+    --badge-color: hsl(249, 3%, 50%);
+    --_shadow: var(--shadow, var(--badge-color));
+    --_text-color: var(--tcolor, var(--badge-color));
+    background-color: var(--_shadow);
+    color: var(--_text-color);
+    border-radius: 4px;
+    padding-inline: .4rem;
+}
+
+.badge--active {
+    --shadow: hsl(105, 63%, 81%);
+    --tcolor: hsl(105, 88%, 16%);
+}
+.badge--cancelled {
+    --shadow: var(--color-light-grey);
+    --tcolor: var(--text-color);
+}
+.badge--expired {
+    --shadow: hsl(350, 100%, 88%);
+    --tcolor: var(--color-red);
+}
+.badge--past_due {
+    --shadow: hsl(350, 100%, 88%);
+    --tcolor: var(--color-red);
+}
+.badge--on_trial {
+    --shadow: hsl(216, 100%, 75%);
+    --tcolor: hsl(216, 100%, 50%);
+}
+.badge--unpaid {
+    --shadow: hsl(350, 100%, 88%);
+    --tcolor: var(--color-red);
+}
+.badge--paused {
+    --shadow: hsl(48, 95%, 74%);
+    --tcolor: hsl(48, 92%, 47%);
+}
+
+#account_subscription_plan-info {
+    background-color: hsl(240, 7%, 97%);
+}
+
+#account_subscription_plan-info_name {
+    font-size: calc(var(--font-size-xx-large) + .6rem);
+    font-variation-settings: 'wght' 900;
+    letter-spacing: -0.03em;
+}
+
+#account_subscription_plan-info_price {
+    margin-top: 1rem;
+    font-size: var(--font-size-x-large);
+    color: hsl(249, 3%, 50%);
+}
+
+.dropbtn:hover, .dropbtn:focus {
+    background-color: hsl(240, 7%, 97%);
+    border-radius: .8rem;
+}
+
+.dropdown-content {
+    display: none;
+    border-radius: .8rem;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.11);
+    background-color: var(--color-white);
+    position: absolute;
+    z-index: 2;
+    min-width: 16rem;
+    right: .6rem;
+    top: 3.5rem;
+
+    & menu {
+        display: flex;
+        flex-direction: column;
+
+        a {
+            font-size: var(--font-size-small);
+            padding-inline: 2rem;
+            display: inline-block;
+            width: 100%;
+            padding-block: .75rem;
+
+            &:first-child {
+                padding-top: 1.2rem;
+            }
+
+            &:last-child {
+                border-top: 1px solid var(--color-light-grey);
+                padding-block: 2rem;
+                color: var(--error-color);
+            }
+
+            &:hover {
+                background-color: var(--color-light-grey);
+            }
+        }
+    }
+}
+
+#portal::after {
+    content: ' ↗';
+    font-variation-settings: 'wght' 500;
+}
+
+.show {
+    display: block;
 }
 
 .content_user_wrapper:has(.no-reports) {
