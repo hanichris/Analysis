@@ -98,8 +98,6 @@ async def fetch(options: FetchOptions, requiresApiKey = True):
                     res = await client.post(options.path, json=data)
                 case HTTPVerbEnum.DELETE:
                     res = await client.delete(options.path)
-                    response["status_code"] = res.status_code
-                    return response
                 case HTTPVerbEnum.PATCH:
                     res = await client.patch(options.path, json=data)
                 case _:
@@ -111,7 +109,7 @@ async def fetch(options: FetchOptions, requiresApiKey = True):
                     return response
             res.raise_for_status()
             response["status_code"] = res.status_code
-            response["data"] = res.json()
+            response["data"] = res.json() if res.status_code != 204 else None
         except httpx.RequestError as exc:
             response["error"] = create_lemon_error(
                 f"{exc}", f"Error while requesting {exc.request.url!r}"
