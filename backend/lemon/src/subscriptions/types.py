@@ -18,7 +18,6 @@ type SubscriptionStatus = Literal[
     "unpaid",
     "cancelled",
     "expired",
-    "cancelled",
 ]
 
 type CardBrand = Literal[
@@ -51,7 +50,7 @@ class Urls(TypedDict):
 
 class UpdateSubscription(TypedDict, total=False):
     variant_id:int
-    pause: Pause
+    pause: Pause | None
     cancelled: bool
     trial_ends_at: str | None
     billing_anchor:int | None
