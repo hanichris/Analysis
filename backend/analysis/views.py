@@ -32,12 +32,12 @@ from .forms import (
     UserEditNameForm,
     UserEditPasswordForm,
 )
-from .config import get_checkout_url, webhook_has_meta
+from .config import get_checkout_url, webhook_has_meta, get_user_subscriptions
 from .mixins import AsyncLoginRequiredMixin, AsyncUserPassesTestMixin
 from .models import User, Comment, Report, WebhookEvent
 from .serialisers import WebhookEventSerializer
 from .tasks import send_to_zoho, process_webhook_event
-from .utils import PostData, get_user_reports, get_plans, save_report_files, get_user_subscriptions
+from .utils import PostData, get_user_reports, get_plans, save_report_files
 
 logger = logging.getLogger(__name__)
 
