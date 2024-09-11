@@ -124,3 +124,25 @@ def cache_results(
             return result
         return wrapper_func
     return decorator_func
+
+def del_cache_key(f: Callable, prefix: str | None = os.getenv('ENV_NAME')):
+    """Deletes the object associated with the provided key from the cache.
+    
+    Args:
+        f: The callable object whose results are to be removed from the cache.
+    Returns:
+        f: wrapper function that performs the eviction operation.
+    """
+    @functools.wraps(f)
+    def wrapper(*args, **kwargs):
+        cache_key = generate_key(f, *args, *kwargs)
+        if prefix:
+            cache_key = f'{prefix}_{cache_key}'
+        print(f"Deleteing cache key {cache_key} entry")
+        is_successful = cache.delete(cache_key)
+        if is_successful:
+            print(f"Successfully deleted the object with cache key {cache_key}")
+        else:
+            print(f"Failed to delete the object with the cache key {cache_key}")
+        return is_successful
+    return wrapper
