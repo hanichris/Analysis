@@ -1,14 +1,29 @@
 import asyncio
 import os
 
+from functools import cmp_to_key
+from operator import attrgetter
 from typing import cast
 
-from analysis.config import configure_lemonsqueezy
-from analysis.models import Plan, User
+from .util import cache_results, del_cache_key
+from .lemonsqueezy import configure_lemonsqueezy
+
+from analysis.models import Plan, User, Subscription
 from lemon.src.products import list_products, get_product
 from lemon.src.prices import list_prices
 from lemon.src.checkouts import create_checkout
 from lemon.src.webhooks import create_webhook, list_webhooks, Webhook
+from lemon.src.subscriptions import get_subscription, cancel_subscription, update_subscription
+
+
+f = attrgetter('status')
+
+def custom_order(a, b):
+    if f(a) == 'active' and f(b) == 'active':
+        return -1
+    if f(a) == 'paused' and f(b) == 'cancelled':
+        return -1
+    return 0
 
 async def sync_plans() -> list[Plan] | None:
     """Synchronises the product variants from Lemon Squeezy with the database.
@@ -286,3 +301,118 @@ async def setup_webhook():
         webhook = new_webhook['data']['data']
 
     print(f"Webhook {webhook['id']} created on Lemon Squeezy.")
+
+async def get_subscription_urls(id: str):
+    """Retrieve the subscription urls related to a given subscription id.
+
+    Retrieves the `update_payment_method` and `custom_portal` urls for the provided
+    subscription id.
+    Args:
+        id: The subscription id of interest.
+    Returns:
+        dict. Holds the urls for the `update_payment_method` and `custom_portal`
+        under the corresponding dictionary key.
+    Raises:
+        RuntimeError: If an error was encountered during the fetch request.
+        ValidationError: If the data returned does not match the expected schema.
+    """
+    configure_lemonsqueezy()
+
+    response = await get_subscription(id)
+
+    return response['data']['data']['attributes']['urls']
+
+@cache_results(timeout=60)
+async def get_user_subscriptions(user: User):
+    """Retrieves the subscriptions for a particular user.
+
+    The retrieved subscriptions are ordered based on their status, i.e.
+    1. Active Subscriptions
+    2. Paused Subscriptions
+    3. Cancelled Subscriptions
+    Args:
+        user: The user whose subscriptions are to be obtained.
+    Returns:
+        list: All the subscriptions for the given user.
+    """
+    subs = [
+        sub
+        async for sub in
+        Subscription.objects.filter(user=user).select_related('plan')
+    ]
+    return sorted(subs, key=cmp_to_key(custom_order))
+
+
+async def cancel_sub(sub_id: str, user: User):
+    """Cancels the subscription identified by the given id for the particular user.
+
+    Makes a delete request to lemon squeezy for the subscription with the given id.
+    The api responds with a cancelled subscription object which is then used to
+    update the corresponding subscription entry in the database.
+    Args:
+        sub_id: id for a particular subscription object.
+        user: The user whose subscription is to be cancelled.
+    Returns:
+        The cancelled subscription object response.
+    Raises:
+        ValidationError: If the response does not match the expected data schema.
+    """
+    configure_lemonsqueezy()
+
+    user_subs: list[Subscription] = await get_user_subscriptions(user)
+    sub = next(filter(lambda x: x.lemonsqueezy_id == sub_id , user_subs), None)
+    if sub is None:
+        raise RuntimeError(f"Subscription {sub_id} not found.")
+    cancelled_sub = await cancel_subscription(sub.lemonsqueezy_id)
+
+    sub.status=cancelled_sub['data']['data']['attributes']['status']
+    sub.status_formatted=cancelled_sub['data']['data']['attributes']['status_formatted']
+    sub.ends_at=cancelled_sub['data']['data']['attributes']['ends_at']
+    await sub.asave(update_fields=['status, status_formatted, ends_at'])
+    del_cache_key(get_user_subscriptions)(user)
+    return cancelled_sub
+    
+async def pause_sub(sub_id: str, user: User):
+    """"""
+    configure_lemonsqueezy()
+
+    user_subs: list[Subscription] = await get_user_subscriptions(user)
+    sub = next(filter(lambda x: x.lemonsqueezy_id == sub_id , user_subs), None)
+    if sub is None:
+        raise RuntimeError(f"Subscription {sub_id} not found.")
+    
+    paused_sub = await update_subscription(sub.lemonsqueezy_id, {
+        'pause': {
+            'mode': 'void',
+        },
+    })
+
+    sub.status=paused_sub['data']['data']['attributes']['status']
+    sub.status_formatted=paused_sub['data']['data']['attributes']['status_formatted']
+    sub.ends_at=paused_sub['data']['data']['attributes']['ends_at']
+    sub.is_paused=paused_sub['data']['data']['attributes']['pause'] is not None
+    await sub.asave(update_fields=['status', 'status_formatted', 'ends_at', 'is_paused'])
+    del_cache_key(get_user_subscriptions)(user)
+    return paused_sub
+
+async def unpause_sub(sub_id: str, user: User):
+    """"""
+    configure_lemonsqueezy()
+
+    user_subs: list[Subscription] = await get_user_subscriptions(user)
+    sub = next(filter(lambda x: x.lemonsqueezy_id == sub_id , user_subs), None)
+    if sub is None:
+        raise RuntimeError(f"Subscription {sub_id} not found.")
+    
+    paused_sub = await update_subscription(sub.lemonsqueezy_id, {
+        'pause': None
+    })
+
+    sub.status=paused_sub['data']['data']['attributes']['status']
+    sub.status_formatted=paused_sub['data']['data']['attributes']['status_formatted']
+    sub.ends_at=paused_sub['data']['data']['attributes']['ends_at']
+    sub.is_paused=paused_sub['data']['data']['attributes']['pause'] is not None
+    await sub.asave(update_fields=['status', 'status_formatted', 'ends_at', 'is_paused'])
+    del_cache_key(get_user_subscriptions)(user)
+    return paused_sub
+
