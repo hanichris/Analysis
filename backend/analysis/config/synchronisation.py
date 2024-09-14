@@ -352,8 +352,6 @@ async def cancel_sub(sub_id: str, user: User):
     Args:
         sub_id: id for a particular subscription object.
         user: The user whose subscription is to be cancelled.
-    Returns:
-        The cancelled subscription object response.
     Raises:
         ValidationError: If the response does not match the expected data schema.
     """
@@ -367,20 +365,30 @@ async def cancel_sub(sub_id: str, user: User):
 
     sub.status=cancelled_sub['data']['data']['attributes']['status']
     sub.status_formatted=cancelled_sub['data']['data']['attributes']['status_formatted']
-    sub.ends_at=cancelled_sub['data']['data']['attributes']['ends_at']
+    if ends_at:=cancelled_sub['data']['data']['attributes']['ends_at']:
+        sub.ends_at=ends_at
     await sub.asave(update_fields=['status, status_formatted, ends_at'])
-    del_cache_key(get_user_subscriptions)(user)
-    return cancelled_sub
+    await del_cache_key(get_user_subscriptions)(user)
     
 async def pause_sub(sub_id: str, user: User):
-    """"""
+    """Pauses the subscription identified by the given id for the particular user.
+    
+    Makes a patch request to lemon squeezy with update details for for the
+    subscription with the given id. The api responds with an updated subscription
+    object which is then used to update the corresponding subscription entry in
+    the database.
+    Args:
+        sub_id: id for a particular subscription object.
+        user: The user whose subscription is to be paused.
+    Raises:
+        ValidationError: If the response does not match the expected data schema.
+    """
     configure_lemonsqueezy()
 
     user_subs: list[Subscription] = await get_user_subscriptions(user)
     sub = next(filter(lambda x: x.lemonsqueezy_id == sub_id , user_subs), None)
     if sub is None:
         raise RuntimeError(f"Subscription {sub_id} not found.")
-    
     paused_sub = await update_subscription(sub.lemonsqueezy_id, {
         'pause': {
             'mode': 'void',
@@ -389,14 +397,25 @@ async def pause_sub(sub_id: str, user: User):
 
     sub.status=paused_sub['data']['data']['attributes']['status']
     sub.status_formatted=paused_sub['data']['data']['attributes']['status_formatted']
-    sub.ends_at=paused_sub['data']['data']['attributes']['ends_at']
+    if ends_at:=paused_sub['data']['data']['attributes']['ends_at']:
+        sub.ends_at=ends_at
     sub.is_paused=paused_sub['data']['data']['attributes']['pause'] is not None
     await sub.asave(update_fields=['status', 'status_formatted', 'ends_at', 'is_paused'])
-    del_cache_key(get_user_subscriptions)(user)
-    return paused_sub
+    await del_cache_key(get_user_subscriptions)(user)
 
 async def unpause_sub(sub_id: str, user: User):
-    """"""
+    """Resumes a given subscription for a particular user.
+    
+    Makes a patch request to lemon squeezy with update details for the
+    subscription with the given id. The api responds with an updated subscription
+    object which is then used to update the corresponding subscription entry in
+    the database.
+    Args:
+        sub_id: id for a particular subscription object.
+        user. The user whose subscription is to be resumed.
+    Raises:
+        ValidationError: If the response does not match the expected data schema.
+    """
     configure_lemonsqueezy()
 
     user_subs: list[Subscription] = await get_user_subscriptions(user)
@@ -404,15 +423,15 @@ async def unpause_sub(sub_id: str, user: User):
     if sub is None:
         raise RuntimeError(f"Subscription {sub_id} not found.")
     
-    paused_sub = await update_subscription(sub.lemonsqueezy_id, {
-        'pause': None
+    resumed_sub = await update_subscription(sub.lemonsqueezy_id, {
+        'pause': None,
     })
 
-    sub.status=paused_sub['data']['data']['attributes']['status']
-    sub.status_formatted=paused_sub['data']['data']['attributes']['status_formatted']
-    sub.ends_at=paused_sub['data']['data']['attributes']['ends_at']
-    sub.is_paused=paused_sub['data']['data']['attributes']['pause'] is not None
+    sub.status=resumed_sub['data']['data']['attributes']['status']
+    sub.status_formatted=resumed_sub['data']['data']['attributes']['status_formatted']
+    if ends_at:=resumed_sub['data']['data']['attributes']['ends_at']:
+        sub.ends_at=ends_at
+    sub.is_paused=resumed_sub['data']['data']['attributes']['pause'] is not None
     await sub.asave(update_fields=['status', 'status_formatted', 'ends_at', 'is_paused'])
-    del_cache_key(get_user_subscriptions)(user)
-    return paused_sub
+    await del_cache_key(get_user_subscriptions)(user)
 
