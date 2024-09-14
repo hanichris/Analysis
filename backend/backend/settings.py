@@ -69,16 +69,16 @@ INTERNAL_IPS = [
 
 TESTING = 'test' in sys.argv
 
-if not TESTING:
-    INSTALLED_APPS = [
-        *INSTALLED_APPS,
-        'debug_toolbar',
-    ]
+# if not TESTING:
+#     INSTALLED_APPS = [
+#         *INSTALLED_APPS,
+#         'debug_toolbar',
+#     ]
 
-    MIDDLEWARE = [
-        "debug_toolbar.middleware.DebugToolbarMiddleware",
-        *MIDDLEWARE,
-    ]
+#     MIDDLEWARE = [
+#         "debug_toolbar.middleware.DebugToolbarMiddleware",
+#         *MIDDLEWARE,
+#     ]
 
 ROOT_URLCONF = 'backend.urls'
 
