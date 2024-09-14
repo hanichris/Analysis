@@ -405,7 +405,8 @@ header {
         display: flex;
         flex-direction: column;
 
-        a {
+        & > * {
+            text-align: left;
             font-size: var(--font-size-small);
             padding-inline: 2rem;
             display: inline-block;
@@ -429,9 +430,14 @@ header {
     }
 }
 
-#portal::after {
+.portal::after {
     content: ' ↗';
     font-variation-settings: 'wght' 500;
+}
+
+.loading {
+    opacity: 50%;
+    pointer-events: none;
 }
 
 .show {
