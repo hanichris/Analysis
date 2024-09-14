@@ -57,16 +57,6 @@ async def update_subscription(
         `ValidationError`: If the parameters or response do not match the expected
         pydantic schemas.
     """
-    attributes = {
-        'variant_id': update_subscription.get('variant_id'),
-        'cancelled': update_subscription.get('cancelled'),
-        'billing_anchor': update_subscription.get('billing_anchor'),
-        'invoice_immediately': update_subscription.get('invoice_immediately'),
-        'disable_prorations': update_subscription.get('disable_prorations'),
-        'pause': update_subscription.get('pause'),
-        'trial_ends_at': update_subscription.get('trial_ends_at')
-    }
-
     options = FetchOptions(
         path=f"/v1/subscriptions/{subscription_id}",
         method=HTTPVerbEnum.PATCH,
@@ -74,7 +64,7 @@ async def update_subscription(
             'data': {
                 'type': 'subscriptions',
                 'id': str(subscription_id),
-                'attributes': attributes,
+                'attributes': update_subscription,
             }
         }
     )
