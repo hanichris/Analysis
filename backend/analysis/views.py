@@ -13,9 +13,10 @@ from typing import cast
 from django.contrib.auth import aauthenticate, alogin
 from django.core.paginator import Paginator
 from django.db import Error
-from django.http import HttpRequest, JsonResponse, HttpResponseNotFound, HttpResponseRedirect
+from django.http import HttpRequest, JsonResponse, HttpResponseNotFound, HttpResponseRedirect, Http404
 from django.shortcuts import render, redirect, aget_object_or_404 # type: ignore
 from django.views.generic import View
+from django.views.decorators.http import require_safe
 
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -32,9 +33,16 @@ from .forms import (
     UserEditNameForm,
     UserEditPasswordForm,
 )
-from .config import get_checkout_url, webhook_has_meta, get_user_subscriptions
+from .config import (
+    get_checkout_url,
+    get_user_subscriptions,
+    get_subscription_urls,
+    pause_sub,
+    unpause_sub,
+    webhook_has_meta,
+)
 from .mixins import AsyncLoginRequiredMixin, AsyncUserPassesTestMixin
-from .models import User, Comment, Report, WebhookEvent
+from .models import User, Comment, Report, Subscription, WebhookEvent
 from .serialisers import WebhookEventSerializer
 from .tasks import send_to_zoho, process_webhook_event
 from .utils import PostData, get_user_reports, get_plans, save_report_files
@@ -66,6 +74,43 @@ def webhook(request: Request):
             return Response(status=status.HTTP_200_OK)
 
     return Response('Invalid data', status=status.HTTP_400_BAD_REQUEST)
+
+@require_safe
+async def retrieve_urls(request: HttpRequest, lemonsqueezy_id: str):
+    urls = await get_subscription_urls(lemonsqueezy_id)
+    return JsonResponse(urls, status=200)
+
+@require_safe
+async def pause_subscription(request: HttpRequest, lemonsqueezy_id: str):
+    user = await request.auser() # type: ignore
+    try:
+        await pause_sub(lemonsqueezy_id, user)
+        sub = await Subscription.objects.filter(lemonsqueezy_id=lemonsqueezy_id).select_related('plan').aget()
+        return render(
+            request,
+            'analysis/partial.html',
+            {
+                'subscription': sub,
+            }
+        )
+    except (Subscription.DoesNotExist, RuntimeError):
+        raise Http404(f'No subscription with the id: {lemonsqueezy_id} was found.')
+
+@require_safe
+async def resume_subscription(request: HttpRequest, lemonsqueezy_id: str):
+    user = await request.auser() # type: ignore
+    try:
+        await unpause_sub(lemonsqueezy_id, user)
+        sub = await Subscription.objects.filter(lemonsqueezy_id=lemonsqueezy_id).select_related('plan').aget()
+        return render(
+            request,
+            'analysis/partial.html',
+            {
+                'subscription': sub,
+            }
+        )
+    except (Subscription.DoesNotExist, RuntimeError):
+        raise Http404(f'No subscription with the id: {lemonsqueezy_id} was found.')
     
 class IndexView(View):
     parents = Path(__file__).parents
