@@ -134,15 +134,17 @@ def del_cache_key(f: Callable, prefix: str | None = os.getenv('ENV_NAME')):
         f: wrapper function that performs the eviction operation.
     """
     @functools.wraps(f)
-    def wrapper(*args, **kwargs):
+    async def wrapper(*args, **kwargs):
         cache_key = generate_key(f, *args, *kwargs)
         if prefix:
             cache_key = f'{prefix}_{cache_key}'
         print(f"Deleteing cache key {cache_key} entry")
-        is_successful = cache.delete(cache_key)
-        if is_successful:
-            print(f"Successfully deleted the object with cache key {cache_key}")
-        else:
+        await cache.adelete_many([cache_key])
+        is_successful = False
+        if await cache.aget(cache_key):
             print(f"Failed to delete the object with the cache key {cache_key}")
+        else:
+            print(f"Successfully deleted the object with cache key {cache_key}")
+            is_successful = True
         return is_successful
     return wrapper
