@@ -7,7 +7,11 @@ app_name = "analysis"
 urlpatterns = [
     path("", cache_page(60 * 60)(views.IndexView.as_view()), name="index"),
     path("api/webhook", views.webhook, name='lswhk_endpoint'),
+    path("custom_urls/<lemonsqueezy_id>", views.retrieve_urls, name='urls'),
+    path("pause_subscription/<lemonsqueezy_id>", views.pause_subscription, name='pause_sub'),
+    path("resume_subscription/<lemonsqueezy_id>", views.resume_subscription, name='resume_sub'),
     path("billing/", views.Billing.as_view(), name="billing"),
+    path("change_plan/<int:pk>", views.Billing.as_view(), name='change_plan'),
     path("dashboard/", views.DashboardView.as_view(), name='dashboard'),
     path("users/<uuid:pk>/", include(
         [
