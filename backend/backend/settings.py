@@ -69,16 +69,16 @@ INTERNAL_IPS = [
 
 TESTING = 'test' in sys.argv
 
-# if not TESTING:
-#     INSTALLED_APPS = [
-#         *INSTALLED_APPS,
-#         'debug_toolbar',
-#     ]
+if not TESTING:
+    INSTALLED_APPS = [
+        *INSTALLED_APPS,
+        'debug_toolbar',
+    ]
 
-#     MIDDLEWARE = [
-#         "debug_toolbar.middleware.DebugToolbarMiddleware",
-#         *MIDDLEWARE,
-#     ]
+    MIDDLEWARE = [
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
+        *MIDDLEWARE,
+    ]
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -200,3 +200,11 @@ CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 CELERY_ACCEPT_CONTENT = {'json'}
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
+
+# Cache Configuration
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.memcached.PyLibMCCache",
+        "LOCATION": "127.0.0.1:11211",
+    }
+}
