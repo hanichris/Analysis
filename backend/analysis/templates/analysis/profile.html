@@ -20,6 +20,7 @@
                         <title>chevron-left</title>
                         <path d="M12.061 16l9.471-9.47c0.134-0.136 0.218-0.322 0.218-0.528 0-0.415-0.336-0.751-0.751-0.751-0.207 0-0.394 0.083-0.529 0.218l-9.999 10c-0.136 0.136-0.22 0.323-0.22 0.53s0.084 0.395 0.22 0.53l9.999 10.001c0.136 0.136 0.324 0.22 0.531 0.22 0.415 0 0.751-0.336 0.751-0.751 0-0.207-0.084-0.395-0.22-0.531v0z"></path>
                     </svg>
+                    <link rel="prefetch" href="{% url 'analysis:dashboard' %}">
                 </a>
                 <div class="profile-image">
                     <button type="button">
@@ -447,7 +448,6 @@
     </div>
 </div>
 <script>
-
     async function updateSub(event, action='pause') {
         event.preventDefault();
         const id = event.currentTarget.id.split('-')[1];
@@ -529,6 +529,7 @@
         }
     }
 
+    // Formate the currency in cents to a standard form.
     function formatPrice(priceInCents) {
         const shillings = parseFloat(priceInCents) / 100;
         return new Intl.NumberFormat('en-US', {
@@ -537,6 +538,8 @@
             minimumFractionDigits: shillings % 1 !== 0 ? 2 : 0,
         }).format(shillings);
     }
+
+    // Formate the date iso string to the desired state.
     function formatDate(date) {
         return date ? new Date(date).toLocaleString('en-US', {
             day: '2-digit',
@@ -558,7 +561,7 @@
     });
 
 
-
+    // Enable client side navigation.
     const links = document.querySelectorAll('li > a');
     let activeDiv;
     let activeLink;
@@ -584,4 +587,5 @@
         })
     });
 </script>
+<script src="https://app.lemonsqueezy.com/js/lemon.js" defer></script>
 {% endblock content %}
