@@ -9,6 +9,7 @@ from asgiref.sync import sync_to_async
 from datetime import date
 from pathlib import Path
 from typing import cast
+from uuid import UUID
 
 from django.contrib.auth import aauthenticate, alogin
 from django.core.paginator import Paginator
@@ -42,7 +43,7 @@ from .config import (
     webhook_has_meta,
 )
 from .mixins import AsyncLoginRequiredMixin, AsyncUserPassesTestMixin
-from .models import User, Comment, Report, Subscription, WebhookEvent
+from .models import User, Comment, Report, Subscription, WebhookEvent, Geofield
 from .serialisers import WebhookEventSerializer
 from .tasks import send_to_zoho, process_webhook_event
 from .utils import PostData, get_user_reports, get_plans, save_report_files
@@ -79,6 +80,30 @@ def webhook(request: Request):
 async def retrieve_urls(request: HttpRequest, lemonsqueezy_id: str):
     urls = await get_subscription_urls(lemonsqueezy_id)
     return JsonResponse(urls, status=200)
+
+@require_safe
+async def get_coordinates(request: HttpRequest, pk: UUID):
+    content = {
+        'content': [],
+        'error': None, 
+        'msg': '',
+        'op': '',
+        'success': None,
+    }
+    qs = Geofield.objects.filter(user__pk=pk)
+    content['msg'] = 'Successfully retrieved data from the database'
+    content['op'] = 'GET'
+    content['success'] = True
+    content['content'] = [
+        {
+            'geometry': entry.geometry,
+            'id': entry.feature_id.hex if entry.feature_id else None,
+            'properties': {},
+            'type': 'Feature',
+        }
+        async for entry in qs
+    ]
+    return JsonResponse(content, status=200)
 
 @require_safe
 async def pause_subscription(request: HttpRequest, lemonsqueezy_id: str):
