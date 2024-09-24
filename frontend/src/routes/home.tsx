@@ -131,8 +131,13 @@ export default function Home() {
       <section id="services" className="section">
         <div className="container">
           <header className="section-header">
-            <h2 className="section-title">Services</h2>
-            <p className="section-tagline">We work with you</p>
+            <h2 className="section-title">
+              Personalised Recommendations At Your Fingertips
+            </h2>
+            <p className="section-tagline">
+              Tailored recommendations for small-scale farmers using satellite
+              imagery and data sources.
+            </p>
           </header>
           <div className="section-body">
             <ul className="row">
@@ -148,14 +153,21 @@ export default function Home() {
                       static/analysis/img/aerial_farm/aerial_farm_c_scale,w_2328.jpg 2328w,
                       static/analysis/img/aerial_farm/aerial_farm_c_scale,w_2600.jpg 2600w"
                         src="static/analysis/img/aerial_farm/aerial_farm_c_scale,w_2600.jpg"
-                        alt="Service 1"
+                        alt="Satellite Data"
                       />
                     </div>
                     <div className="card-inner">
                       <h3 className="card-title">
-                        <span>Service 1</span>
+                        <span>Using Satellite Data</span>
                       </h3>
                     </div>
+                  </div>
+                  <div className="description">
+                    <p className="info">
+                      Combined with weather patterns and crop-specific insights,
+                      we generate personalised, location-based recommendations
+                      for every farm.
+                    </p>
                   </div>
                 </article>
               </li>
@@ -172,14 +184,21 @@ export default function Home() {
                           static/analysis/img/satellite_side/satellite_side_c_scale,w_2134.jpg 2134w,
                           static/analysis/img/satellite_side/satellite_side_c_scale,w_2600.jpg 2600w"
                         src="static/analysis/img/satellite_side/satellite_side_c_scale,w_2600.jpg"
-                        alt=""
+                        alt="Direct SMS Delivery"
                       />
                     </div>
                     <div className="card-inner">
                       <h3 className="card-title">
-                        <span>Service 2</span>
+                        <span>Direct SMS Delivery</span>
                       </h3>
                     </div>
+                  </div>
+                  <div className="description">
+                    <p className="info">
+                      Delivered directly to farmers through SMS, ensuring that
+                      even those without internet access benefit from our
+                      service
+                    </p>
                   </div>
                 </article>
               </li>
@@ -195,14 +214,21 @@ export default function Home() {
                       static/analysis/img/aerial_farm/aerial_farm_c_scale,w_2328.jpg 2328w,
                       static/analysis/img/aerial_farm/aerial_farm_c_scale,w_2600.jpg 2600w"
                         src="static/analysis/img/aerial_farm/aerial_farm_c_scale,w_2600.jpg"
-                        alt="Service 3"
+                        alt="Dashboard"
                       />
                     </div>
                     <div className="card-inner">
                       <h3 className="card-title">
-                        <span>Service 3</span>
+                        <span>Client Specific Dashboard</span>
                       </h3>
                     </div>
+                  </div>
+                  <div className="description">
+                    <p className="info">
+                      For a more detailed analysis, farmers can log into their
+                      client-specific dashboard to review full reports and track
+                      their progress.
+                    </p>
                   </div>
                 </article>
               </li>
