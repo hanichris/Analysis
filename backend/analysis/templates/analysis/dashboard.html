@@ -138,12 +138,10 @@
 {{ access_token|json_script:'token-data'}}
 <script>
     const _id = document.getElementById("user_id").value;
-    const ws = new WebSocket(`ws://${window.location.host}/ws/geo/`);
-    let init = undefined;
-
+    const scheme = window.location.protocol === "https:" ? "wss" : "ws";
+    const ws = new WebSocket(`${scheme}://${window.location.host}/ws/geo/`);
     ws.onopen = (e) => {
         console.log("[open] Connection established!!!.");
-        ws.send(JSON.stringify({'OP': 'GET'}));
     }
 
     ws.onclose = (e) => {
@@ -157,10 +155,6 @@
     ws.onerror = (err) => {
         console.log(`[error] ${err}`);
     };
-
-    ws.onmessage = (e) => {
-        init = JSON.parse(e.data);
-    }
 
     const token = JSON.parse(document.getElementById('token-data').textContent);
     const csrftoken = getCookie('csrftoken');
@@ -185,7 +179,15 @@
             defaultMode: 'draw_polygon',
         })
 
-        map.on('load', () => {
+        map.on('load', async () => {
+            const init = await fetch(`/users/${_id}/coordinates`)
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(res.statusText);
+                }
+                return res.json();
+            })
+            .catch(err => console.error(err));
 
             map.addSource(`${_id}-land`, {
                 type: 'geojson',
