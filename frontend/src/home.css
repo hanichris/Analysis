@@ -362,11 +362,16 @@ header .menu-icon .navicon::after {
 }
 
 .section-tagline {
-    color: rgb(55 65 81 / 1);
+    color: #6c6c89;
     font-family: var(--font-family);
-    font-weight: 500;
+    font-variation-settings: 'wght' 400;
     font-size: var(--font-size-large);
+    line-height: 1.7;
     text-align: center;
+}
+
+#services .section-tagline {
+    margin-top: 1rem;
 }
 
 .section-tagline + div {
@@ -454,6 +459,18 @@ header .menu-icon .navicon::after {
 
         &:hover .card-title {
             opacity: 1;
+        }
+
+        & .description {
+            margin-top: .8rem;
+
+            & > .info {
+                color: #6c6c89;
+                font-size: var(--font-size-small);
+                font-family: var(--font-family);
+                font-variation-settings: 'wght' 400;
+                text-align: center;
+            }
         }
     }
 }
@@ -827,6 +844,12 @@ fieldset {
 
         & .card-services {
 
+            & .description {
+                max-height: 0;
+                overflow: hidden;
+                transition: .3s;
+            }
+
             &:hover {
                 & .card-outer {
                     transform: scale(0.95);
@@ -839,6 +862,11 @@ fieldset {
 
                 & .card-inner {
                     background-color: rgba(0, 0, 0, 0.7);
+                }
+
+                & .description {
+                    max-height: 20rem;
+                    margin-top: 0;
                 }
 
             }
