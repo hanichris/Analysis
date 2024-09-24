@@ -5,7 +5,7 @@ from . import views
 
 app_name = "analysis"
 urlpatterns = [
-    path("", cache_page(60 * 60)(views.IndexView.as_view()), name="index"),
+    path("", views.IndexView.as_view(), name="index"),
     path("api/webhook", views.webhook, name='lswhk_endpoint'),
     path("custom_urls/<lemonsqueezy_id>", views.retrieve_urls, name='urls'),
     path("pause_subscription/<lemonsqueezy_id>", views.pause_subscription, name='pause_sub'),
@@ -16,6 +16,7 @@ urlpatterns = [
     path("users/<uuid:pk>/", include(
         [
             path("", views.UserProfileView.as_view(), name='profile'),
+            path("coordinates", views.get_coordinates, name="user_coords"),
             path("edit/", views.UserProfileEditView.as_view(), name='edit_profile'),
         ]
     )),
