@@ -82,30 +82,6 @@ async def retrieve_urls(request: HttpRequest, lemonsqueezy_id: str):
     return JsonResponse(urls, status=200)
 
 @require_safe
-async def get_coordinates(request: HttpRequest, pk: UUID):
-    content = {
-        'content': [],
-        'error': None, 
-        'msg': '',
-        'op': '',
-        'success': None,
-    }
-    qs = Geofield.objects.filter(user__pk=pk)
-    content['msg'] = 'Successfully retrieved data from the database'
-    content['op'] = 'GET'
-    content['success'] = True
-    content['content'] = [
-        {
-            'geometry': entry.geometry,
-            'id': entry.feature_id.hex if entry.feature_id else None,
-            'properties': {},
-            'type': 'Feature',
-        }
-        async for entry in qs
-    ]
-    return JsonResponse(content, status=200)
-
-@require_safe
 async def pause_subscription(request: HttpRequest, lemonsqueezy_id: str):
     user = await request.auser() # type: ignore
     try:
@@ -190,6 +166,66 @@ class DashboardView(AsyncLoginRequiredMixin, View):
                 "user": user
             }
         )
+
+class Coordinates(View):
+    content = {
+        'content': [],
+        'error': None, 
+        'msg': '',
+        'op': '',
+        'success': None,
+    }
+
+    async def get(self, request: HttpRequest, *args, **kwargs):
+        pk = kwargs['pk']
+        qs = Geofield.objects.filter(user__pk=pk)
+        self.content['msg'] = 'Successfully retrieved data from the database'
+        self.content['op'] = 'GET'
+        self.content['success'] = True
+        self.content['content'] = [
+            {
+                'geometry': entry.geometry,
+                'id': entry.feature_id.hex if entry.feature_id else None,
+                'properties': {},
+                'type': 'Feature',
+            }
+            async for entry in qs
+        ]
+        return JsonResponse(self.content, status=200)
+
+    async def post(self, request: HttpRequest, *args, **kwargs):
+        pk = kwargs['pk']
+        data: dict = json.loads(request.body.decode('utf-8'))
+        user = await User.people.aget(pk=pk)
+        create_data = [
+            Geofield(
+                user=user,
+                feature_id=UUID(feature["feature_id"]),
+                geometry=feature["geometry"]
+            )
+            for feature in data['features']
+        ]
+
+        created_objects = await Geofield.objects.abulk_create(
+            create_data,
+            update_conflicts=True, # type: ignore
+            update_fields=["geometry"],
+            unique_fields=["feature_id"]   
+        )
+
+        self.content['msg'] = 'Successfully saved the coordinates into the database'
+        self.content['op'] = "POST",
+        self.content['success'] = True,
+        self.content['content'] = [
+            {
+                'geometry': item.geometry,
+                'id': item.feature_id.hex if item.feature_id else None,
+                'properties': {},
+                'type': 'Feature',
+            }
+            for item in created_objects
+        ]
+        return JsonResponse(self.content, status=200)
 
 class SignUpView(View):
     async def get(self, request: HttpRequest, *args, **kwargs):
