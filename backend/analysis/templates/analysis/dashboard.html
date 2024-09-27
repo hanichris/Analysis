@@ -156,6 +156,10 @@
         console.log(`[error] ${err}`);
     };
 
+    if (!!window.SharedWorker) {
+        var worker = new SharedWorker('/static/analysis/js/worker.js');
+    }
+
     const token = JSON.parse(document.getElementById('token-data').textContent);
     const csrftoken = getCookie('csrftoken');
 
@@ -193,7 +197,7 @@
                 type: 'geojson',
                 data: {
                     type: 'FeatureCollection',
-                    features: init.content,
+                    features: init.content ?? [],
                 },
                 dynamic: true,
             });
@@ -220,13 +224,18 @@
                 },
             });
 
+            worker.port.onmessage = (e) => {
+                console.log("Worker message: ", e.data);
+                map.getSource(`${_id}-land`).updateData(e.data);
+            };
+
             ws.onmessage = (e) => {
                 const resp = JSON.parse(e.data);
                 console.log(resp);
                 map.getSource(`${_id}-land`).updateData({
                     type: 'FeatureCollection',
                     features: resp.content,
-                })
+                });
             };
         });
 
@@ -242,7 +251,8 @@
     async function saveCoord(e) {
         const data = draw.getAll();
         if (data.features.length > 0) {
-            ws.send(JSON.stringify({...data, 'OP': 'POST'}));
+            // ws.send(JSON.stringify({...data, 'OP': 'POST'}));
+            worker.port.postMessage({ data, _id, csrftoken });
         }
     }
 </script>
