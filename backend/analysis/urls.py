@@ -16,7 +16,7 @@ urlpatterns = [
     path("users/<uuid:pk>/", include(
         [
             path("", views.UserProfileView.as_view(), name='profile'),
-            path("coordinates", views.get_coordinates, name="user_coords"),
+            path("coordinates", views.Coordinates.as_view(), name="user_coords"),
             path("edit/", views.UserProfileEditView.as_view(), name='edit_profile'),
         ]
     )),
