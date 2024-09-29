@@ -1,10 +1,11 @@
+const cache = new Set();
 onconnect = (event) => {
     const port = event.ports[0];
 
     const request = indexedDB.open('GeofieldDatabase');
 
     request.onerror = () => {
-        console.error(`Error: Permission to open a database has been denied.\n${request.error}`);
+        console.error("Error: Permission to open a database has been denied.", request.error);
     };
 
     request.onupgradeneeded = () => {
@@ -26,58 +27,104 @@ onconnect = (event) => {
             alert('Database is outdated. Please reload the page.');
         };
 
-        port.onmessage = (e) => {
-            const { data, _id, csrftoken } = e.data;
-            const transaction = db.transaction('coordinates', 'readwrite');
-            let objectStore = transaction.objectStore('coordinates');
-            const formattedData = data.features?.map((feature) => {
-                return {
-                    'feature_id': feature.id,
-                    'geometry': feature.geometry,
-                }
-            });
+        db.onerror = (e) => {
+            console.log("Error", e.target.error);
+        }
 
-            formattedData.forEach(feature => {
-                objectStore.put(feature);
-            });
-
-            transaction.oncomplete = () => {
-                port.postMessage(data);
-            };
-
-            let features = [];
-            objectStore = db.transaction('coordinates').objectStore('coordinates');
-            objectStore.openCursor(null, 'prev').onsuccess = async (event) => {
-                const cursor = event.target.result;
-                if (cursor && features.length < 10) {
-                    features.push(cursor.value);
-                    cursor.continue();
-                } else {
-                    if (features.length == 10){
-                        await fetch(`/users/${_id}/coordinates`, {
-                            method: "POST",
-                            body: JSON.stringify({
-                                'features': features,
-                            }),
-                            headers: {
-                                'Accept': 'application/json',
-                                'Content-Type': 'application/json',
-                                'X-Requested-With': 'XMLHttpRequest',
-                                "X-CSRFToken": csrftoken,
-                            },
-                        }).then(res => {
-                            if (!res.ok) {
-                                throw new Error(res.statusText);
-                            }
-                            return res.json();
-                        }).catch(err => console.error(err));
-                        flush = true;
-                        features = [];
+        port.onmessage = async (e) => {
+            const { data, _id, csrftoken, method } = e.data;
+            if ( method === "GET" ) {
+                let features = [];
+                let objectStore = db.transaction('coordinates').objectStore('coordinates');
+                objectStore.openCursor().onsuccess = (event) => {
+                    const cursor = event.target.result;
+                    if (cursor) {
+                        features.push(cursor.value);
+                        cursor.continue();
                     } else {
-                        console.log('No more entries.');
+                        features = features.map((element) => {
+                            return {
+                                'geometry': element.geometry,
+                                'id': element.feature_id,
+                                'properties': {},
+                                'type': 'Feature',
+                            }
+                        });
+                        port.postMessage({ 'type': 'FeatureCollection', features });
                     }
-                }
+                };
+
+            } else if ( method === "POST" ) {
+                const formattedData = data.features.map((feature) => {
+                    return {
+                        'feature_id': feature.id,
+                        'geometry': feature.geometry,
+                    }
+                });
+    
+                const transaction = db.transaction('coordinates', 'readwrite');
+                let objectStore = transaction.objectStore('coordinates');
+                formattedData.forEach(feature => {
+                    cache.add(feature.feature_id);
+                    objectStore.put(feature);
+                });
+    
+                transaction.oncomplete = () => {
+                    port.postMessage(data);
+                };
             }
+
+            // synchronise(db, csrftoken, _id)
+            // .catch(err => {
+            //     console.error(err);
+            // })
+
         };
     };
+
+    const synchronise = async (db, csrftoken, id) => {
+        // await sleep(1);
+        return new Promise((resolve, reject) => {
+            if (cache.size > 10) {
+                let response = null;
+                let objectStore = db.transaction('coordinates').objectStore('coordinates');
+                objectStore.getAll().onsuccess = async (event) => {
+                    const features = event.target.result;
+                    response = await fetch(`/users/${id}/coordinates`, {
+                        method: 'POST',
+                        body: JSON.stringify({ features }),
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                            "X-CSRFToken": csrftoken,
+                        },
+
+                    }).then(res => {
+                        if (!res.ok) {
+                            throw new Error(res.statusText);
+                        }
+                        return res.json();
+                    });
+                }
+                if (response) {
+                    objectStore = db.transaction('coordinates', 'readwrite').objectStore('coordinates');
+                    objectStore.clear();
+                    cache.clear();
+                    resolve();
+                }
+            } else {
+                reject("Cache not yet full!!!");
+            }
+        });
+    };
+
+    const sleep = (ms) => {
+        return new Promise(resolve => {
+            const timeoutId = setTimeout(() => {
+                clearTimeout(timeoutId);
+                resolve();
+            }, ms);
+        });
+    }
 };

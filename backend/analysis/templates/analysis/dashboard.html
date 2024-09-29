@@ -224,6 +224,7 @@
                 },
             });
 
+            worker.port.postMessage({ 'method': 'GET' });
             worker.port.onmessage = (e) => {
                 console.log("Worker message: ", e.data);
                 map.getSource(`${_id}-land`).updateData(e.data);
@@ -252,7 +253,7 @@
         const data = draw.getAll();
         if (data.features.length > 0) {
             // ws.send(JSON.stringify({...data, 'OP': 'POST'}));
-            worker.port.postMessage({ data, _id, csrftoken });
+            worker.port.postMessage({ data, _id, csrftoken, 'method': 'POST' });
         }
     }
 </script>
