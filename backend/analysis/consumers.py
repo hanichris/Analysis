@@ -1,5 +1,6 @@
 import json
-from uuid import UUID
+
+from typing import cast
 
 from channels.generic.websocket import WebsocketConsumer
 
@@ -22,8 +23,8 @@ class GeoConsumer(WebsocketConsumer):
             create_data = [
                 Geofield(
                     user=self.user,
-                    feature_id=UUID(feature.get("id")),
-                    geometry=feature.get("geometry")
+                    feature_id=feature["id"],
+                    geometry=feature["geometry"],
                 )
                 for feature in data.get("features") # type: ignore
             ]
@@ -32,7 +33,7 @@ class GeoConsumer(WebsocketConsumer):
                 create_data,
                 update_conflicts=True,
                 update_fields=["geometry"],
-                unique_fields=["feature_id"]   
+                unique_fields=["unique_id"]   
             )
 
             content['msg'] = 'Successfully saved the coordinates into the database'
@@ -41,7 +42,7 @@ class GeoConsumer(WebsocketConsumer):
             content['content'] = [
                 {
                     'geometry': item.geometry,
-                    'id': item.feature_id.hex if item.feature_id else None,
+                    'id': cast(str, item.unique_id).rsplit(',', 1)[-1],
                     'properties': {},
                     'type': 'Feature',
                 }
@@ -58,7 +59,7 @@ class GeoConsumer(WebsocketConsumer):
             content['content'] = [
                 {
                     'geometry': entry.geometry,
-                    'id': entry.feature_id.hex if entry.feature_id else None,
+                    'id': cast(str, entry.unique_id).rsplit(',', 1)[-1],
                     'properties': {},
                     'type': 'Feature',
                 }
