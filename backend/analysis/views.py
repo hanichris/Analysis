@@ -185,7 +185,7 @@ class Coordinates(View):
         self.content['content'] = [
             {
                 'geometry': entry.geometry,
-                'id': entry.feature_id.hex if entry.feature_id else None,
+                'id': cast(str, entry.unique_id).rsplit(',', 1)[-1],
                 'properties': {},
                 'type': 'Feature',
             }
@@ -200,7 +200,7 @@ class Coordinates(View):
         create_data = [
             Geofield(
                 user=user,
-                feature_id=UUID(feature["feature_id"]),
+                feature_id=feature["feature_id"],
                 geometry=feature["geometry"]
             )
             for feature in data['features']
@@ -210,7 +210,7 @@ class Coordinates(View):
             create_data,
             update_conflicts=True, # type: ignore
             update_fields=["geometry"],
-            unique_fields=["feature_id"]   
+            unique_fields=["unique_id"]
         )
 
         self.content['msg'] = 'Successfully saved the coordinates into the database'
@@ -219,7 +219,7 @@ class Coordinates(View):
         self.content['content'] = [
             {
                 'geometry': item.geometry,
-                'id': item.feature_id.hex if item.feature_id else None,
+                'id': cast(str, item.unique_id).rsplit(',', 1)[-1],
                 'properties': {},
                 'type': 'Feature',
             }
