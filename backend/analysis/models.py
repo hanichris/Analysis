@@ -3,6 +3,7 @@ import uuid
 from datetime import date
 
 from django.db import models
+from django.db.models.functions import Concat
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import Group, Permission, PermissionsMixin
 from django.core.serializers.json import DjangoJSONEncoder
@@ -69,13 +70,18 @@ class User(PermissionsMixin, AbstractTime, AbstractBaseUser):
     
 class Geofield(AbstractTime):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    feature_id = models.UUIDField(null=True, unique=True)
+    feature_id = models.TextField()
+    unique_id = models.GeneratedField( # type: ignore
+        expression=Concat("user", models.Value(','), "feature_id"),
+        output_field=models.TextField(),
+        db_persist=True,
+        verbose_name="Unique Feature ID",
+        unique=True,
+    )
     geometry = models.JSONField(encoder=DjangoJSONEncoder)
 
     def __str__(self) -> str:
-        return f"{
-            self.feature_id.hex if self.feature_id else None
-        } {self.user} {self.geometry}"
+        return f"{self.feature_id} {self.user} {self.geometry}"
 
 class Message(AbstractTime):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
