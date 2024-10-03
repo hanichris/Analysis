@@ -1,4 +1,5 @@
 const cache = new Set();
+const THRESHOLD = 10;
 onconnect = (event) => {
     const port = event.ports[0];
 
@@ -11,7 +12,7 @@ onconnect = (event) => {
     request.onupgradeneeded = () => {
         const db = request.result;
         if (!db.objectStoreNames.contains('coordinates')) {
-            db.createObjectStore('coordinates', { keyPath: 'feature_id' });
+            db.createObjectStore('coordinates', { autoIncrement: true });
         }
     };
 
@@ -32,14 +33,19 @@ onconnect = (event) => {
         }
 
         port.onmessage = async (e) => {
-            const { data, _id, csrftoken, method } = e.data;
-            if ( method === "GET" ) {
+            const { data, _id, csrftoken, action } = e.data;
+            if ( action === "getFeatures" ) {
                 let features = [];
+                const storeCache = new Set();
                 let objectStore = db.transaction('coordinates').objectStore('coordinates');
-                objectStore.openCursor().onsuccess = (event) => {
+                objectStore.openCursor(null, 'prev').onsuccess = (event) => {
                     const cursor = event.target.result;
                     if (cursor) {
-                        features.push(cursor.value);
+                        const value = cursor.value;
+                        if (!storeCache.has(value.feature_id)) {
+                            storeCache.add(value.feature_id);
+                            features.push(value);
+                        }
                         cursor.continue();
                     } else {
                         features = features.map((element) => {
@@ -54,7 +60,7 @@ onconnect = (event) => {
                     }
                 };
 
-            } else if ( method === "POST" ) {
+            } else if ( action === "addFeatures" ) {
                 const formattedData = data.features.map((feature) => {
                     return {
                         'feature_id': feature.id,
@@ -66,65 +72,64 @@ onconnect = (event) => {
                 let objectStore = transaction.objectStore('coordinates');
                 formattedData.forEach(feature => {
                     cache.add(feature.feature_id);
-                    objectStore.put(feature);
+                    objectStore.add({...feature, 'synchronized': false});
                 });
     
                 transaction.oncomplete = () => {
                     port.postMessage(data);
                 };
-            }
 
-            // synchronise(db, csrftoken, _id)
-            // .catch(err => {
-            //     console.error(err);
-            // })
+                if (cache.size >= THRESHOLD) {
+                    syncDataToServer(db, csrftoken, _id)
+                    .then(() => {
+                        objectStore = db.transaction('coordinates', 'readwrite').objectStore('coordinates');
+                        objectStore.clear();
+                        cache.clear();
+                    })
+                    .catch(err => console.error(err));
+                }
+            } else if ( action === "syncData" ) {
+                
+            }
 
         };
     };
 
-    const synchronise = async (db, csrftoken, id) => {
-        // await sleep(1);
-        return new Promise((resolve, reject) => {
-            if (cache.size > 10) {
-                let response = null;
-                let objectStore = db.transaction('coordinates').objectStore('coordinates');
-                objectStore.getAll().onsuccess = async (event) => {
-                    const features = event.target.result;
-                    response = await fetch(`/users/${id}/coordinates`, {
-                        method: 'POST',
-                        body: JSON.stringify({ features }),
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest',
-                            "X-CSRFToken": csrftoken,
-                        },
+};
 
-                    }).then(res => {
-                        if (!res.ok) {
-                            throw new Error(res.statusText);
-                        }
-                        return res.json();
-                    });
+const syncDataToServer = async (db, csrftoken, id) => {
+    return new Promise(resolve => {
+        let features = [];
+        const storeCache = new Set();
+        let objectStore = db.transaction('coordinates').objectStore('coordinates');
+        objectStore.openCursor(null, 'prev').onsuccess = async (event) => {
+            const cursor = event.target.result;
+            if (cursor) {
+                let value = cursor.value;
+                if (!storeCache.has(value.feature_id)) {
+                    storeCache.add(value.feature_id);
+                    features.push(value);
                 }
-                if (response) {
-                    objectStore = db.transaction('coordinates', 'readwrite').objectStore('coordinates');
-                    objectStore.clear();
-                    cache.clear();
-                    resolve();
-                }
+                cursor.continue();
             } else {
-                reject("Cache not yet full!!!");
+                const response = await fetch(`/users/${id}/coordinates`, {
+                    method: 'POST',
+                    body: JSON.stringify({ features }),
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        "X-CSRFToken": csrftoken,
+                    },
+    
+                }).then(res => {
+                    if (!res.ok) {
+                        throw new Error(res.statusText);
+                    }
+                    return res.json();
+                });
+                resolve(response);
             }
-        });
-    };
-
-    const sleep = (ms) => {
-        return new Promise(resolve => {
-            const timeoutId = setTimeout(() => {
-                clearTimeout(timeoutId);
-                resolve();
-            }, ms);
-        });
-    }
+        }
+    });
 };
