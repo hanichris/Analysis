@@ -14,7 +14,14 @@ from uuid import UUID
 from django.contrib.auth import aauthenticate, alogin
 from django.core.paginator import Paginator
 from django.db import Error
-from django.http import HttpRequest, JsonResponse, HttpResponseNotFound, HttpResponseRedirect, Http404
+from django.http import (
+    Http404,
+    HttpRequest,
+    HttpResponse,
+    HttpResponseNotFound,
+    HttpResponseRedirect,
+    JsonResponse,
+)
 from django.shortcuts import render, redirect, aget_object_or_404 # type: ignore
 from django.views.generic import View
 from django.views.decorators.http import require_safe
@@ -27,8 +34,8 @@ from rest_framework.request import Request
 from pydantic import ValidationError
 
 from .forms import (
-    UserCreationForm,
     UploadFileForm,
+    UserCreationForm,
     UserEditBirthdayForm,
     UserEditEmailForm,
     UserEditNameForm,
@@ -77,6 +84,18 @@ def webhook(request: Request):
     return Response('Invalid data', status=status.HTTP_400_BAD_REQUEST)
 
 @require_safe
+def service_worker(request: HttpRequest):
+    dir = Path(__file__).parent
+    filepath = dir.joinpath('static/analysis/js/serviceWorker.js')
+    return HttpResponse(
+        filepath.open(encoding='utf-8'),
+        headers={
+            'Content-Type': 'application/javascript',
+            'Service-Worker-Allowed': '/',
+        }
+    )
+
+@require_safe
 async def retrieve_urls(request: HttpRequest, lemonsqueezy_id: str):
     urls = await get_subscription_urls(lemonsqueezy_id)
     return JsonResponse(urls, status=200)
@@ -112,7 +131,7 @@ async def resume_subscription(request: HttpRequest, lemonsqueezy_id: str):
         )
     except (Subscription.DoesNotExist, RuntimeError):
         raise Http404(f'No subscription with the id: {lemonsqueezy_id} was found.')
-    
+
 class IndexView(View):
     parents = Path(__file__).parents
     new_path = parents[1].joinpath('static/manifest.json')
@@ -139,13 +158,13 @@ class IndexView(View):
             return JsonResponse({
                 "msg": "Validation of the data failed.",
                 "type": "error",
-            }, status_code=400)
+            }, status=400)
         except Error as err:
             logger.error(err)
             return JsonResponse({
                 "msg": "An error occurred while saving your message.",
                 "type": "error",
-            }, status_code=500)
+            }, status=500)
         else:
             return JsonResponse({
                 "msg": "Your message has been saved",
