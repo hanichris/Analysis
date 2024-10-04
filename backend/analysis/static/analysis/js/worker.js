@@ -89,16 +89,20 @@ onconnect = (event) => {
                     .catch(err => console.error(err));
                 }
             } else if ( action === "syncData" ) {
-                
+                syncDataToServer(db, csrftoken, _id)
+                .then(() => {
+                    objectStore = db.transaction('coordinates', 'readwrite').objectStore('coordinates');
+                    objectStore.clear();
+                    cache.clear();
+                })
+                .catch(err => console.error(err));
             }
-
         };
     };
-
 };
 
 const syncDataToServer = async (db, csrftoken, id) => {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
         let features = [];
         const storeCache = new Set();
         let objectStore = db.transaction('coordinates').objectStore('coordinates');
@@ -112,23 +116,27 @@ const syncDataToServer = async (db, csrftoken, id) => {
                 }
                 cursor.continue();
             } else {
-                const response = await fetch(`/users/${id}/coordinates`, {
-                    method: 'POST',
-                    body: JSON.stringify({ features }),
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest',
-                        "X-CSRFToken": csrftoken,
-                    },
-    
-                }).then(res => {
-                    if (!res.ok) {
-                        throw new Error(res.statusText);
-                    }
-                    return res.json();
-                });
-                resolve(response);
+                if (features.length > 0) {
+                    const response = await fetch(`/users/${id}/coordinates`, {
+                        method: 'POST',
+                        body: JSON.stringify({ features }),
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                            "X-CSRFToken": csrftoken,
+                        },
+        
+                    }).then(res => {
+                        if (!res.ok) {
+                            throw new Error(res.statusText);
+                        }
+                        return res.json();
+                    });
+                    resolve(response);
+                } else {
+                    reject('No data to synchronize the server with');
+                }
             }
         }
     });
