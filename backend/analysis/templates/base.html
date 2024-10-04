@@ -18,4 +18,19 @@
     {% block content %}
     {% endblock content %}
   </body>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('{% url "analysis:service_worker" %}', {
+        scope: '/',
+      }).then(registration => {
+        if (registration.installing) {
+          console.log('Service worker installing');
+        } else if (registration.waiting) {
+          console.log('Service worker installed');
+        } else if (registration.active) {
+          console.log('Service worker active');
+        }
+      }).catch(err => console.error(`Registration failed with ${err}`));
+    }
+  </script>
 </html>
