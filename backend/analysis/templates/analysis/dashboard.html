@@ -172,18 +172,15 @@
     needs to be augmented with another event to account for the "when page is unloaded" case.
     */
     window.onbeforeunload = () => {
-        console.log("Before unload event triggered.")
         synchronize();
     };
 
     window.onpagehide = () => {
-        console.log("Page hidden event triggered.")
         synchronize();
     };
 
     document.onvisibilitychange = () => {
         if (document.visibilityState === 'hidden') {
-            console.log('Visibility Change event triggered.');
             synchronize();
         }
     };
