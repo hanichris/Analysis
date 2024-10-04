@@ -160,6 +160,34 @@
         var worker = new SharedWorker('/static/analysis/js/worker.js');
     }
 
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.ready.then(registration => {
+            registration.active.postMessage(JSON.stringify({ token: csrftoken, id: _id }));
+        });
+    }
+    
+    /*
+    To prevent the loss of user and app state, the "Page visibility API" provides a reliable
+    and consistent user experience on both mobile and desktop. However, it currently
+    needs to be augmented with another event to account for the "when page is unloaded" case.
+    */
+    window.onbeforeunload = () => {
+        console.log("Before unload event triggered.")
+        synchronize();
+    };
+
+    window.onpagehide = () => {
+        console.log("Page hidden event triggered.")
+        synchronize();
+    };
+
+    document.onvisibilitychange = () => {
+        if (document.visibilityState === 'hidden') {
+            console.log('Visibility Change event triggered.');
+            synchronize();
+        }
+    };
+
     const token = JSON.parse(document.getElementById('token-data').textContent);
     const csrftoken = getCookie('csrftoken');
 
@@ -254,6 +282,18 @@
         if (data.features.length > 0) {
             // ws.send(JSON.stringify({...data, 'OP': 'POST'}));
             worker.port.postMessage({ data, _id, csrftoken, 'action': 'addFeatures' });
+        }
+    }
+
+    function synchronize() {
+        if ('serviceWorker' in navigator && 'SyncManager' in window) {
+            navigator.serviceWorker.ready.then((registration) => {
+                registration.sync.register('synchronize').then(() => {
+                    console.log('Synchronisation task registered.');
+                }).catch(err => console.error('Failed to register synchronisation task', err));
+            });
+        } else {
+            worker.port.postMessage({ action: 'syncData', _id, csrftoken });
         }
     }
 </script>
