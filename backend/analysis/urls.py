@@ -13,6 +13,7 @@ urlpatterns = [
     path("billing/", views.Billing.as_view(), name="billing"),
     path("change_plan/<int:pk>", views.Billing.as_view(), name='change_plan'),
     path("dashboard/", views.DashboardView.as_view(), name='dashboard'),
+    path("sw/", views.service_worker, name='service_worker'),
     path("users/<uuid:pk>/", include(
         [
             path("", views.UserProfileView.as_view(), name='profile'),
