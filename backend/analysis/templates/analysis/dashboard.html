@@ -187,6 +187,7 @@
 
     const token = JSON.parse(document.getElementById('token-data').textContent);
     const csrftoken = getCookie('csrftoken');
+    console.log(`CSRFToken: ${csrftoken}` );
 
     mapboxgl.accessToken = token;
     if (!mapboxgl.supported()) {
@@ -251,7 +252,6 @@
 
             worker.port.postMessage({ 'action': 'getFeatures' });
             worker.port.onmessage = (e) => {
-                console.log("Worker message: ", e.data);
                 map.getSource(`${_id}-land`).updateData(e.data);
             };
 
@@ -271,7 +271,18 @@
     }
 
     function getCookie(name){
-        return document.cookie.match(name).input.split('=').pop();
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i];
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
     }
 
     async function saveCoord(e) {
