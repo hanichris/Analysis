@@ -9,8 +9,6 @@
     margin-left: auto;
     margin-right: auto;
     max-width: 84rem;
-    padding-left: .8rem;
-    padding-right: .8rem;
 }
 
 .container.container-xl {
@@ -59,6 +57,7 @@ header {
         font-size: var(--font-size-medium);
         font-variation-settings: 'wght' 400;
         margin-top: 1.6rem;
+        margin-inline: 1rem;
         text-align: center;
     }
 }
@@ -70,7 +69,7 @@ header {
     .container_sidebar-sidebar {
         flex-basis: 30rem;
         flex-grow: 1;
-        margin: 2rem;
+        margin: 2rem 1rem;
 
         .sidebar {
             padding: 3rem;
@@ -98,7 +97,7 @@ header {
     .container_sidebar-content {
         flex-basis: 60rem;
         flex-grow: 100;
-        margin: 2rem;
+        margin: 2rem 1rem;
 
         *[data-tab] {
             display: none;
@@ -304,13 +303,22 @@ header {
 
         .change_product {
             grid-column: 2 / 3;
-            margin-left: 3rem;
             display: flex;
             position: relative;
             justify-content: flex-end;
-            gap: 1rem
+            gap: 1rem;
+
+            .btn > span {
+                /* content: '\002807'; */
+                font-size: 2.5rem;
+                font-family: Times, 'Times New Roman', serif;
+                position: relative;
+                top: 5%;
+                left: 10%;
+                color: var(--color-eerie-black);
+            }
         }
-    }
+    }    
 
     .subscription-info_content {
         color: hsl(249, 3%, 50%);
@@ -385,7 +393,7 @@ header {
     color: hsl(249, 3%, 50%);
 }
 
-.dropbtn:hover, .dropbtn:focus {
+.dropbtn:hover {
     background-color: hsl(240, 7%, 97%);
     border-radius: .8rem;
 }
