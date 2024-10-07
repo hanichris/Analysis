@@ -131,8 +131,8 @@ export default function Home() {
       <section id="services" className="section">
         <div className="container">
           <header className="section-header">
-            <h2 className="section-title">
-              Personalised Recommendations At Your Fingertips
+            <h2 className="section-title" lang="en">
+              Personalised Recommend&shy;ations At Your Fingertips
             </h2>
             <p className="section-tagline">
               Tailored recommendations for small-scale farmers using satellite
@@ -158,16 +158,18 @@ export default function Home() {
                     </div>
                     <div className="card-inner">
                       <h3 className="card-title">
-                        <span>Using Satellite Data</span>
+                        <span>
+                          Using Satellite Data
+                          <div className="description">
+                            <p className="info">
+                              Combined with weather patterns and crop-specific
+                              insights, we generate personalised, location-based
+                              recommendations for every farm.
+                            </p>
+                          </div>
+                        </span>
                       </h3>
                     </div>
-                  </div>
-                  <div className="description">
-                    <p className="info">
-                      Combined with weather patterns and crop-specific insights,
-                      we generate personalised, location-based recommendations
-                      for every farm.
-                    </p>
                   </div>
                 </article>
               </li>
@@ -189,16 +191,18 @@ export default function Home() {
                     </div>
                     <div className="card-inner">
                       <h3 className="card-title">
-                        <span>Direct SMS Delivery</span>
+                        <span>
+                          Direct SMS Delivery
+                          <div className="description">
+                            <p className="info">
+                              Delivered directly to farmers through SMS,
+                              ensuring that even those without internet access
+                              benefit from our service
+                            </p>
+                          </div>
+                        </span>
                       </h3>
                     </div>
-                  </div>
-                  <div className="description">
-                    <p className="info">
-                      Delivered directly to farmers through SMS, ensuring that
-                      even those without internet access benefit from our
-                      service
-                    </p>
                   </div>
                 </article>
               </li>
@@ -219,16 +223,18 @@ export default function Home() {
                     </div>
                     <div className="card-inner">
                       <h3 className="card-title">
-                        <span>Client Specific Dashboard</span>
+                        <span>
+                          Client Specific Dashboard
+                          <div className="description">
+                            <p className="info">
+                              For a more detailed analysis, farmers can log into
+                              their client-specific dashboard to review full
+                              reports and track their progress.
+                            </p>
+                          </div>
+                        </span>
                       </h3>
                     </div>
-                  </div>
-                  <div className="description">
-                    <p className="info">
-                      For a more detailed analysis, farmers can log into their
-                      client-specific dashboard to review full reports and track
-                      their progress.
-                    </p>
                   </div>
                 </article>
               </li>
