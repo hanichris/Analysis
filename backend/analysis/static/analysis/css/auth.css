@@ -197,6 +197,11 @@ input[type=text]:focus:not(:disabled) {
     box-shadow: inset var(--color-blue) 0 0 0 1px, inset white 0 0 0 100px !important;
 }
 
+input[type=password] {
+    font-size: var(--font-size-small);
+    font: small-caption;
+}
+
 ::placeholder {
     color: #d8d8da;
 }
