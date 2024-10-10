@@ -148,11 +148,12 @@ export default function Home() {
                       <img
                         sizes="(max-width: 6500px) 40vw, 2600px"
                         srcSet="
-                      static/analysis/img/aerial_farm/aerial_farm_c_scale,w_1872.jpg 1872w,
-                      static/analysis/img/aerial_farm/aerial_farm_c_scale,w_1237.jpg 1237w,
-                      static/analysis/img/aerial_farm/aerial_farm_c_scale,w_2328.jpg 2328w,
-                      static/analysis/img/aerial_farm/aerial_farm_c_scale,w_2600.jpg 2600w"
-                        src="static/analysis/img/aerial_farm/aerial_farm_c_scale,w_2600.jpg"
+                          static/analysis/img/satellite_side/satellite_side_c_scale,w_380.jpg 380w,
+                          static/analysis/img/satellite_side/satellite_side_c_scale,w_1149.jpg 1149w,
+                          static/analysis/img/satellite_side/satellite_side_c_scale,w_1668.jpg 1668w,
+                          static/analysis/img/satellite_side/satellite_side_c_scale,w_2134.jpg 2134w,
+                          static/analysis/img/satellite_side/satellite_side_c_scale,w_2600.jpg 2600w"
+                        src="static/analysis/img/satellite_side/satellite_side_c_scale,w_2600.jpg"
                         alt="Satellite Data"
                       />
                     </div>
@@ -177,17 +178,28 @@ export default function Home() {
                 <article className="card-services">
                   <div className="card-outer">
                     <div className="card-services-image">
-                      <img
-                        sizes="(max-width: 6500px) 40vw, 2600px"
+                      {/* <img
+                        sizes="(max-width: 6000px) 40vw, 2400px"
                         srcSet="
-                          static/analysis/img/satellite_side/satellite_side_c_scale,w_380.jpg 380w,
-                          static/analysis/img/satellite_side/satellite_side_c_scale,w_1149.jpg 1149w,
-                          static/analysis/img/satellite_side/satellite_side_c_scale,w_1668.jpg 1668w,
-                          static/analysis/img/satellite_side/satellite_side_c_scale,w_2134.jpg 2134w,
-                          static/analysis/img/satellite_side/satellite_side_c_scale,w_2600.jpg 2600w"
-                        src="static/analysis/img/satellite_side/satellite_side_c_scale,w_2600.jpg"
+                          static/analysis/img/sms/sms_delivery_c_scale,w_300.jpg 300w,
+                          static/analysis/img/sms/sms_delivery_c_scale,w_1111.jpg 1111w,
+                          static/analysis/img/sms/sms_delivery_c_scale,w_1613.jpg 1613w,
+                          static/analysis/img/sms/sms_delivery_c_scale,w_2105.jpg 2105w,
+                          static/analysis/img/sms/sms_delivery_c_scale,w_2400.jpg 2400w"
+                        src="static/analysis/img/sms/sms_delivery_c_scale,w_2400.jpg"
                         alt="Direct SMS Delivery"
-                      />
+                      /> */}
+                      {/* <img
+                        sizes="(max-width: 6000px) 40vw, 2400px"
+                        srcSet="
+                          static/analysis/img/sms_2/sms_delivery_c_scale,w_300.jpg 300w,
+                          static/analysis/img/sms_2/sms_delivery_c_scale,w_1112.jpg 1112w,
+                          static/analysis/img/sms_2/sms_delivery_c_scale,w_1624.jpg 1624w,
+                          static/analysis/img/sms_2/sms_delivery_c_scale,w_2097.jpg 2097w,
+                          static/analysis/img/sms_2/sms_delivery_c_scale,w_2400.jpg 2400w"
+                        src="static/analysis/img/sms_2/sms_delivery_c_scale,w_2400.jpg"
+                        alt="Direct SMS Delivery"
+                      /> */}
                     </div>
                     <div className="card-inner">
                       <h3 className="card-title">
@@ -211,14 +223,15 @@ export default function Home() {
                   <div className="card-outer">
                     <div className="card-services-image">
                       <img
-                        sizes="(max-width: 6500px) 40vw, 2600px"
+                        sizes="(max-width: 2700px) 40vw, 1080px"
                         srcSet="
-                      static/analysis/img/aerial_farm/aerial_farm_c_scale,w_1237.jpg 1237w,
-                      static/analysis/img/aerial_farm/aerial_farm_c_scale,w_1872.jpg 1872w,
-                      static/analysis/img/aerial_farm/aerial_farm_c_scale,w_2328.jpg 2328w,
-                      static/analysis/img/aerial_farm/aerial_farm_c_scale,w_2600.jpg 2600w"
-                        src="static/analysis/img/aerial_farm/aerial_farm_c_scale,w_2600.jpg"
-                        alt="Dashboard"
+                          static/analysis/img/dashboard/dashboard_c_scale,w_300.png 300w,
+                          static/analysis/img/dashboard/dashboard_c_scale,w_722.png 722w,
+                          static/analysis/img/dashboard/dashboard_c_scale,w_886.png 886w,
+                          static/analysis/img/dashboard/dashboard_c_scale,w_951.png 951w,
+                          static/analysis/img/dashboard/dashboard_c_scale,w_1080.png 1080w"
+                        src="static/analysis/img/dashboard/dashboard_c_scale,w_1080.png"
+                        alt="Client Dashboard"
                       />
                     </div>
                     <div className="card-inner">
