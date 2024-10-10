@@ -9,6 +9,8 @@ from django.contrib.auth.models import Group, Permission, PermissionsMixin
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.translation import gettext_lazy as _
 
+from phonenumber_field.modelfields import PhoneNumberField
+
 from .managers import CustomUserManager
 
 # Create your models here.
@@ -26,7 +28,8 @@ class User(PermissionsMixin, AbstractTime, AbstractBaseUser):
         default=uuid.uuid4,
         editable=False
     )
-    email = models.EmailField(_('email address'), unique=True, db_index=True)
+    email = models.EmailField(_('email address'), unique=True)
+    verified = models.BooleanField(default=False)
     first_name = models.CharField(max_length=50, default='')
     last_name = models.CharField(max_length=50, default='')
     birth_date = models.DateField(null=True)
@@ -68,6 +71,23 @@ class User(PermissionsMixin, AbstractTime, AbstractBaseUser):
             )
         return None
     
+    class Meta:
+        indexes = [
+            models.Index(fields=['id', 'email']),
+            models.Index(fields=['email'], name='unique_verified_email', condition=models.Q(verified=True)),
+        ]
+
+class PhoneNumber(AbstractTime):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    number = PhoneNumberField()
+    verified = models.BooleanField(default=False)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['number', 'user']),
+            models.Index(fields=['number'], name='verified_number', condition=models.Q(verified=True))
+        ]
+
 class Geofield(AbstractTime):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     feature_id = models.TextField()
