@@ -74,7 +74,11 @@ class User(PermissionsMixin, AbstractTime, AbstractBaseUser):
     class Meta:
         indexes = [
             models.Index(fields=['id', 'email']),
-            models.Index(fields=['email'], name='unique_verified_email', condition=models.Q(verified=True)),
+            models.Index(
+                fields=['email'],
+                name='unique_verified_email',
+                condition=models.Q(verified=True)
+            ),
         ]
 
 class PhoneNumber(AbstractTime):
@@ -85,7 +89,18 @@ class PhoneNumber(AbstractTime):
     class Meta:
         indexes = [
             models.Index(fields=['number', 'user']),
-            models.Index(fields=['number'], name='verified_number', condition=models.Q(verified=True))
+            models.Index(
+                fields=['number'],
+                name='verified_number',
+                condition=models.Q(verified=True)
+            ),
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=['number', 'user'],
+                name='unique_verfified_number',
+                condition=models.Q(verified=True)
+            ),
         ]
 
 class Geofield(AbstractTime):
