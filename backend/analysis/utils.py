@@ -2,7 +2,7 @@ from django.core.files.uploadedfile import UploadedFile
 from pydantic import BaseModel, EmailStr
 
 from .config import cache_results, sync_plans
-from .models import Plan, Report, User
+from .models import Plan, PhoneNumber, Report, User
 
 class PostData(BaseModel):
     first_name: str
@@ -49,3 +49,19 @@ async def save_report_files(user: User, files: list[UploadedFile]):
     """
     uploaded_files = [ Report(user=user, file=file) for file in files ]
     await Report.objects.abulk_create(uploaded_files)
+
+async def get_user_phone_number(user: User) -> None | str:
+    """Retrieves a user's phone number from the database.
+
+    Args:
+        user: The user whose phone number is required.
+    Returns:
+        ( str | None ): The phone number of interest if found. Otherwise, None.
+    """
+    try:
+        return await PhoneNumber.objects.filter(
+            user=user,
+            verified=True
+        ).values_list('number', flat=True).aget()
+    except PhoneNumber.DoesNotExist:
+        return None
