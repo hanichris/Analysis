@@ -16,7 +16,8 @@ def redact_phone_number(value: str, arg: str = '*') -> str:
     Returns:
         str: Redacted string.
     """
-    return f"A redacted string {arg}"
+    display = value.strip()[-3:]
+    return f"{arg*5}{display}"
 
 @register.filter(name='mask_pwd', is_safe=True)
 @stringfilter
