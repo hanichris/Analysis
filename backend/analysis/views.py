@@ -50,10 +50,23 @@ from .config import (
     webhook_has_meta,
 )
 from .mixins import AsyncLoginRequiredMixin, AsyncUserPassesTestMixin
-from .models import User, Comment, Report, Subscription, WebhookEvent, Geofield
+from .models import (
+    Comment,
+    Geofield,
+    Report,
+    Subscription,
+    User,
+    WebhookEvent,
+)
 from .serialisers import WebhookEventSerializer
 from .tasks import send_to_zoho, process_webhook_event
-from .utils import PostData, get_user_reports, get_plans, save_report_files
+from .utils import (
+    get_plans,
+    get_user_phone_number,
+    get_user_reports,
+    PostData,
+    save_report_files,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -275,22 +288,31 @@ class SignUpView(View):
 class UserProfileView(AsyncLoginRequiredMixin, View):
     async def get(self, request: HttpRequest, *args, **kwargs):
         user= cast(User, await request.auser()) # type: ignore
+
         async with asyncio.TaskGroup() as tg:
             report_task = tg.create_task(get_user_reports(user))
             sub_task = tg.create_task(get_user_subscriptions(user))
+            number_task = tg.create_task(get_user_phone_number(user))
         reports = report_task.result()
+        number = number_task.result()
         subscriptions = sub_task.result()
+
         page_number = request.GET.get('page')
         paginator = Paginator(reports, 3)
         page_obj = paginator.get_page(page_number)
+
+        context = {
+            'page_obj': page_obj,
+            'user': user,
+            'phone_number': None,
+            'subscriptions': subscriptions,
+        }
+        if number:
+            context['phone_number'] = number
         return render(
             request,
             'analysis/profile.html',
-            {
-                'page_obj': page_obj,
-                'user': user,
-                'subscriptions': subscriptions,
-            }
+            context
         )
 
 class UserProfileEditView(AsyncLoginRequiredMixin, View):
