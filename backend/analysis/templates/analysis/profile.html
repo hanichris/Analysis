@@ -272,10 +272,8 @@
                                             <div class="link_container">
                                                 <div class="user_wrapper">
                                                     <div class="user">
-                                                        <div>
-                                                            <div class="user_content">
-                                                                {{ user.password|mask_pwd:'*' }}
-                                                            </div>
+                                                        <div class="user_content">
+                                                            {{ user.password|mask_pwd }}
                                                         </div>
                                                     </div>
                                                 </div>
