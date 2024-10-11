@@ -12,6 +12,7 @@ from typing import cast
 from uuid import UUID
 
 from django.contrib.auth import aauthenticate, alogin
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.paginator import Paginator
 from django.db import Error
 from django.http import (
@@ -22,7 +23,11 @@ from django.http import (
     HttpResponseRedirect,
     JsonResponse,
 )
-from django.shortcuts import render, redirect, aget_object_or_404 # type: ignore
+from django.shortcuts import (
+    aget_object_or_404, # type: ignore
+    redirect,
+    render,
+)
 from django.views.generic import View
 from django.views.decorators.http import require_safe
 
@@ -42,6 +47,8 @@ from .forms import (
     UserEditPasswordForm,
 )
 from .config import (
+    cancel_sub,
+    change_plan,
     get_checkout_url,
     get_user_subscriptions,
     get_subscription_urls,
@@ -134,6 +141,22 @@ async def resume_subscription(request: HttpRequest, lemonsqueezy_id: str):
     user = await request.auser() # type: ignore
     try:
         await unpause_sub(lemonsqueezy_id, user)
+        sub = await Subscription.objects.filter(lemonsqueezy_id=lemonsqueezy_id).select_related('plan').aget()
+        return render(
+            request,
+            'analysis/partial.html',
+            {
+                'subscription': sub,
+            }
+        )
+    except (Subscription.DoesNotExist, RuntimeError):
+        raise Http404(f'No subscription with the id: {lemonsqueezy_id} was found.')
+
+@require_safe
+async def cancel_subscription(request: HttpRequest, lemonsqueezy_id: str):
+    user = await request.auser() # type: ignore
+    try:
+        await cancel_sub(lemonsqueezy_id, user)
         sub = await Subscription.objects.filter(lemonsqueezy_id=lemonsqueezy_id).select_related('plan').aget()
         return render(
             request,
@@ -267,12 +290,17 @@ class SignUpView(View):
     async def post(self, request: HttpRequest, *args, **kwargs):
         form = UserCreationForm(request.POST)
         if await sync_to_async(form.is_valid)():
-            await sync_to_async(form.save)()
+            user = await sync_to_async(form.save)(commit=False)
             email = form.cleaned_data['email']
-            password = form.cleaned_data['password1']
-            user = await aauthenticate(request, email=email, password=password)
-            await alogin(request, user)
+            # password = form.cleaned_data['password1']
+            # user = await aauthenticate(request, email=email, password=password)
+            # await alogin(request, user)
             # Send sign up email
+            user.is_active = False
+            await user.asave()
+            current_site = get_current_site(request)
+            mail_subject = 'Welcome to Divergent AG!'
+            
             return redirect('/billing/')
         return render(
             request, 'registration/signup.html', {'form': form}
@@ -467,3 +495,36 @@ class Billing(AsyncLoginRequiredMixin, View):
                 'plans': plans,
             }
         )
+
+class ChangeBilling(AsyncLoginRequiredMixin, View):
+    async def get(self, request: HttpRequest, *args, **kwargs):
+        user = await request.auser() # type: ignore
+        plan_id = cast(int, self.kwargs['pk'])
+
+        async with asyncio.TaskGroup() as tg:
+            plans_task = tg.create_task(get_plans())
+            subs_task = tg.create_task(get_user_subscriptions(user))
+        user_subs: list[Subscription] = subs_task.result()
+        plans = plans_task.result()
+
+        current_sub = cast(
+            Subscription | None,
+            next(filter(lambda x: x.plan.pk == plan_id, user_subs), None))
+        if current_sub is None:
+            raise Http404(f'Plan with id {plan_id} was not found!')
+        
+        if plans is None:
+            return redirect('analysis:billing')
+        
+        return render(
+            request,
+            'analysis/change_plan.html',
+            {
+                'plans': plans,
+                'current_sub': current_sub,
+            }
+        )
+    
+    # async def post(self, request: HttpRequest, *args, **kwargs):
+    #     user = await request.auser() # type: ignore
+    #     plan_id = cast(int, kwargs['pk'])
