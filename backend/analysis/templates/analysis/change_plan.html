@@ -42,6 +42,7 @@
 
 <script>
     const prices = document.querySelectorAll('.plan__price');
+    const csrftoken = getCookie('csrftoken');
     prices.forEach((price) => {
         let amount = new Intl.NumberFormat('en-US', {
             style: 'currency',
@@ -55,9 +56,24 @@
         if (!button.disabled) {
             button.addEventListener('click', async (event) => {
                 button.classList.add('loading');
-                setTimeout(() => {
-                    button.classList.remove('loading');
-                }, 3000)
+                await fetch(`/change_plan/${button.dataset.currentPlan}`, {
+                    method: "POST",
+                    headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                            "X-CSRFToken": csrftoken,
+                            "X-New-Plan": button.id,
+                        },
+                }).then((res) => {
+                    if (!res.ok) {
+                        throw new Error(res.statusText);
+                    } else if (res.redirected){
+                        button.classList.remove('loading');
+                        window.location.replace(res.url);
+                    }
+                }).catch(err => console.error(err));
+                button.classList.remove('loading');
             })
         }
     });
