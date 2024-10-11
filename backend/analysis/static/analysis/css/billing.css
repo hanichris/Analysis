@@ -79,6 +79,24 @@ p, li {
     font-variation-settings: 'wght' 600;
     height: 6.2rem;
     padding: 1rem 3rem;
+    position: relative;
+    text-align: center;
+}
+
+.button::after {
+    content: '';
+    border-color: var(--color-white) rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    border-style: solid;
+    border-width: 2px;
+    position: absolute;
+    left: 50%;
+    top: 35%;
+    transform: translate3d(-50%, -50%, 0) rotate(0deg);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    width: 20px;
+    height: 20px;
 }
 
 .button:hover, .button:focus {
@@ -88,6 +106,16 @@ p, li {
 
 .plan .button:hover, .plan .button:focus {
     background-color: var(--_button-hover);
+}
+
+.plan .button.loading {
+    color: var(--_button-hover);
+    background-color: var(--_button-hover);
+
+    &::after {
+        opacity: 1;
+        animation: spin 1s linear infinite;
+    }
 }
 
 .plan > .button:last-child {
@@ -128,8 +156,55 @@ p, li {
     }
 }
 
+.plan__description {
+    & > :first-child {
+        color: var(--color-grey);
+        font-size: var(--font-size-small);
+        margin-bottom: 2rem;
+    }
 
+    & > :nth-child(2) {
+        margin-bottom: .8rem;
+    }
 
+    & li {
+        font-size: var(--font-size-medium);
+        margin-bottom: .8rem;
+
+        & p::before {
+            content: '•';
+            color: var(--_button-hover);
+            font-size: var(--font-size-small);
+            padding-right: .8rem;
+        }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+
+.button.plan__current {
+    background-color: #CFF6CC;
+    color: #0A7D00;
+    pointer-events: none;
+}
+
+.pricing:has(.loading) {
+    & .button {
+        pointer-events: none;
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
 
 @media (min-width: 720px) {
     .even-columns {
