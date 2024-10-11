@@ -32,7 +32,7 @@ async def sync_plans() -> list[Plan] | None:
     obtained from Lemon Squeezy, then they are made available to the caller.
 
     Returns:
-        list[Plan] | None. The saved plan objects if there were any variants
+        (list[Plan] | None): The saved plan objects if there were any variants
         obtained from Lemon Squeezy. Otherwise, None.
     """
     configure_lemonsqueezy()
@@ -353,6 +353,7 @@ async def cancel_sub(sub_id: str, user: User):
         sub_id: id for a particular subscription object.
         user: The user whose subscription is to be cancelled.
     Raises:
+        RuntimeError: If a given subscription object is not found.
         ValidationError: If the response does not match the expected data schema.
     """
     configure_lemonsqueezy()
@@ -381,6 +382,7 @@ async def pause_sub(sub_id: str, user: User):
         sub_id: id for a particular subscription object.
         user: The user whose subscription is to be paused.
     Raises:
+        RuntimeError: If a given subscription object is not found.
         ValidationError: If the response does not match the expected data schema.
     """
     configure_lemonsqueezy()
@@ -414,6 +416,7 @@ async def unpause_sub(sub_id: str, user: User):
         sub_id: id for a particular subscription object.
         user. The user whose subscription is to be resumed.
     Raises:
+        RuntimeError: If a given subscription object is not found.
         ValidationError: If the response does not match the expected data schema.
     """
     configure_lemonsqueezy()
@@ -435,3 +438,47 @@ async def unpause_sub(sub_id: str, user: User):
     await sub.asave(update_fields=['status', 'status_formatted', 'ends_at', 'is_paused'])
     await del_cache_key(get_user_subscriptions)(user)
 
+async def change_plan(current_plan_id: int, new_plan_id: int, user: User):
+    """Changes the plan for the user's current subscription.
+
+    Makes a patch request to lemon squeezy with the update details for the
+    subscription with the given id. The api responds with an updated subscription
+    object which is then used to update the corresponding subscription entry in
+    the database.
+    Args:
+        current_plan_id: The corresponding plan id for the current subscription.
+        new_plan_id: The plan id to change the current subscription to.
+        user: The user whose subscription is to be changed.
+    Raises:
+        RuntimeError: If a given subscription or plan object is not found.
+        ValidationError: If the response does not match the expected data schema.
+    """
+    configure_lemonsqueezy()
+
+    user_subs: list[Subscription] = await get_user_subscriptions(user)
+    current_sub = cast(Subscription | None, next(
+        filter(lambda x: x.plan.pk == current_plan_id, user_subs),
+        None
+    ))
+    if current_sub is None:
+        raise RuntimeError(
+            f'No subscription with plan id: {current_plan_id} was found.'
+        )
+    
+    try:
+        new_plan = await Plan.objects.aget(pk=new_plan_id)
+    except Plan.DoesNotExist:
+        raise RuntimeError(f'No plan with id: {new_plan_id} was found.')
+    
+    updated_sub = await update_subscription(current_sub.lemonsqueezy_id, {
+        'variant_id': new_plan.variant_id
+    })
+
+    
+    current_sub.price = new_plan.price
+    current_sub.plan = new_plan
+    if ends_at:=updated_sub['data']['data']['attributes']['ends_at']:
+        current_sub.ends_at = ends_at
+    
+    await current_sub.asave(update_fields=['price', 'plan', 'ends_at'])
+    await del_cache_key(get_user_subscriptions)(user)
