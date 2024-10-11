@@ -310,7 +310,7 @@ async def get_subscription_urls(id: str):
     Args:
         id: The subscription id of interest.
     Returns:
-        dict. Holds the urls for the `update_payment_method` and `custom_portal`
+        dict: Holds the urls for the `update_payment_method` and `custom_portal`
         under the corresponding dictionary key.
     Raises:
         RuntimeError: If an error was encountered during the fetch request.
