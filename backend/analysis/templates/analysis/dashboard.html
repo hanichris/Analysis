@@ -138,23 +138,23 @@
 {{ access_token|json_script:'token-data'}}
 <script>
     const _id = document.getElementById("user_id").value;
-    const scheme = window.location.protocol === "https:" ? "wss" : "ws";
-    const ws = new WebSocket(`${scheme}://${window.location.host}/ws/geo/`);
-    ws.onopen = (e) => {
-        console.log("[open] Connection established!!!.");
-    }
+    // const scheme = window.location.protocol === "https:" ? "wss" : "ws";
+    // const ws = new WebSocket(`${scheme}://${window.location.host}/ws/geo/`);
+    // ws.onopen = (e) => {
+    //     console.log("[open] Connection established!!!.");
+    // }
 
-    ws.onclose = (e) => {
-        if (e.wasClean) {
-            console.log(`[close] Connection closed cleanly, code=${e.code} reason=${e.reason}`);
-        } else {
-            console.log("[close] Connection died");
-        }
-    };
+    // ws.onclose = (e) => {
+    //     if (e.wasClean) {
+    //         console.log(`[close] Connection closed cleanly, code=${e.code} reason=${e.reason}`);
+    //     } else {
+    //         console.log("[close] Connection died");
+    //     }
+    // };
 
-    ws.onerror = (err) => {
-        console.log(`[error] ${err}`);
-    };
+    // ws.onerror = (err) => {
+    //     console.log(`[error] ${err}`);
+    // };
 
     if (!!window.SharedWorker) {
         var worker = new SharedWorker('/static/analysis/js/worker.js');
