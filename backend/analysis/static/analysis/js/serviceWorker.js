@@ -1,3 +1,4 @@
+cache = {};
 self.addEventListener('sync', (event) => {
     if (event.tag === 'synchronize') {
         self.console.log('Synchronizing data with the server.');
@@ -5,10 +6,11 @@ self.addEventListener('sync', (event) => {
     }
 });
 
-self.addEventListener('message', (event) => {
-    const data = JSON.parse(event.data);
-    self.token = data.token;
-    self.id = data.id;
+self.addEventListener('message', async (event) => {
+    const data = event.data;
+    cache['id'] = data.id;
+    cache['token'] = data.token;
+    self.console.log(cache);
 })
 
 async function syncDataToServer() {
@@ -30,14 +32,14 @@ async function syncDataToServer() {
                     cursor.continue();
                 } else {
                     if (features.length > 0) {
-                        const response = await fetch(`/users/${self.id}/coordinates`, {
+                        const response = await fetch(`/users/${cache['id']}/coordinates`, {
                             method: 'POST',
                             body: JSON.stringify({ features }),
                             headers: {
                                 'Accept': 'application/json',
                                 'Content-Type': 'application/json',
                                 'X-Requested-With': 'XMLHttpRequest',
-                                "X-CSRFToken": self.token,
+                                "X-CSRFToken": cache['token'],
                             },
             
                         }).then(res => {
