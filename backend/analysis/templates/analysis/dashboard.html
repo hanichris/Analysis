@@ -165,7 +165,7 @@
 
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.ready.then(registration => {
-            registration.active.postMessage(JSON.stringify({ token: csrftoken, id: _id }));
+            registration.active.postMessage({ token: csrftoken, id: _id });
         });
     }
     
