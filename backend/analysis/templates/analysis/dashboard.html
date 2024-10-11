@@ -4,6 +4,8 @@
 {% block title %}Dashboard{% endblock title %}
 {% block css %}
 <link rel="stylesheet" href="{% static 'analysis/css/dashboard.css' %}">
+<!-- Mapbox search cdn -->
+<script id="search-js" defer src="https://api.mapbox.com/search-js/v1.0.0-beta.21/web.js"></script>
 <!-- Mapbox cdn -->
 <script src='https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js'></script>
 <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css'/>
@@ -14,6 +16,7 @@
 
 {% block content %}
 <div id="map"></div>
+<!-- <div id='search-box-container'></div> -->
 <div class="window">
     <div class="inner">
         <div class="another">
@@ -187,7 +190,6 @@
 
     const token = JSON.parse(document.getElementById('token-data').textContent);
     const csrftoken = getCookie('csrftoken');
-    console.log(`CSRFToken: ${csrftoken}` );
 
     mapboxgl.accessToken = token;
     if (!mapboxgl.supported()) {
@@ -207,7 +209,23 @@
                 trash: true,
             },
             defaultMode: 'draw_polygon',
-        })
+        });
+        const searchJS = document.getElementById('search-js');
+        searchJS.onload = function () {
+            const searchBox = new mapboxsearch.MapboxGeocoder();
+            searchBox.accessToken = token;
+            searchBox.options = {
+                autocomplete: true,
+                country: 'ke',
+                limit: 10,
+            }
+            searchBox.mapboxgl = mapboxgl;
+            searchBox.marker = true;
+            map.addControl(searchBox, 'top-right');
+            map.addControl(draw, 'top-right');
+            // searchBox.bindMap(map);
+            // document.getElementById('search-box-container').appendChild(searchBox);
+        }
 
         map.on('load', async () => {
             const init = await fetch(`/users/${_id}/coordinates`)
@@ -255,17 +273,15 @@
                 map.getSource(`${_id}-land`).updateData(e.data);
             };
 
-            ws.onmessage = (e) => {
-                const resp = JSON.parse(e.data);
-                console.log(resp);
-                map.getSource(`${_id}-land`).updateData({
-                    type: 'FeatureCollection',
-                    features: resp.content,
-                });
-            };
+            // ws.onmessage = (e) => {
+            //     const resp = JSON.parse(e.data);
+            //     console.log(resp);
+            //     map.getSource(`${_id}-land`).updateData({
+            //         type: 'FeatureCollection',
+            //         features: resp.content,
+            //     });
+            // };
         });
-
-        map.addControl(draw);
         map.on('draw.create', saveCoord);
         map.on('draw.update', saveCoord);
     }
