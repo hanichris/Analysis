@@ -18,7 +18,8 @@ async def get_plans():
     the plans from lemon squeezy and saves them in the database for future use. The
     saved plans are then returned to the caller.
     Returns:
-        A list of `Plan` model instances if available. Otherwise, `None`.
+        ( list[Plan] | None ): A list of `Plan` model instances if available.
+        Otherwise, `None`.
     """
     plans = [plan async for plan in Plan.objects.all()]
     if len(plans) == 0:
