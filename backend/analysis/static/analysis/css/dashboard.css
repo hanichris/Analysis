@@ -8,7 +8,7 @@
 .window {
     position: absolute;
     left: 0;
-    top: 0;
+    top: 6%;
     width: auto;
     min-width: 0;
 }
@@ -312,6 +312,12 @@
 
 .footer_container ._m-l-3  {
     margin-left: .8rem;
+}
+
+@media (min-width: 400px) {
+    .window {
+        top: -.9%;
+    }
 }
 
 @media (min-width: 321px) {
