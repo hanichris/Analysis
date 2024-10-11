@@ -27,7 +27,7 @@
                         <h2 class="plan__title">{{ plan.0.product_name}} ({{ plan.0.name }})</h2>
                         <p class="plan__price">{{ plan.0.price }} <span>/month</span></p>
                         {% if plan.0.description %}
-                            <div class="description">
+                            <div class="plan__description">
                                 {{ plan.0.description|bleach }}
                             </div>
                         {% endif %}
