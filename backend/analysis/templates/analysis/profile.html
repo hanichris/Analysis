@@ -201,15 +201,15 @@
                                                     </div>
                                                     <div class="user">
                                                         <div>
+                                                            {% if phone_number %}
                                                             <div class="user_content">
-                                                                {{ user.email|mask_num }}
+                                                                {{ phone_number|mask_num }}
                                                             </div>
-                                                            <!-- {% if user.age %}
                                                             {% else %}
                                                             <div class="user_content_empty">
                                                                 No phone number provided
                                                             </div>
-                                                            {% endif %} -->
+                                                            {% endif %}
                                                         </div>
                                                     </div>
                                                 </div>
