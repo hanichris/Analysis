@@ -122,7 +122,7 @@ async def retrieve_urls(request: HttpRequest, lemonsqueezy_id: str):
 
 @require_safe
 async def pause_subscription(request: HttpRequest, lemonsqueezy_id: str):
-    user = await request.auser() # type: ignore
+    user = cast(User, await request.auser()) # type: ignore
     try:
         await pause_sub(lemonsqueezy_id, user)
         sub = await Subscription.objects.filter(lemonsqueezy_id=lemonsqueezy_id).select_related('plan').aget()
@@ -138,7 +138,7 @@ async def pause_subscription(request: HttpRequest, lemonsqueezy_id: str):
 
 @require_safe
 async def resume_subscription(request: HttpRequest, lemonsqueezy_id: str):
-    user = await request.auser() # type: ignore
+    user = cast(User, await request.auser()) # type: ignore
     try:
         await unpause_sub(lemonsqueezy_id, user)
         sub = await Subscription.objects.filter(lemonsqueezy_id=lemonsqueezy_id).select_related('plan').aget()
@@ -154,7 +154,7 @@ async def resume_subscription(request: HttpRequest, lemonsqueezy_id: str):
 
 @require_safe
 async def cancel_subscription(request: HttpRequest, lemonsqueezy_id: str):
-    user = await request.auser() # type: ignore
+    user = cast(User, await request.auser()) # type: ignore
     try:
         await cancel_sub(lemonsqueezy_id, user)
         sub = await Subscription.objects.filter(lemonsqueezy_id=lemonsqueezy_id).select_related('plan').aget()
@@ -212,7 +212,7 @@ class DashboardView(AsyncLoginRequiredMixin, View):
     access_token = os.getenv('MAPBOX_ACCESS_TOKEN')
 
     async def get(self, request: HttpRequest, *args, **kwargs):
-        user = await request.auser() # type: ignore
+        user = cast(User, await request.auser()) # type: ignore
         return render(
             request,
             "analysis/dashboard.html",
@@ -232,7 +232,7 @@ class Coordinates(View):
     }
 
     async def get(self, request: HttpRequest, *args, **kwargs):
-        pk = kwargs['pk']
+        pk = self.kwargs['pk']
         qs = Geofield.objects.filter(user__pk=pk)
         self.content['msg'] = 'Successfully retrieved data from the database'
         self.content['op'] = 'GET'
@@ -249,7 +249,7 @@ class Coordinates(View):
         return JsonResponse(self.content, status=200)
 
     async def post(self, request: HttpRequest, *args, **kwargs):
-        pk = kwargs['pk']
+        pk = self.kwargs['pk']
         data: dict = json.loads(request.body.decode('utf-8'))
         user = await User.people.aget(pk=pk)
         create_data = [
@@ -478,7 +478,7 @@ async def download_file(request, pk: int):
 
 class Billing(AsyncLoginRequiredMixin, View):
     async def get(self, request: HttpRequest, *args, **kwargs):
-        user = await request.auser() # type: ignore
+        user = cast(User, await request.auser()) # type: ignore
         plans = await get_plans()
         if plans:
             async with asyncio.TaskGroup() as tg:
@@ -498,7 +498,7 @@ class Billing(AsyncLoginRequiredMixin, View):
 
 class ChangeBilling(AsyncLoginRequiredMixin, View):
     async def get(self, request: HttpRequest, *args, **kwargs):
-        user = await request.auser() # type: ignore
+        user = cast(User, await request.auser()) # type: ignore
         plan_id = cast(int, self.kwargs['pk'])
 
         async with asyncio.TaskGroup() as tg:
@@ -525,6 +525,12 @@ class ChangeBilling(AsyncLoginRequiredMixin, View):
             }
         )
     
-    # async def post(self, request: HttpRequest, *args, **kwargs):
-    #     user = await request.auser() # type: ignore
-    #     plan_id = cast(int, kwargs['pk'])
+    async def post(self, request: HttpRequest, *args, **kwargs):
+        user = cast(User, await request.auser()) # type: ignore
+        current_plan_id = cast(int, self.kwargs['pk'])
+        new_plan_id = int(request.META['HTTP_X_NEW_PLAN'])
+        try:
+            await change_plan(current_plan_id, new_plan_id, user)
+            return redirect(f'/users/{user.pk}/')
+        except RuntimeError as exc:
+            raise Http404(exc)
