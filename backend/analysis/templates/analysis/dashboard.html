@@ -142,24 +142,6 @@
 {{ access_token|json_script:'token-data'}}
 <script>
     const _id = document.getElementById("user_id").value;
-    // const scheme = window.location.protocol === "https:" ? "wss" : "ws";
-    // const ws = new WebSocket(`${scheme}://${window.location.host}/ws/geo/`);
-    // ws.onopen = (e) => {
-    //     console.log("[open] Connection established!!!.");
-    // }
-
-    // ws.onclose = (e) => {
-    //     if (e.wasClean) {
-    //         console.log(`[close] Connection closed cleanly, code=${e.code} reason=${e.reason}`);
-    //     } else {
-    //         console.log("[close] Connection died");
-    //     }
-    // };
-
-    // ws.onerror = (err) => {
-    //     console.log(`[error] ${err}`);
-    // };
-
     if (!!window.SharedWorker) {
         var worker = new SharedWorker('/static/analysis/js/worker.js');
     }
@@ -190,7 +172,6 @@
     };
 
     const token = JSON.parse(document.getElementById('token-data').textContent);
-    // const csrftoken = getCookie('csrftoken');
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
     mapboxgl.accessToken = token;
@@ -225,8 +206,6 @@
             searchBox.marker = true;
             map.addControl(searchBox, 'top-right');
             map.addControl(draw, 'top-right');
-            // searchBox.bindMap(map);
-            // document.getElementById('search-box-container').appendChild(searchBox);
         }
 
         map.on('load', async () => {
@@ -274,39 +253,14 @@
             worker.port.onmessage = (e) => {
                 map.getSource(`${_id}-land`).updateData(e.data);
             };
-
-            // ws.onmessage = (e) => {
-            //     const resp = JSON.parse(e.data);
-            //     console.log(resp);
-            //     map.getSource(`${_id}-land`).updateData({
-            //         type: 'FeatureCollection',
-            //         features: resp.content,
-            //     });
-            // };
         });
         map.on('draw.create', saveCoord);
         map.on('draw.update', saveCoord);
     }
 
-    function getCookie(name){
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i];
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
     async function saveCoord(e) {
         const data = draw.getAll();
         if (data.features.length > 0) {
-            // ws.send(JSON.stringify({...data, 'OP': 'POST'}));
             worker.port.postMessage({ data, _id, csrftoken, 'action': 'addFeatures' });
         }
     }
