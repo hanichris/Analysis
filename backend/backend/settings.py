@@ -18,17 +18,18 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(os.path.join(BASE_DIR, '.env'))
+print(BASE_DIR)
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY_NEW')
+SECRET_KEY = os.getenv('SECRET_KEY_NEW', 'django-insecure-&psk#na5l=p3q8_a+-$4w1f^lt3lx1c@d*p4x$ymm_rn7pwb87')
 SECRET_KEY_FALLBACKS = [os.getenv('SECERET_KEY_OLD')]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DJANGO_DEBUG', '') != 'False'
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", ".ngrok-free.app"]
 
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_bleach',
     'rest_framework',
+    'phonenumber_field',
 ]
 
 MIDDLEWARE = [
@@ -69,16 +71,16 @@ INTERNAL_IPS = [
 
 TESTING = 'test' in sys.argv
 
-if not TESTING:
-    INSTALLED_APPS = [
-        *INSTALLED_APPS,
-        'debug_toolbar',
-    ]
+# if not TESTING:
+#     INSTALLED_APPS = [
+#         *INSTALLED_APPS,
+#         'debug_toolbar',
+#     ]
 
-    MIDDLEWARE = [
-        "debug_toolbar.middleware.DebugToolbarMiddleware",
-        *MIDDLEWARE,
-    ]
+#     MIDDLEWARE = [
+#         "debug_toolbar.middleware.DebugToolbarMiddleware",
+#         *MIDDLEWARE,
+#     ]
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -107,17 +109,10 @@ ASGI_APPLICATION = 'backend.asgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
         'OPTIONS': {
-            'transaction_mode': 'IMMEDIATE',
-            'init_command': """
-                PRAGMA journal_mode=WAL;
-                PRAGMA synchronous=NORMAL;
-                PRAGMA mmap_size=134217728;
-                PRAGMA journal_size_limit=27103364;
-                PRAGMA cache_size=2000;
-            """,
+            ''
+            'pool': True,
         }
     }
 }
@@ -183,6 +178,7 @@ LOGOUT_REDIRECT_URL = 'analysis:index'
 
 # CSRF settings
 CSRF_TRUSTED_ORIGINS = ['https://previously-funny-bee.ngrok-free.app']
+CSRF_COOKIE_HTTPONLY = True
 
 # Bleach Configuration
 # Allowed HTML tags
@@ -208,3 +204,12 @@ CACHES = {
         "LOCATION": "127.0.0.1:11211",
     }
 }
+
+# SITE ID FOR USE WITH THE SITES FRAMEWORK
+SITE_ID = 1
+
+# EMAIL CONFIGURATION
+RESEND_SMTP_PORT = 587
+RESEND_SMTP_USERNAME = 'resend'
+RESEND_SMTP_HOST = 'smtp.resend.com'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
