@@ -290,17 +290,12 @@ class SignUpView(View):
     async def post(self, request: HttpRequest, *args, **kwargs):
         form = UserCreationForm(request.POST)
         if await sync_to_async(form.is_valid)():
-            user = await sync_to_async(form.save)(commit=False)
+            await sync_to_async(form.save)()
             email = form.cleaned_data['email']
-            # password = form.cleaned_data['password1']
-            # user = await aauthenticate(request, email=email, password=password)
-            # await alogin(request, user)
-            # Send sign up email
-            user.is_active = False
-            await user.asave()
-            current_site = get_current_site(request)
-            mail_subject = 'Welcome to Divergent AG!'
-            
+            password = form.cleaned_data['password1']
+            user = await aauthenticate(request, email=email, password=password)
+            await alogin(request, user)
+            # Set up email verification
             return redirect('/billing/')
         return render(
             request, 'registration/signup.html', {'form': form}
