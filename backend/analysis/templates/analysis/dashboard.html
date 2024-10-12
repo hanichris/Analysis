@@ -22,6 +22,7 @@
         <div class="another">
             <div class="holder">
                 <div class="wrapper">
+                    {% csrf_token %}
                     <input type="hidden" id="user_id" value={{ user.id }} />
                     <button type="button" id="openModal">
                         {% if user.full_name %} {{ user.full_name.0 }} {% else %} {{ user.email.0|upper }} {% endif %}
@@ -189,7 +190,8 @@
     };
 
     const token = JSON.parse(document.getElementById('token-data').textContent);
-    const csrftoken = getCookie('csrftoken');
+    // const csrftoken = getCookie('csrftoken');
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
     mapboxgl.accessToken = token;
     if (!mapboxgl.supported()) {
