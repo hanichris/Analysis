@@ -175,16 +175,23 @@ BLEACH_STRIP_COMMENTS = False
 
 
 # Celery Configuration
-CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+CELERY_BROKER_URL = os.getenv('RABBITMQ_URL')
 CELERY_ACCEPT_CONTENT = {'json'}
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
+CELERY_BROKER_TRANSPORT_OPTIONS = {
+    'region': 'eu-north-1',
+    'queue_name_prefix': 'dspace-rmq',
+    'visibility_timeout': 360,
+    'polling_interval': 10,
+    'max_retries': 5,
+}
 
 # Cache Configuration
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.memcached.PyLibMCCache",
-        "LOCATION": "127.0.0.1:11211",
+        "LOCATION": "dspace-memcached-ogiqmr.serverless.eun1.cache.amazonaws.com:11211",
     }
 }
 
@@ -192,7 +199,7 @@ CACHES = {
 SITE_ID = 1
 
 # EMAIL CONFIGURATION
-RESEND_SMTP_PORT = 587
-RESEND_SMTP_USERNAME = 'resend'
-RESEND_SMTP_HOST = 'smtp.resend.com'
+# RESEND_SMTP_PORT = 587
+# RESEND_SMTP_USERNAME = 'resend'
+# RESEND_SMTP_HOST = 'smtp.resend.com'
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
