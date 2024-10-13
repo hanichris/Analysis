@@ -23,9 +23,8 @@ class AbstractTime(models.Model):
         abstract = True
 
 class User(PermissionsMixin, AbstractTime, AbstractBaseUser):
-    id = models.UUIDField(
+    id = models.BigAutoField(
         primary_key=True,
-        default=uuid.uuid4,
         editable=False
     )
     email = models.EmailField(_('email address'), unique=True)
