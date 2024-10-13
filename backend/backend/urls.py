@@ -24,9 +24,3 @@ urlpatterns = [
     path('accounts/', include("django.contrib.auth.urls")),
     path('', include('analysis.urls')),
 ]
-
-if not settings.TESTING:
-    urlpatterns = [
-        path('__debug__/', include("debug_toolbar.urls")),
-        *urlpatterns,
-    ]
