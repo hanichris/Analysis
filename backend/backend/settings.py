@@ -18,7 +18,6 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(os.path.join(BASE_DIR, '.env'))
-print(BASE_DIR)
 
 
 # Quick-start development settings - unsuitable for production
@@ -64,23 +63,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# Support debug toolbar
-INTERNAL_IPS = [
-    "127.0.0.1",
-]
-
-TESTING = 'test' in sys.argv
-
-# if not TESTING:
-#     INSTALLED_APPS = [
-#         *INSTALLED_APPS,
-#         'debug_toolbar',
-#     ]
-
-#     MIDDLEWARE = [
-#         "debug_toolbar.middleware.DebugToolbarMiddleware",
-#         *MIDDLEWARE,
-#     ]
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -111,7 +93,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'OPTIONS': {
-            ''
+            'service': 'mydb',
+            'passfile': '.pgpass',
             'pool': True,
         }
     }
