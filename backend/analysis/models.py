@@ -106,7 +106,10 @@ class Geofield(AbstractTime):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     feature_id = models.TextField()
     unique_id = models.GeneratedField( # type: ignore
-        expression=Concat("user", models.Value(','), "feature_id"),
+        expression=Concat(
+            "user", models.Value(','), "feature_id",
+            output_field=models.TextField()
+        ),
         output_field=models.TextField(),
         db_persist=True,
         verbose_name="Unique Feature ID",
