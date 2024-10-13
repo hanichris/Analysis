@@ -8,8 +8,34 @@ from typing import cast
 from dotenv import load_dotenv
 
 from lemon.src.internal.setup import lemon_squeezy_setup, Config
-from lemon.src.checkouts import NewCheckout
-from lemon.src.webhooks import list_webhooks, UpdateWebhook
+from lemon.src.checkouts import NewCheckout, create_checkout
+from lemon.src.webhooks import list_webhooks, UpdateWebhook, create_webhook
+from lemon.src.prices import list_prices, get_price
+from lemon.src.subscriptions import list_subscriptions, cancel_subscription, get_subscription, update_subscription
+
+async def bar(error = False):
+    if error:
+        raise RuntimeError('raising an error')
+    return await list_prices()
+
+async def foo():
+    plan_task = None
+    try:
+        async with asyncio.TaskGroup() as tg:
+            plan_task = tg.create_task(bar())
+            user_task = tg.create_task(bar(error=True))
+            price_task = tg.create_task(bar())
+    except ExceptionGroup as exc:
+        print('One of the tasks failed')
+    
+    plan = None
+    try:
+        plan = plan_task.result() if plan_task else plan
+    except (Exception, asyncio.CancelledError):
+        print('error occurred.')
+
+    return plan
+
 
 def main():
     BASE_DIR = Path(__file__).resolve().parent
@@ -28,54 +54,93 @@ def main():
     webhook_id = cast(str, os.getenv("LEMONSQUEEZY_WEBHOOK_ID"))
 
     new_checkout: NewCheckout = {
-        "product_options": {            
-            "name": "New Checkout Test",
-            "description": "a new checkout test",
-            "media": ["https://google.com"],
-            "redirect_url": "https://google.com",
-            "receipt_button_text": "Text Receipt",
-            "receipt_link_url": "https://lemonsqueezy.com",
-            "receipt_thank_you_note": "Thanks to lemonsqueezy",
-            "enabled_variants": [int(variant_id)],
-            "confirmation_title": "Thank you for your support",
-            "confirmation_message": "Thank you for subscribing and have a great day",
-            "confirmation_button_text": "View Order",
-        },
+        "product_options": {
+            'enabled_variants': [int(variant_id)],
+            'redirect_url': f"{os.getenv('PUBLIC_URL')}/dashboard",
+            'receipt_button_text': 'Go to Dashboard',
+            'receipt_thank_you_note': 'Thank you for signing up to Divergent AG'
+        } ,
         "checkout_options": {
             "embed": True,
             "media": True,
             "logo": True,
-            "desc": True,
-            "dark": True,
-            "skip_trial": True,
-            "discount": False,
-            "button_color": "#ccc",
-            "subscription_preview": True,
         },
         "checkout_data": {
             "email": "tita0x00@gmail.com",
-            "name": "Lemon Squeezy Test",
-            "billing_address": {                
-                "country": "US",
-            },
             "tax_number": "12345",
-            # discountCode: 'Q3MJI5MG',
             "custom": {
                 "user_id": "1234567890",
-                "user_name": "Mrs.A",
-                "nick_name": "AAA",
             },
-            "variant_quantities": [],
         },
         "expires_at": None,
         "preview": True,
         "test_mode": True,
     }
-    val = asyncio.run(list_webhooks({
-            "filter": {
-                "store_id": store_id
-            }
-        }))
+
+    checkout: NewCheckout = {
+        'checkout_options': {
+            'embed': True,
+            'media': False,
+            'logo': True,
+        },
+        'checkout_data': {
+            'email': "hanichris71@gmail.com",
+            'custom': {
+                'user_id': '296a4772026c46ef9a5494b62590a9ae',
+            },
+        },
+        'product_options': {
+            'enabled_variants': [int(variant_id)],
+            'redirect_url': f"{os.getenv('PUBLIC_URL')}/dashboard",
+            'receipt_button_text': 'Go to Dashboard',
+            'receipt_thank_you_note': 'Thank you for signing up to Divergent AG'
+        },
+        'preview': True,
+    }
+    # val = os.getenv("SECERET_KEY") == os.getenv("LEMONSQUEEZY_WEBHOOK_SECRET")
+    # val = asyncio.run(create_webhook(
+    #     store_id,
+    #     {
+    #         'url': 'https://previously-funny-bee.ngrok-free.app/api/webhook',
+    #         'secret': cast(str, os.getenv('LEMONSQUEEZY_WEBHOOK_SECRET')),
+    #         'events': [
+    #             'subscription_created',
+    #             'subscription_expired',
+    #             'subscription_updated',
+    #         ],
+    #         'test_mode': True
+    #     }
+    # ))
+
+    # val = asyncio.run(create_checkout(
+    #     store_id,
+    #     variant_id,
+    #     {
+    #         'checkout_options': {
+    #             'embed': True,
+    #             'media': False,
+    #             'logo': True,
+    #         },
+    #         'checkout_data': {
+    #             'email': 'albertmbogokuria@gmail.com',
+    #             'custom': {
+    #                 'user_id': '8652c3435313405b8907b02f4e0c82c8',
+    #             },
+    #         },
+    #         'product_options': {
+    #             'enabled_variants': [int(variant_id)],
+    #             'redirect_url': f"{os.getenv('PUBLIC_URL')}/dashboard",
+    #             'receipt_button_text': 'Go to Dashboard',
+    #             'receipt_thank_you_note': 'Thank you for signing up to Divergent AG'
+    #         },
+    #         'preview': True, # if missing, LEMONSQUEEZY returns a 500 server error.
+    #     }
+    # ))
+    val = asyncio.run(update_subscription(579702, {
+        'pause': {
+            'mode': 'void',
+        }
+    }))
     pprint.pprint(val)
 
 if __name__ == "__main__":
