@@ -200,7 +200,7 @@ async def get_checkout_url(variant_id: int, user: User, embed: bool = True) -> s
             'checkout_data': {
                 'email': user.email,
                 'custom': {
-                    'user_id': user.id.hex,
+                    'user_id': user.pk,
                 },
             },
             'product_options': {
