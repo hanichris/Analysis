@@ -114,9 +114,9 @@ async def get_variant_details(
     }
     is_subscription = False
     if current_price_obj:
-        variant_obj['interval'] = current_price_obj['attributes']['renewal_interval_unit']
+        variant_obj['interval'] = current_price_obj['attributes']['renewal_interval_unit'] or ''
         variant_obj['interval_count'] = current_price_obj['attributes']['renewal_interval_quantity']
-        variant_obj['trial_interval'] = current_price_obj['attributes']['trial_interval_unit']
+        variant_obj['trial_interval'] = current_price_obj['attributes']['trial_interval_unit'] or ''
         variant_obj['trial_interval_count'] = current_price_obj['attributes']['trial_interval_quantity']
 
         is_usage_based = current_price_obj[
