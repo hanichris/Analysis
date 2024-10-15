@@ -15,7 +15,7 @@ urlpatterns = [
     path("change_plan/<int:pk>", views.ChangeBilling.as_view(), name='change_plan'),
     path("dashboard/", views.DashboardView.as_view(), name='dashboard'),
     path("sw/", views.service_worker, name='service_worker'),
-    path("users/<uuid:pk>/", include(
+    path("users/<int:pk>/", include(
         [
             path("", views.UserProfileView.as_view(), name='profile'),
             path("coordinates", views.Coordinates.as_view(), name="user_coords"),

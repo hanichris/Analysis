@@ -1,0 +1,11 @@
+{
+  "src/main.tsx": {
+    "file": "index-bundle.js",
+    "name": "key0001",
+    "src": "src/main.tsx",
+    "isEntry": true,
+    "css": [
+      "assets/key0001-B9YgqjwJ.css"
+    ]
+  }
+}
