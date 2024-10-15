@@ -169,6 +169,7 @@ LOGOUT_REDIRECT_URL = 'analysis:index'
 # CSRF settings
 CSRF_TRUSTED_ORIGINS = ['https://previously-funny-bee.ngrok-free.app', 'https://*.divergentspace.com']
 CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SECURE = True
 
 # HSTS Configuration
 SECURE_HSTS_SECONDS = 30
@@ -176,7 +177,11 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
+SECURE_SSL_REDIRECT = True
 SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+
+SESSION_COOKIE_SECURE = True
+
 
 # Bleach Configuration
 # Allowed HTML tags
