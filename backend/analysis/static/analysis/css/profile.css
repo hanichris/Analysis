@@ -1,3 +1,75 @@
+dialog {
+    border: none;
+    border-radius: calc(5px * 3.75);
+    box-shadow: 0 0 #0000, 0 0 #0000, 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    padding: 2.5rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100vw;
+
+    &:has(.loading) .button {
+        pointer-events: none;
+    }
+
+    img {
+        margin-inline: auto
+    }
+
+    .dialog_title {
+        font-size: var(--font-size-x-large);
+        font-variation-settings: 'wght' 800;
+        letter-spacing: -0.67px;
+        margin-block: 2rem 1rem;
+    }
+
+    .description {
+        color: #6c6c89;
+        font-size: var(--font-size-medium);
+        margin-block-end: 1.5rem;
+
+        span {
+            color: var(--color-red);
+            font-variation-settings: 'wght' 500;
+        }
+    }
+
+    .button {
+        --_text-color: var(--txt-color, #6b7280);
+        --_btn-bg-color: var(--btn-bg-color, #eef1f7);
+        background-color: var(--_btn-bg-color);
+        border: none;
+        border-radius: 1rem;
+        color: var(--_text-color);
+        cursor: pointer;
+        display: block;
+        font-size: var(--font-size-medium);
+        font-variation-settings: 'wght' 700;
+        height: 4.4rem;
+        width: 50%;
+
+        &:focus, &:hover {
+            outline: none;
+            box-shadow: 0 0 0 0.125rem var(--color-white), 0 0 0 0.2rem var(--color-eerie-black);
+        }
+    }
+
+    .button.cta {
+        --txt-color: var(--color-white);
+        --btn-bg-color: var(--color-red);
+
+        &:focus, &:hover {
+            box-shadow: 0 0 0 0.125rem var(--color-white), 0 0 0 0.2rem var(--color-red);
+        }
+    }
+}
+
+.flex {
+    display: flex;
+    gap: 2rem;
+}
+
 .wrapper {
     display: flex;
     flex-direction: column;
@@ -512,6 +584,12 @@ div.user_content_empty {
 
 .chev_icon {
     color: #444746;
+}
+
+@media (min-width: 500px) {
+    dialog {
+        max-width: 50rem;
+    }
 }
 
 @media (min-width: 765px) {
