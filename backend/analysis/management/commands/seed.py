@@ -51,7 +51,7 @@ class Command(BaseCommand):
 
 def clear_data():
     """Deletes all the dummy users from the database."""
-    logger.warn("Delete all users with no administrative permissions")
+    logger.warning("Delete all users with no administrative permissions")
     User.people.filter(email__icontains="example").delete()
 
 def create_users(batch_size: int = 500, num: int = 20):
