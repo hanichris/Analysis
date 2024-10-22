@@ -25,5 +25,7 @@ urlpatterns = [
     path("download/<int:pk>/", views.download_file, name="download_file"),
     path("reports/upload", views.UploadReport.as_view(), name='report_upload'),
     path("accounts/signup/", views.SignUpView.as_view(), name='signup'),
+    path("activate/<slug:uidb64>/<slug:token>", views.activate, name='activate'),
+    path("sent/", views.activation_sent, name='activation_sent'),
     re_path("(about|contact)/", views.IndexView.as_view()),
 ]
