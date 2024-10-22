@@ -1,0 +1,5 @@
+
+Hey,
+
+Please click the following link to confirm your registration:
+https://{{ domain }}{% url 'analysis:activate' uidb64=uid token=token %}
