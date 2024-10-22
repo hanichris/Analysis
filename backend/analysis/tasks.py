@@ -10,7 +10,12 @@ from uuid import UUID
 import httpx
 
 from celery import shared_task
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import EmailMultiAlternatives, get_connection
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
 
 from analysis.models import Plan, User, WebhookEvent, Subscription
 from analysis.config import (
@@ -18,6 +23,8 @@ from analysis.config import (
     webhook_has_data,
     webhook_has_meta,
 )
+
+from .tokens import account_activation_token
 
 from lemon.src.prices import get_price
 
@@ -152,3 +159,35 @@ async def send_to_zoho(data: dict):
             res.raise_for_status()
     except (httpx.RequestError, httpx.HTTPStatusError) as exc:
         print(exc, file=sys.stderr)
+
+@shared_task
+@async_to_sync
+async def send_email(**kwargs):
+    user = cast(User, await User.people.aget(pk=kwargs['user_pk']))
+    ctx = {
+        'domain': kwargs['domain'],
+        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+        'token': account_activation_token.make_token(user),
+    }
+
+    subject = "Activate Your Divergent Space Account"
+    txt_msg = render_to_string('analysis/activation_request.html', ctx)
+    html_msg = render_to_string('analysis/activation_request.txt', ctx)
+    from_email = 'onboarding@resend.dev'
+
+    with get_connection(
+        host=settings.RESEND_SMTP_HOST,
+        port=settings.RESEND_SMTP_PORT,
+        username=settings.RESEND_SMTP_USERNAME,
+        password=settings.RESEND_API_KEY,
+        use_tls=True,
+    ) as connection:
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=txt_msg,
+            from_email=from_email,
+            to=[user.email],
+            connection=connection
+        )
+        msg.attach_alternative(html_msg, 'text/html')
+        msg.send()
