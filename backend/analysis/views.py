@@ -30,7 +30,8 @@ from django.shortcuts import (
 )
 from django.views.generic import View
 from django.views.decorators.http import require_safe
-
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -66,7 +67,8 @@ from .models import (
     WebhookEvent,
 )
 from .serialisers import WebhookEventSerializer
-from .tasks import send_to_zoho, process_webhook_event
+from .tasks import send_to_zoho, process_webhook_event, send_email
+from .tokens import account_activation_token
 from .utils import (
     get_plans,
     get_user_phone_number,
@@ -102,6 +104,26 @@ def webhook(request: Request):
             return Response(status=status.HTTP_200_OK)
 
     return Response('Invalid data', status=status.HTTP_400_BAD_REQUEST)
+
+@require_safe
+async def activate(request: HttpRequest, uidb64: str, token: str):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = cast(User, await User.people.aget(pk=uid))
+    except (TypeError, ValueError, User.DoesNotExist):
+        user = None
+    
+    if user and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.verified = True
+        await user.asave(update_fields=['is_active', 'verified'])
+        await alogin(request, user)
+        return redirect('analysis:billing')
+    return render(request, 'analysis/activation_invalid.html')
+
+@require_safe
+def activation_sent(request: HttpRequest):
+    return render(request, 'analysis/activation_sent.html')
 
 @require_safe
 def service_worker(request: HttpRequest):
@@ -290,13 +312,19 @@ class SignUpView(View):
     async def post(self, request: HttpRequest, *args, **kwargs):
         form = UserCreationForm(request.POST)
         if await sync_to_async(form.is_valid)():
-            await sync_to_async(form.save)()
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password1']
-            user = await aauthenticate(request, email=email, password=password)
-            await alogin(request, user)
+            user = await sync_to_async(form.save)(commit=False)
+            user.is_active = False
+            await user.asave()
+            await user.arefresh_from_db()
+            # email = form.cleaned_data['email']
+            # password = form.cleaned_data['password1']
+            # user = await aauthenticate(request, email=email, password=password)
+            # await alogin(request, user)
             # Set up email verification
-            return redirect('/billing/')
+            current_site = await sync_to_async(get_current_site)(request)
+            print(current_site)
+            send_email.delay(domain=current_site.domain, user_pk=user.pk)
+            return redirect('analysis:activation_sent')
         return render(
             request, 'registration/signup.html', {'form': form}
         )
