@@ -171,8 +171,8 @@ async def send_email(**kwargs):
     }
 
     subject = "Activate Your Divergent Space Account"
-    txt_msg = render_to_string('analysis/activation_request.html', ctx)
-    html_msg = render_to_string('analysis/activation_request.txt', ctx)
+    txt_msg = render_to_string('analysis/activation_request.txt', ctx)
+    html_msg = render_to_string('analysis/activation_request.html', ctx)
     from_email = 'onboarding@resend.dev'
 
     with get_connection(
