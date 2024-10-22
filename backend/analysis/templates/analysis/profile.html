@@ -9,8 +9,24 @@
 
 {% block content %}
 <dialog id="confirmation_modal">
-    <button autofocus onclick="closeModal()">Close</button>
-    <p>This modal dialog has a groovy backdrop!</p>
+    <img
+        sizes="(max-width: 2700px) 40vw, 1080px"
+        srcset="
+        /static/analysis/img/destroyed_planet_wbg/destroyed_planet_wbg_c_scale,w_200.png 200w,
+        /static/analysis/img/destroyed_planet_wbg/destroyed_planet_wbg_c_scale,w_732.png 732w,
+        /static/analysis/img/destroyed_planet_wbg/destroyed_planet_wbg_c_scale,w_1080.png 1080w"
+        src="/static/analysis/img/destroyed_planet_wbg/destroyed_planet_wbg_c_scale,w_1080.png"
+        alt="subscription cancellation"
+    >
+    <h2 class="dialog_title">Cancel subscription</h2>
+    <p class="description">
+        Are you sure you want to cancel your subscription?<br>
+        <span>This action cannot be undone.</span>
+    </p>
+    <div class="flex">
+        <button autofocus class='button' onclick="closeModal(event)" data-delete="false">Close</button>
+        <button class="button cta" onclick="closeModal(event)" data-delete="true" id="cta">Confirm</button>
+    </div>
 </dialog>
 <div class="wrapper", id="profile">
     <div>
@@ -405,7 +421,7 @@
                                                                                 Customer portal
                                                                             </a>
                                                                             <a onclick="updatePayment(event)" id="update-{{ subscription.lemonsqueezy_id }}">Update payment method</a>
-                                                                            <button class="btn btn--transparent" onclick="openModal()">Cancel subscription</button>
+                                                                            <button class="btn btn--transparent" onclick="openModal(event)" id="cancel-{{ subscription.lemonsqueezy_id }}">Cancel subscription</button>
                                                                         </menu>
                                                                     </div>
                                                                 </div>
@@ -492,6 +508,33 @@
     </div>
 </div>
 <script>
+    const cache = {
+        'subscriptionToDelete': undefined,
+        'delete': undefined,
+    };
+
+    async function cancelSub(id) {
+        const elem = document.getElementById(`${id}`);
+        elem.classList.add('loading');
+        const response = await fetch(`/cancel_subscription/${id}`)
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(res.statusText);
+            }
+            return res.text();
+        })
+        .catch(err => console.error(err));
+        if (response) {
+            elem.outerHTML = response;
+
+            // Re-format the display of the price value.
+            const priceElement = document.getElementById(`price-${id}`);
+            priceElement.innerText = formatPrice(priceElement.textContent);
+        } else {
+            elem.classList.remove('loading');
+        }
+    }
+
     async function updateSub(event, action='pause') {
         event.preventDefault();
         const id = event.currentTarget.id.split('-')[1];
@@ -553,11 +596,23 @@
         })
         .catch(err => console.error(err));
     }
-    function openModal() {
+    function openModal(event) {
+        cache['subscriptionToDelete'] = event.currentTarget.id.split('-')[1];
         document.getElementById("confirmation_modal").showModal();
     }
-    function closeModal() {
+    function closeModal(event) {
+        const toDelete = event.currentTarget.dataset.delete;
+        cache['delete'] = toDelete === 'true' ? true : toDelete === 'false' && false;
         document.getElementById("confirmation_modal").close();
+        if (cache['delete']) {
+            cancelSub(cache['subscriptionToDelete']).then(() => {
+                cache['delete'] = undefined;
+                cache['subscriptionToDelete'] = undefined;
+            })
+        } else {
+            cache['delete'] = undefined;
+            cache['subscriptionToDelete'] = undefined;
+        }
     }
     function toggleDropdown(event) {
         document.getElementById(`dropdown-content-${event.currentTarget.id}`).classList.toggle('show');
